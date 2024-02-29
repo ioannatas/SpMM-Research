@@ -30,19 +30,19 @@ struct CSRArrays : Matrix_Format
 		free(ja);
 	}
 
-	void spmv(ValueType * x, ValueType * y);
+	void spmm(ValueType * x, ValueType * y, INT_T k);
 	void statistics_start();
 	int statistics_print_data(__attribute__((unused)) char * buf, __attribute__((unused)) long buf_n);
 };
 
 
-void compute_csr(CSRArrays * csr, ValueType * x , ValueType * y);
+void compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k);
 
 
 void
-CSRArrays::spmv(ValueType * x, ValueType * y)
+CSRArrays::spmm(ValueType * x, ValueType * y, INT_T k)
 {
-	compute_csr(this, x, y);
+	compute_csr(this, x, y, k);
 }
 
 
@@ -59,13 +59,21 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 
 
 void
-compute_csr(CSRArrays * csr, ValueType * x , ValueType * y)
+compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 {
 	char transa = 'N';
+	ValueType alpha = 1.0, beta = 0.0;
+	char matdescra[6];
+	matdescra[0] = 'G';
+    matdescra[1] = 'L';
+    matdescra[2] = 'N';
+    matdescra[3] = 'C';
 	#if DOUBLE == 0
-		mkl_cspblas_scsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
+		// mkl_cspblas_scsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
+		mkl_scsrmm(&transa, &csr->m, &k, &csr->n, &alpha, matdescra, csr->a, csr->ja, csr->ia,  &(csr->ia[1]), &(x[0]), &k,  &beta, &(y[0]), &k);
 	#elif DOUBLE == 1
-		mkl_cspblas_dcsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
+		// mkl_cspblas_dcsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
+		mkl_dcsrmm(&transa, &csr->m, &k, &csr->n, &alpha, matdescra, csr->a, csr->ja, csr->ia,  &(csr->ia[1]), &(x[0]), &k,  &beta, &(y[0]), &k);
 	#endif
 }
 

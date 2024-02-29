@@ -56,8 +56,8 @@ IFS="$IFS_buf"
 
 
 matrices_validation=(
-
-    # scircuit.mtx
+    # mtx1.mtx
+    scircuit.mtx
     # mac_econ_fwd500.mtx
     # raefsky3.mtx
     # rgg_n_2_17_s0.mtx
@@ -77,7 +77,7 @@ matrices_validation=(
     # Chebyshev4.mtx
     # consph.mtx
     # com-Youtube.mtx
-    rajat30.mtx
+    # rajat30.mtx
     # radiation.mtx
     # Stanford_Berkeley.mtx
     # shipsec1.mtx
@@ -400,10 +400,10 @@ bench()
 
 matrices=(
     # "${matrices_openFoam[@]}"
-    # "${matrices_validation[@]}"
+    "${matrices_validation[@]}"
     # "${matrices_paper_csr_rv[@]}"
     # "${matrices_compression_small[@]}"
-    "${matrices_compression[@]}"
+    # "${matrices_compression[@]}"
     # "${matrices_M3E[@]}"
 
     # "$path_tamu"/matrices/ASIC_680k/ASIC_680k.mtx
@@ -528,7 +528,6 @@ for format_name in "${!progs[@]}"; do
     echo "program: $prog"
     echo "number of matrices: ${#prog_args[@]}"
 
-    # Just print the output labels first.
     "$prog"
 
     rep=1
@@ -540,6 +539,7 @@ for format_name in "${!progs[@]}"; do
 
     LEVEL3_CACHE_SIZE="$(getconf LEVEL3_CACHE_SIZE)"
     csrcv_num_packet_vals=(
+        # 128 
         $((2**6))
         # $((2**7))
         # $((2**10))

@@ -31,10 +31,10 @@ calc_cpu_pinning()
 }
 
 
-export SPARSEX_ROOT_DIR="${HOME}/lib"
+# export SPARSEX_ROOT_DIR="${HOME}/lib"
 # export SPARSEX_ROOT_DIR=/various/dgal/epyc1
 # export SPARSEX_ROOT_DIR=/home/pmpakos/sparsex
-# export SPARSEX_ROOT_DIR=/various/pmpakos/SPMV_BENCHMARKS/sparsex
+export SPARSEX_ROOT_DIR=/various/pmpakos/epyc5_libs/sparsex
 
 
 declare -A conf_vars
@@ -68,9 +68,9 @@ conf_vars=(
     # Maximum number of the machine's cores.
     # ['max_cores']=160
     # ['max_cores']=256
-    ['max_cores']=128
+    # ['max_cores']=128
     # ['max_cores']=64
-    # ['max_cores']=96
+    ['max_cores']=96
     # ['max_cores']=48
     # ['max_cores']=16
     # ['max_cores']=8
@@ -83,8 +83,8 @@ conf_vars=(
     # ['cores']=64
     # ['cores']=48
     # ['cores']=32
-    # ['cores']=24
-    ['cores']=16
+    ['cores']=24
+    # ['cores']=16
     # ['cores']=12
     # ['cores']=8
     # ['cores']=6
@@ -184,6 +184,7 @@ conf_vars=(
                         "$HOME/Data/graphs/validation_matrices"
                         # "${script_dir}/../../../validation_matrices"
                         '/various/pmpakos/SpMV-Research/validation_matrices'
+                        # "$HOME/matrices"
                     )
                     find_valid_dir "${options[@]}"
                 )"
@@ -201,8 +202,6 @@ conf_vars=(
     ['path_tamu']="${HOME}/Data/graphs/tamu"
     ['path_M3E']="${HOME}/Data/graphs/M3E-Matrix-Collection"
 
-    ['ZFP_ROOT_DIR']="${HOME}/lib/zfp"
-    ['FPZIP_ROOT_DIR']="${HOME}/lib/fpzip"
 )
 
 conf_vars['cpu_affinity']="$(calc_cpu_pinning "${conf_vars["cores"]}" "${conf_vars["max_cores"]}" "${conf_vars["cpu_pinning_step"]}" "${conf_vars["cpu_pinning_group_size"]}")"
@@ -330,11 +329,8 @@ progs=(
     # ['cusparse_coo_d']="${script_dir}/spmv_code_bench/spmv_cusparse_coo_nv_d.exe"
 
     # Custom compressed values block
-    # ['csr_cv_block_id_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_id_d.exe"
-    # ['csr_cv_block_d2f_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_d2f_d.exe"
     # ['csr_cv_block_fpc_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_fpc_d.exe"
-    ['csr_cv_block_zfp_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_zfp_d.exe"
-    # ['csr_cv_block_fpzip_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_fpzip_d.exe"
+    # ['csr_cv_block_zfp_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_block_zfp_d.exe"
 
     # Custom compressed values stream
     # ['csr_cv_stream_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_stream_d.exe"
@@ -345,7 +341,11 @@ progs=(
     # ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmv_mkl_ie_f.exe"
 
     # MKL CSR
-    # ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
+    ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
+    # ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmv_mkl_csr_f.exe"
+    # MKL GEMM
+    # ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
+    # ['mkl_gemm_f']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_f.exe"
 
     # AOCL
     # ['aocl_optmv_d']="${script_dir}/spmv_code_bench/spmv_aocl_optmv_d.exe"

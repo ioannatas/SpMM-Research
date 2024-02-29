@@ -20,7 +20,7 @@ extern "C"{
 	#include "time_it.h"
 	#include "parallel_util.h"
 	#include "pthread_functions.h"
-	#include "matrix_util.h"
+	// #include "matrix_util.h"
 	#include "array_metrics.h"
 
 	#include "string_util.h"
@@ -97,7 +97,7 @@ reference_to_double(void * A, long i)
 
 /** Simply return the max relative diff */
 void
-CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, __attribute__((unused)) INT_T csr_n, __attribute__((unused)) INT_T csr_nnz, double * x_ref, ValueType * y)
+CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, INT_T csr_k, __attribute__((unused)) INT_T csr_nnz, INT_T n, double * x_ref, ValueType * y)
 {
 	__attribute__((unused)) ReferenceType epsilon_relaxed = 1e-4;
 	#if DOUBLE == 0
@@ -106,42 +106,41 @@ CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, _
 		ReferenceType epsilon = 1e-10;
 	#endif
 	long i;
-	ReferenceType * y_gold = (typeof(y_gold)) malloc(csr_m * sizeof(*y_gold));
-	ReferenceType * y_test = (typeof(y_test)) malloc(csr_m * sizeof(*y_test));
+	ReferenceType * y_gold = (typeof(y_gold)) malloc(csr_m * n * sizeof(*y_gold));
+	ReferenceType * y_test = (typeof(y_test)) malloc(csr_m * n * sizeof(*y_test));
 	#pragma omp parallel
 	{
 		ReferenceType sum;
 		long i, j;
 		#pragma omp for
-		for(i=0;i<csr_m;i++)
+		for(i=0;i<csr_m * n;i++)
 		{
 			y_gold[i] = 0;
 			y_test[i] = y[i];
 		}
 		#pragma omp for
-		for (i=0;i<csr_m;i++)
-		{
-			ReferenceType val, tmp, compensation;
-			compensation = 0;
-			sum = 0;
-			for (j=csr_ia[i];j<csr_ia[i+1];j++)
-			{
+		for (i = 0; i < csr_m; i++) {
 
-				// sum += csr_a_ref[j] * x_ref[csr_ja[j]];
+            for (long k = 0; k < n; k++) {
 
-				val = csr_a_ref[j] * x_ref[csr_ja[j]] - compensation;
-				tmp = sum + val;
-				compensation = (tmp - sum) - val;
-				sum = tmp;
-
-			}
-			y_gold[i] = sum;
-		}
+                ReferenceType val, tmp, compensation;
+                compensation = 0;
+                sum = 0;
+                
+				for (j = csr_ia[i]; j < csr_ia[i + 1]; j++) {
+					val = csr_a_ref[j] * x_ref[k * csr_k + csr_ja[j]] - compensation;
+                    tmp = sum + val;
+                    compensation = (tmp - sum) - val;
+                    sum = tmp;
+                }
+                y_gold[i * n + k] = sum;
+            }
+        }
 	}
 
 	ReferenceType maxDiff = 0, diff;
 	// int cnt=0;
-	for(i=0;i<csr_m;i++)
+	for(i=0;i<csr_m * n;i++)
 	{
 		diff = Abs(y_gold[i] - y_test[i]);
 		// maxDiff = Max(maxDiff, diff);
@@ -150,8 +149,10 @@ CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, _
 			diff = diff / abs(y_gold[i]);
 			maxDiff = Max(maxDiff, diff);
 		}
-		// if (diff > epsilon_relaxed)
-			// printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
+		// if (i<100) 
+		// 	printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
+		if (diff > epsilon_relaxed)
+			printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
 		// std::cout << i << ": " << y_gold[i]-y_test[i] << "\n";
 		// if (y_gold[i] != 0.0)
 		// {
@@ -167,14 +168,14 @@ CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, _
 	{
 		double mae, max_ae, mse, mape, smape;
 		double lnQ_error, mlare, gmare;
-		array_mae_concurrent(y_gold, y_test, csr_m, &mae, reference_to_double);
-		array_max_ae_concurrent(y_gold, y_test, csr_m, &max_ae, reference_to_double);
-		array_mse_concurrent(y_gold, y_test, csr_m, &mse, reference_to_double);
-		array_mape_concurrent(y_gold, y_test, csr_m, &mape, reference_to_double);
-		array_smape_concurrent(y_gold, y_test, csr_m, &smape, reference_to_double);
-		array_lnQ_error_concurrent(y_gold, y_test, csr_m, &lnQ_error, reference_to_double);
-		array_mlare_concurrent(y_gold, y_test, csr_m, &mlare, reference_to_double);
-		array_gmare_concurrent(y_gold, y_test, csr_m, &gmare, reference_to_double);
+		array_mae_concurrent(y_gold, y_test, csr_m * n, &mae, reference_to_double);
+		array_max_ae_concurrent(y_gold, y_test, csr_m * n, &max_ae, reference_to_double);
+		array_mse_concurrent(y_gold, y_test, csr_m * n, &mse, reference_to_double);
+		array_mape_concurrent(y_gold, y_test, csr_m * n, &mape, reference_to_double);
+		array_smape_concurrent(y_gold, y_test, csr_m * n, &smape, reference_to_double);
+		array_lnQ_error_concurrent(y_gold, y_test, csr_m * n, &lnQ_error, reference_to_double);
+		array_mlare_concurrent(y_gold, y_test, csr_m * n, &mlare, reference_to_double);
+		array_gmare_concurrent(y_gold, y_test, csr_m * n, &gmare, reference_to_double);
 		#pragma omp single
 		printf("errors spmv: mae=%g, max_ae=%g, mse=%g, mape=%g, smape=%g, lnQ_error=%g, mlare=%g, gmare=%g\n", mae, max_ae, mse, mape, smape, lnQ_error, mlare, gmare);
 	}
@@ -246,7 +247,7 @@ get_pinning_position_from_affinity_string(const char * range_string, long len, i
 
 void
 compute(char * matrix_name,
-		__attribute__((unused)) INT_T * csr_ia, __attribute__((unused)) INT_T * csr_ja, __attribute__((unused)) ValueType * csr_a, double * csr_a_ref, INT_T csr_m, INT_T csr_n, INT_T csr_nnz,
+		__attribute__((unused)) INT_T * csr_ia, __attribute__((unused)) INT_T * csr_ja, __attribute__((unused)) ValueType * csr_a, double * csr_a_ref, INT_T csr_m, INT_T csr_k, INT_T n, INT_T csr_nnz,
 		struct Matrix_Format * MF,
 		csr_matrix * AM,
 		ValueType * x, double * x_ref, ValueType * y,
@@ -290,7 +291,7 @@ compute(char * matrix_name,
 
 		// Warm up caches.
 		time_warm_up = time_it(1,
-			MF->spmv(x, y);
+			MF->spmm(x, y, n);
 		);
 
 		// /* Calculate number of loops so that the total running time is at least 1 second for stability reasons
@@ -341,7 +342,7 @@ compute(char * matrix_name,
 			rapl_read_start(regs, regs_n);
 
 			time += time_it(1,
-				MF->spmv(x, y);
+				MF->spmm(x, y, n);
 			);
 
 			rapl_read_end(regs, regs_n);
@@ -368,7 +369,7 @@ compute(char * matrix_name,
 		//=============================================================================
 
 		std::stringstream stream;
-		gflops = csr_nnz / time * num_loops * 2 * 1e-9;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
+		gflops = csr_nnz * n / time * num_loops * 2 * 1e-9;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
 	}
 
 	if (!use_artificial_matrices)
@@ -386,7 +387,7 @@ compute(char * matrix_name,
 				i += snprintf(buf + i, buf_n - i, ",%s", "num_threads");
 			}
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_m");
-			i += snprintf(buf + i, buf_n - i, ",%s", "csr_n");
+			i += snprintf(buf + i, buf_n - i, ",%s", "csr_k");
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_nnz");
 			i += snprintf(buf + i, buf_n - i, ",%s", "time");
 			i += snprintf(buf + i, buf_n - i, ",%s", "gflops");
@@ -418,7 +419,7 @@ compute(char * matrix_name,
 			i += snprintf(buf + i, buf_n - i, ",%d", omp_get_max_threads());
 		}
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_m);
-		i += snprintf(buf + i, buf_n - i, ",%u", csr_n);
+		i += snprintf(buf + i, buf_n - i, ",%u", csr_k);
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_nnz);
 		i += snprintf(buf + i, buf_n - i, ",%lf", time);
 		i += snprintf(buf + i, buf_n - i, ",%lf", gflops);
@@ -438,7 +439,7 @@ compute(char * matrix_name,
 		buf[i] = '\0';
 		fprintf(stderr, "%s\n", buf);
 
-		CheckAccuracy(csr_ia, csr_ja, csr_a_ref, csr_m, csr_n, csr_nnz, x_ref, y);
+		CheckAccuracy(csr_ia, csr_ja, csr_a_ref, csr_m, csr_k, csr_nnz, n, x_ref, y);
 	}
 	else
 	{
@@ -532,7 +533,7 @@ main(int argc, char **argv)
 	INT_T * mtx_rowind = NULL;
 	INT_T * mtx_colind = NULL;
 	INT_T mtx_m = 0;
-	INT_T mtx_n = 0;
+	INT_T mtx_k = 0;
 	INT_T mtx_nnz = 0;
 	double * x_ref;
 
@@ -542,8 +543,9 @@ main(int argc, char **argv)
 	INT_T * csr_ia = NULL;    // rowptr (of size m+1)
 	INT_T * csr_ja = NULL;    // colidx of each NNZ (of size nnz)
 	INT_T csr_m = 0;
-	INT_T csr_n = 0;
+	INT_T csr_k = 0;
 	INT_T csr_nnz = 0;
+	INT_T n = 0;
 
 	struct Matrix_Format * MF;   // Real matrices.
 	csr_matrix * AM = NULL;
@@ -565,7 +567,7 @@ main(int argc, char **argv)
 	// Just print the labels and exit.
 	if (argc == 1)
 	{
-		compute(NULL, NULL, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 1);
+		compute(NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 1);
 		return 0;
 	}
 
@@ -627,7 +629,7 @@ child_proc_label:
 				int * rowind, * colind;
 				read_openfoam_matrix_dir(file_in, &rowind, &colind, &N, &nnz_non_diag);
 				mtx_m = N;
-				mtx_n = N;
+				mtx_k = N;
 				mtx_nnz = N + nnz_non_diag;
 				mtx_rowind = (typeof(mtx_rowind)) aligned_alloc(64, mtx_nnz * sizeof(*mtx_rowind));
 				mtx_colind = (typeof(mtx_colind)) aligned_alloc(64, mtx_nnz * sizeof(*mtx_colind));
@@ -652,7 +654,7 @@ child_proc_label:
 				mtx_rowind = MTX->R;
 				mtx_colind = MTX->C;
 				mtx_m = MTX->m;
-				mtx_n = MTX->n;
+				mtx_k = MTX->n;
 				mtx_nnz = MTX->nnz;
 				if (!strcmp(MTX->field, "integer"))
 				{
@@ -690,7 +692,7 @@ child_proc_label:
 			csr_ja = (typeof(csr_ja)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_ja));
 			csr_ia = (typeof(csr_ia)) aligned_alloc(64, (mtx_m+1 + VECTOR_ELEM_NUM) * sizeof(*csr_ia));
 			csr_m = mtx_m;
-			csr_n = mtx_n;
+			csr_k = mtx_k;
 			csr_nnz = mtx_nnz;
 			_Pragma("omp parallel for")
 			for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
@@ -701,7 +703,7 @@ child_proc_label:
 			_Pragma("omp parallel for")
 			for (long i=0;i<mtx_m+1 + VECTOR_ELEM_NUM;i++)
 				csr_ia[i] = 0;
-			coo_to_csr(mtx_rowind, mtx_colind, mtx_val, mtx_m, mtx_n, mtx_nnz, csr_ia, csr_ja, csr_a_ref, 1, 0);
+			coo_to_csr(mtx_rowind, mtx_colind, mtx_val, mtx_m, mtx_k, mtx_nnz, csr_ia, csr_ja, csr_a_ref, 1, 0);
 			_Pragma("omp parallel for")
 			for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
 				csr_a[i] = (ValueType) csr_a_ref[i];
@@ -743,7 +745,7 @@ child_proc_label:
 		printf("time generate artificial matrix: %lf\n", time);
 
 		csr_m = AM->nr_rows;
-		csr_n = AM->nr_cols;
+		csr_k = AM->nr_cols;
 		csr_nnz = AM->nr_nzeros;
 
 		csr_ia = (typeof(csr_ia)) aligned_alloc(64, (csr_m+1 + VECTOR_ELEM_NUM) * sizeof(*csr_ia));
@@ -766,141 +768,141 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-
-	x_ref = (typeof(x_ref)) aligned_alloc(64, csr_n * sizeof(*x_ref));
-	x = (typeof(x)) aligned_alloc(64, csr_n * sizeof(*x));
-	#pragma omp parallel for
-	for(int i=0;i<csr_n;++i)
-	{
-		x_ref[i] = 1.0;
-		x[i] = x_ref[i];
-	}
-	y = (typeof(y)) aligned_alloc(64, csr_m * sizeof(sizeof(*y)));
-	#pragma omp parallel for
-	for(long i=0;i<csr_m;i++)
-		y[i] = 0.0;
-
-	#if 0
-		_Pragma("omp parallel")
+	for( n=32 ; n <33 ; n*=4){
+		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
+		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
+		#pragma omp parallel for
+		for(int i=0;i<csr_k * n;++i)
 		{
-			int tnum = omp_get_thread_num();
-			long i;
-			long i_per_t = csr_n / num_threads;
-			long i_s = tnum * i_per_t;
-
-			// No operations.
-			// _Pragma("omp parallel for")
-			// for (i=0;i<csr_m+1;i++)
-				// csr_ia[i] = 0;
-
-			_Pragma("omp parallel for")
-			for (i=0;i<csr_nnz;i++)
-			{
-				csr_ja[i] = 0;                      // idx0 - Remove X access pattern dependency.
-				// csr_ja[i] = i % csr_n;              // idx_serial - Remove X access pattern dependency.
-				// csr_ja[i] = i_s + (i % i_per_t);    // idx_t_local - Remove X access pattern dependency.
-			}
+			x_ref[i] = 1.0;
+			x[i] = x_ref[i];
 		}
-	#endif
+		y = (typeof(y)) aligned_alloc(64, csr_m * n * sizeof(sizeof(*y)));
+		#pragma omp parallel for
+		for(long i=0;i<csr_m * n;i++)
+			y[i] = 0.0;
 
-	long buf_n = strlen(matrix_name) + 1 + 1000;
-	char buf[buf_n];
-	char * path, * filename, * filename_base;
-	str_path_split_path(matrix_name, strlen(matrix_name) + 1, buf, buf_n, &path, &filename);
-	path = strdup(path);
-	filename = strdup(filename);
-	str_path_split_ext(filename, strlen(filename) + 1, buf, buf_n, &filename_base, NULL);
-	filename_base = strdup(filename_base);
-	if (0)
-	{
-		long num_pixels = 1024;
-		long num_pixels_x = (csr_n < num_pixels) ? csr_n : num_pixels;
-		long num_pixels_y = (csr_m < num_pixels) ? csr_m : num_pixels;
-
-		printf("ploting : %s\n", filename_base);
-		csr_plot(filename_base, csr_ia, csr_ja, csr_a, csr_m, csr_n, csr_nnz, 0, num_pixels_x, num_pixels_y);
-		return 0;
-	}
-
-
-	long split_matrix = 0;
-	long nnz_per_row_cutoff = 50;
-
-	ValueType * gpu_csr_a = NULL;
-	INT_T * gpu_csr_ia = NULL;
-	INT_T * gpu_csr_ja = NULL;
-	INT_T gpu_csr_nnz = 0;
-	if (split_matrix)
-	{
-		long k;
-		long degree;
-		gpu_csr_ia = (typeof(gpu_csr_ia)) aligned_alloc(64, (csr_m+1 + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_ia));
-		gpu_csr_a = (typeof(gpu_csr_a)) aligned_alloc(64, (csr_nnz + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_a));
-		gpu_csr_ja = (typeof(gpu_csr_ja)) aligned_alloc(64, (csr_nnz + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_ja));
-		k = 0;
-		gpu_csr_ia[0] = 0;
-		for (i=0;i<csr_m+1;i++)
-		{
-			degree = csr_ia[i+1] - csr_ia[i];
-			if (degree > nnz_per_row_cutoff)
+		#if 0
+			_Pragma("omp parallel")
 			{
-				for (j=csr_ia[i];j<csr_ia[i+1];j++,k++)
+				int tnum = omp_get_thread_num();
+				long i;
+				long i_per_t = csr_k / num_threads;
+				long i_s = tnum * i_per_t;
+
+				// No operations.
+				// _Pragma("omp parallel for")
+				// for (i=0;i<csr_m+1;i++)
+					// csr_ia[i] = 0;
+
+				_Pragma("omp parallel for")
+				for (i=0;i<csr_nnz;i++)
 				{
-					gpu_csr_ja[k] = csr_ja[j];
-					gpu_csr_a[k] = csr_a[j];
+					csr_ja[i] = 0;                      // idx0 - Remove X access pattern dependency.
+					// csr_ja[i] = i % csr_n;              // idx_serial - Remove X access pattern dependency.
+					// csr_ja[i] = i_s + (i % i_per_t);    // idx_t_local - Remove X access pattern dependency.
 				}
-				gpu_csr_ia[i+1] = k;
 			}
-			else
-			{
-				gpu_csr_ia[i+1] = gpu_csr_ia[i];
-			}
-		}
-		gpu_csr_nnz = k;
-		printf("GPU part nnz = %d (%.2lf%%)\n", gpu_csr_nnz, ((double) gpu_csr_nnz) / csr_nnz * 100);
-	}
+		#endif
 
-	time = time_it(1,
+		long buf_n = strlen(matrix_name) + 1 + 1000;
+		char buf[buf_n];
+		char * path, * filename, * filename_base;
+		str_path_split_path(matrix_name, strlen(matrix_name) + 1, buf, buf_n, &path, &filename);
+		path = strdup(path);
+		filename = strdup(filename);
+		str_path_split_ext(filename, strlen(filename) + 1, buf, buf_n, &filename_base, NULL);
+		filename_base = strdup(filename_base);
+		if (0)
+		{
+			long num_pixels = 1024;
+			long num_pixels_x = (csr_k < num_pixels) ? csr_k : num_pixels;
+			long num_pixels_y = (csr_m < num_pixels) ? csr_m : num_pixels;
+
+			printf("ploting : %s\n", filename_base);
+			csr_plot(filename_base, csr_ia, csr_ja, csr_a, csr_m, csr_k, csr_nnz, 0, num_pixels_x, num_pixels_y);
+			return 0;
+		}
+
+
+		long split_matrix = 0;
+		long nnz_per_row_cutoff = 50;
+
+		ValueType * gpu_csr_a = NULL;
+		INT_T * gpu_csr_ia = NULL;
+		INT_T * gpu_csr_ja = NULL;
+		INT_T gpu_csr_nnz = 0;
 		if (split_matrix)
 		{
-			MF = csr_to_format(gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_m, csr_n, gpu_csr_nnz);
+			long k;
+			long degree;
+			gpu_csr_ia = (typeof(gpu_csr_ia)) aligned_alloc(64, (csr_m+1 + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_ia));
+			gpu_csr_a = (typeof(gpu_csr_a)) aligned_alloc(64, (csr_nnz + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_a));
+			gpu_csr_ja = (typeof(gpu_csr_ja)) aligned_alloc(64, (csr_nnz + VECTOR_ELEM_NUM) * sizeof(*gpu_csr_ja));
+			k = 0;
+			gpu_csr_ia[0] = 0;
+			for (i=0;i<csr_m+1;i++)
+			{
+				degree = csr_ia[i+1] - csr_ia[i];
+				if (degree > nnz_per_row_cutoff)
+				{
+					for (j=csr_ia[i];j<csr_ia[i+1];j++,k++)
+					{
+						gpu_csr_ja[k] = csr_ja[j];
+						gpu_csr_a[k] = csr_a[j];
+					}
+					gpu_csr_ia[i+1] = k;
+				}
+				else
+				{
+					gpu_csr_ia[i+1] = gpu_csr_ia[i];
+				}
+			}
+			gpu_csr_nnz = k;
+			printf("GPU part nnz = %d (%.2lf%%)\n", gpu_csr_nnz, ((double) gpu_csr_nnz) / csr_nnz * 100);
 		}
-		else
-		{
-			MF = csr_to_format(csr_ia, csr_ja, csr_a, csr_m, csr_n, csr_nnz);
-		}
-	);
-	printf("time convert to format: %lf\n", time);
-
-	long min_num_loops;
-	min_num_loops = 128;
-
-	prefetch_distance = 1;
-	time = time_it(1,
-		// for (i=0;i<5;i++)
-		{
-			// printf("prefetch_distance = %d\n", prefetch_distance);
+		printf("hi\n");
+		time = time_it(1,
 			if (split_matrix)
 			{
-				compute(matrix_name,
-					gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_a_ref, csr_m, csr_n, gpu_csr_nnz,
-					MF, AM, x, x_ref, y, min_num_loops, 0);
+				MF = csr_to_format(gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_m, csr_k, gpu_csr_nnz);
 			}
 			else
 			{
-				compute(matrix_name,
-					csr_ia, csr_ja, csr_a, csr_a_ref, csr_m, csr_n, csr_nnz,
-					MF, AM, x, x_ref, y, min_num_loops, 0);
+				MF = csr_to_format(csr_ia, csr_ja, csr_a, csr_m, csr_k, csr_nnz);
 			}
-			prefetch_distance++;
-		}
-	);
-	if (atoi(getenv("COOLDOWN")) == 1)
-	{
-		printf("time total = %g, sleeping\n", time);
-		usleep((long) (time * 1000000));
-	}
+		);
+		printf("time convert to format: %lf\n", time);
 
+		long min_num_loops;
+		min_num_loops = 128;
+
+		prefetch_distance = 1;
+		time = time_it(1,
+			// for (i=0;i<5;i++)
+			{
+				// printf("prefetch_distance = %d\n", prefetch_distance);
+				if (split_matrix)
+				{
+					compute(matrix_name,
+						gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_a_ref, csr_m, csr_k, n, gpu_csr_nnz,
+						MF, AM, x, x_ref, y, min_num_loops, 0);
+				}
+				else
+				{
+					compute(matrix_name,
+						csr_ia, csr_ja, csr_a, csr_a_ref, csr_m, csr_k, n, csr_nnz,
+						MF, AM, x, x_ref, y, min_num_loops, 0);
+				}
+				prefetch_distance++;
+			}
+		);
+		if (atoi(getenv("COOLDOWN")) == 1)
+		{
+			printf("time total = %g, sleeping\n", time);
+			usleep((long) (time * 1000000));
+		}
+	}
 	free_csr_matrix(AM);
 	free(x);
 	free(y);
