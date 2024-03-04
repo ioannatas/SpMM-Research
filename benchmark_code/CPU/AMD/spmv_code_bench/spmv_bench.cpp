@@ -151,8 +151,8 @@ CheckAccuracy(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, I
 		}
 		// if (i<100) 
 		// 	printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
-		if (diff > epsilon_relaxed)
-			printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
+		// if (diff > epsilon_relaxed)
+			// printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
 		// std::cout << i << ": " << y_gold[i]-y_test[i] << "\n";
 		// if (y_gold[i] != 0.0)
 		// {
@@ -369,7 +369,13 @@ compute(char * matrix_name,
 		//=============================================================================
 
 		std::stringstream stream;
-		gflops = csr_nnz * n / time * num_loops * 2 * 1e-9;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
+		if (MF->format_name=="MKL_GEMM"){
+			// gflops = csr_k * csr_m * n / time * num_loops * 2 * 1e-9;  
+			gflops = csr_k * n * 2 * 1e-9 * csr_m / time * num_loops;   
+			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
+		} else{
+			gflops = csr_nnz * n / time * num_loops * 2 * 1e-9;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
+		}
 	}
 
 	if (!use_artificial_matrices)
@@ -768,7 +774,7 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-	for( n=32 ; n <33 ; n*=4){
+	for( n=128 ; n <130 ; n*=4){
 		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
 		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
 		#pragma omp parallel for
@@ -861,7 +867,7 @@ child_proc_label:
 			gpu_csr_nnz = k;
 			printf("GPU part nnz = %d (%.2lf%%)\n", gpu_csr_nnz, ((double) gpu_csr_nnz) / csr_nnz * 100);
 		}
-		printf("hi\n");
+		// printf("hi\n");
 		time = time_it(1,
 			if (split_matrix)
 			{

@@ -49,7 +49,7 @@ GEArrays::spmm(ValueType * x, ValueType * y, INT_T k)
 struct Matrix_Format *
 csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz)
 {
-	printf("hi2\n");
+	// printf("hi2\n");
 	struct GEArrays * dense = new GEArrays(m, n, nnz);
 	// ValueType *dense_matrix = (ValueType*)malloc(sizeof(ValueType) * m * n);
 	// ValueType * dense_matrix = (typeof(dense_matrix)) malloc(m * n * sizeof(*dense_matrix));
@@ -62,26 +62,26 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
         exit(1);
     }
 	for (long i = 0; i < m * n ; ++i) {
-		printf("...");
+		// printf("...");
         dense_matrix[i] = 0.0;
 		
 		
     }
-	printf("hi3\n");
+	// printf("hi3\n");
     // Fill in non-zero elements
     for (long i = 0; i < m; ++i) {
-		printf("hii\n");
+		// printf("hii\n");
         for (long j = row_ptr[i]; j < row_ptr[i + 1]; ++j) {
-			printf("%ld\n",j);
+			// printf("%ld\n",j);
             dense_matrix[i * n + col_ind[j]] = values[j];
-			if(i * n + col_ind[j]>=m*n)
+			if((i * n + col_ind[j])>=m*n)
 				printf("hey %ld < %ld", i * n + col_ind[j], m*n);
-			if(j>=n)
-				printf("hey %ld < %ld", j, n);
+			// if(j>=n)
+			// 	printf("hey %ld < %ld", j, n);
 
         }
     }
-	printf("hi4\n");
+	// printf("hi4\n");
 	dense->format_name = (char *) "MKL_GEMM";
 	dense->a = dense_matrix;
 	return dense;

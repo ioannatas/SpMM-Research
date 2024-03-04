@@ -1,0 +1,39 @@
+SPARSEX_LIB_PATH=/various/pmpakos/epyc5_libs/sparsex/build/lib;PRINT_STATISTICS=1;LLVM_INC_PATH=;AOCL_PATH=/various/pmpakos/spmv_paper/aocl-sparse/build/release;SPARSEX_INC_PATH=/various/pmpakos/epyc5_libs/sparsex/build/include;max_cores=96;LLVM_LIB_PATH=;USE_ARTIFICIAL_MATRICES=0;VC_TOLERANCE=0;GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;cores=24;BOOST_LIB_PATH=;path_validation=/various/pmpakos/SpMV-Research/validation_matrices;output_to_files=1;force_retry_on_error=0;path_tamu=/home/users/itasou/Data/graphs/tamu;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;MKL_PATH=/various/common_tools/intel_parallel_studio/compilers_and_libraries/linux/mkl;SPARSEX_CONF_PATH=/various/pmpakos/epyc5_libs/sparsex/build/bin;cpu_pinning_group_size=1;path_M3E=/home/users/itasou/Data/graphs/M3E-Matrix-Collection;cpu_affinity=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23;USE_PROCESSES=0;cpu_pinning_step=1;RAPL_REGISTERS=0;BOOST_INC_PATH=;path_openFoam=/various/dgal/graphs/matrices_openFoam;COOLDOWN=0;
+program: /home/users/itasou/SpMM/SpMM-Research/benchmark_code/CPU/AMD/spmv_code_bench/spmv_mkl_csr_d.exe
+number of matrices: 3
+max threads 96
+Temps: Tctl 37250 Tdie 37250 Tccd1 33250 Tccd3 32500 Tccd5 34500 Tccd7 34750 Tctl 40500 Tdie 40500 Tccd1 38750 Tccd3 39250 Tccd5 36750 Tccd7 39250 
+File: /various/pmpakos/SpMV-Research/validation_matrices/scircuit.mtx
+max threads 24
+time read: 0.033295
+time coo to csr: 0.058423
+hi
+time convert to format: 0.000003
+time warm up 0.091215
+number of loops = 128
+Test failed! (7.56845e-07)
+errors spmv: mae=3.07523e-15, max_ae=2.28724e-12, mse=9.08329e-28, mape=1.64741, smape=1.31093, lnQ_error=-0.00544667, mlare=-1.90437, gmare=0.0124631
+/various/pmpakos/SpMV-Research/validation_matrices/scircuit.mtx,24,170998,170998,958936,1.461244,21.503875,11.626461,0.000000,0.000000,MKL_CSR,170998,170998,958936,4600587329582608786313370001374722921021659547933625527032906487825217606671945498573673987299102022167235139991182457198271473757158075416632046707661558185609199936463658243959649078217645366541489329185259829546748739584.000000,395699716197942816167184466697923570028219110454862438302666228830195018759103723028887851540380840968249196650778471628519372815242750377930065182703895139435810801370180401699645225410771179177235330985804905630421483520.000000,64
+Temps: Tctl 40375 Tdie 40375 Tccd1 38500 Tccd3 35750 Tccd5 37000 Tccd7 37750 Tctl 40500 Tdie 40500 Tccd1 39250 Tccd3 40000 Tccd5 37500 Tccd7 39250 
+File: /various/pmpakos/SpMV-Research/validation_matrices/mac_econ_fwd500.mtx
+max threads 24
+time read: 0.036133
+time coo to csr: 0.055750
+hi
+time convert to format: 0.000003
+time warm up 0.092363
+number of loops = 128
+Test failed! (7.01418e-08)
+errors spmv: mae=6.88477e-14, max_ae=1.45519e-11, mse=2.94514e-25, mape=0.992724, smape=0.992715, lnQ_error=7.12703e-08, mlare=-6.78488, gmare=1.64106e-07
+/various/pmpakos/SpMV-Research/validation_matrices/mac_econ_fwd500.mtx,24,206500,206500,1273389,1.161018,35.939501,15.360519,0.000000,0.000000,MKL_CSR,206500,206500,1273389,0.000000,0.000000,64
+Temps: Tctl 41750 Tdie 41750 Tccd1 38500 Tccd3 37250 Tccd5 37500 Tccd7 39750 Tctl 40500 Tdie 40500 Tccd1 39500 Tccd3 40250 Tccd5 37750 Tccd7 39500 
+File: /various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx
+max threads 24
+time read: 0.046371
+time coo to csr: 0.020726
+hi
+time convert to format: 0.000003
+time warm up 0.091903
+number of loops = 872
+errors spmv: mae=2.28587e-17, max_ae=3.55271e-15, mse=1.55549e-32, mape=0.000923041, smape=0.000888383, lnQ_error=6.40905e-08, mlare=-6.83099, gmare=1.47574e-07
+/various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx,24,21200,21200,1488768,1.000854,332.057200,17.118473,0.000000,0.000000,MKL_CSR,21200,21200,1488768,4600587329582608786313370001374722921021659547933625527032906487825217606671945498573673987299102022167235139991182457198271473757158075416632046707661558185609199936463658243959649078217645366541489329185259829546748739584.000000,268749865443292736289518667065541526066533582887942426772902155389295186326572665162293146032743179997807650325027097233116693382587167782330357583977773008741081225072909708698781386639720131077770726903993240704002293760.000000,64
