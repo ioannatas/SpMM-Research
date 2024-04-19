@@ -371,10 +371,12 @@ compute(char * matrix_name,
 		std::stringstream stream;
 		if (MF->format_name=="MKL_GEMM"){
 			// gflops = csr_k * csr_m * n / time * num_loops * 2 * 1e-9;  
-			gflops = csr_k * n * 2 * 1e-9 * csr_m / time * num_loops;   
+			gflops = csr_k * 2 * 1e-9 * csr_m * n / time * num_loops;   
 			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
 		} else{
-			gflops = csr_nnz * n / time * num_loops * 2 * 1e-9;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
+			// gflops = csr_nnz * n / time * num_loops * 2 * 1e-9; 
+			gflops = csr_nnz * 2 * 1e-9 * n / time * num_loops ;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
+			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
 		}
 	}
 
@@ -392,21 +394,22 @@ compute(char * matrix_name,
 			{
 				i += snprintf(buf + i, buf_n - i, ",%s", "num_threads");
 			}
+			i += snprintf(buf + i, buf_n - i, ",%s", "input_columns");
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_m");
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_k");
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_nnz");
 			i += snprintf(buf + i, buf_n - i, ",%s", "time");
 			i += snprintf(buf + i, buf_n - i, ",%s", "gflops");
 			i += snprintf(buf + i, buf_n - i, ",%s", "csr_mem_footprint");
-			i += snprintf(buf + i, buf_n - i, ",%s", "W_avg");
-			i += snprintf(buf + i, buf_n - i, ",%s", "J_estimated");
-			i += snprintf(buf + i, buf_n - i, ",%s", "format_name");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "W_avg");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "J_estimated");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "format_name");
 			i += snprintf(buf + i, buf_n - i, ",%s", "m");
 			i += snprintf(buf + i, buf_n - i, ",%s", "n");
 			i += snprintf(buf + i, buf_n - i, ",%s", "nnz");
-			i += snprintf(buf + i, buf_n - i, ",%s", "mem_footprint");
-			i += snprintf(buf + i, buf_n - i, ",%s", "mem_ratio");
-			i += snprintf(buf + i, buf_n - i, ",%s", "CSRCV_NUM_PACKET_VALS");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "mem_footprint");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "mem_ratio");
+			// i += snprintf(buf + i, buf_n - i, ",%s", "CSRCV_NUM_PACKET_VALS");
 			#ifdef PRINT_STATISTICS
 				i += statistics_print_labels(buf + i, buf_n - i);
 			#endif
@@ -424,21 +427,22 @@ compute(char * matrix_name,
 		{
 			i += snprintf(buf + i, buf_n - i, ",%d", omp_get_max_threads());
 		}
+		i += snprintf(buf + i, buf_n - i, ",%u", n);
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_m);
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_k);
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_nnz);
 		i += snprintf(buf + i, buf_n - i, ",%lf", time);
 		i += snprintf(buf + i, buf_n - i, ",%lf", gflops);
 		i += snprintf(buf + i, buf_n - i, ",%lf", MF->csr_mem_footprint / (1024*1024));
-		i += snprintf(buf + i, buf_n - i, ",%lf", W_avg);
-		i += snprintf(buf + i, buf_n - i, ",%lf", J_estimated);
-		i += snprintf(buf + i, buf_n - i, ",%s", MF->format_name);
+		// i += snprintf(buf + i, buf_n - i, ",%lf", W_avg);
+		// i += snprintf(buf + i, buf_n - i, ",%lf", J_estimated);
+		// i += snprintf(buf + i, buf_n - i, ",%s", MF->format_name);
 		i += snprintf(buf + i, buf_n - i, ",%u", MF->m);
 		i += snprintf(buf + i, buf_n - i, ",%u", MF->n);
 		i += snprintf(buf + i, buf_n - i, ",%u", MF->nnz);
-		i += snprintf(buf + i, buf_n - i, ",%lf", MF->mem_footprint / (1024*1024));
-		i += snprintf(buf + i, buf_n - i, ",%lf", MF->mem_footprint / MF->csr_mem_footprint);
-		i += snprintf(buf + i, buf_n - i, ",%ld", atol(getenv("CSRCV_NUM_PACKET_VALS")));
+		// i += snprintf(buf + i, buf_n - i, ",%lf", MF->mem_footprint / (1024*1024));
+		// i += snprintf(buf + i, buf_n - i, ",%lf", MF->mem_footprint / MF->csr_mem_footprint);
+		// i += snprintf(buf + i, buf_n - i, ",%ld", atol(getenv("CSRCV_NUM_PACKET_VALS")));
 		#ifdef PRINT_STATISTICS
 			i += MF->statistics_print_data(buf + i, buf_n - i);
 		#endif
@@ -774,7 +778,7 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-	for( n=128 ; n <130 ; n*=4){
+	for( n=64 ; n <78; n*=4){
 		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
 		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
 		#pragma omp parallel for
@@ -871,11 +875,11 @@ child_proc_label:
 		time = time_it(1,
 			if (split_matrix)
 			{
-				MF = csr_to_format(gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_m, csr_k, gpu_csr_nnz);
+				MF = csr_to_format(gpu_csr_ia, gpu_csr_ja, gpu_csr_a, csr_m, csr_k, gpu_csr_nnz, n);
 			}
 			else
 			{
-				MF = csr_to_format(csr_ia, csr_ja, csr_a, csr_m, csr_k, csr_nnz);
+				MF = csr_to_format(csr_ia, csr_ja, csr_a, csr_m, csr_k, csr_nnz, n);
 			}
 		);
 		printf("time convert to format: %lf\n", time);
@@ -912,7 +916,7 @@ child_proc_label:
 	free_csr_matrix(AM);
 	free(x);
 	free(y);
-
+	delete MF;
 	return 0;
 }
 

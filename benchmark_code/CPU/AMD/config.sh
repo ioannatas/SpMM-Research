@@ -48,7 +48,7 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=1
+    ['output_to_files']=0
     # ['output_to_files']=1
 
     ['COOLDOWN']=0
@@ -337,14 +337,14 @@ progs=(
     # ['csr_cv_stream_opt_compress_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_stream_opt_compress_d.exe"
 
     # MKL IE
-    # ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmv_mkl_ie_d.exe"
-    # ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmv_mkl_ie_f.exe"
+    ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_d.exe"
+    ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_f.exe"
 
     # MKL CSR
-    ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
+    # ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
     # ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmv_mkl_csr_f.exe"
     # MKL GEMM
-    ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
+    # ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
     # ['mkl_gemm_f']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_f.exe"
 
     # AOCL

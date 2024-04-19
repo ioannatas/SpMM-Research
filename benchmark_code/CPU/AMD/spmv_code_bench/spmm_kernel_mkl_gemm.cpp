@@ -23,7 +23,7 @@ struct GEArrays : Matrix_Format
 		ja= NULL;
 	}
 
-	~GEArrays()
+	virtual ~GEArrays()
 	{
 		free(a);
 		free(ia);
@@ -47,7 +47,7 @@ GEArrays::spmm(ValueType * x, ValueType * y, INT_T k)
 
 
 struct Matrix_Format *
-csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz)
+csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz, int k)
 {
 	// printf("hi2\n");
 	struct GEArrays * dense = new GEArrays(m, n, nnz);

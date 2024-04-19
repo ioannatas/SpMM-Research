@@ -26,7 +26,7 @@ struct Matrix_Format
 };
 
 
-struct Matrix_Format * csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz);
+struct Matrix_Format * csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz, int k);
 int statistics_print_labels(char * buf, long buf_n);
 
 

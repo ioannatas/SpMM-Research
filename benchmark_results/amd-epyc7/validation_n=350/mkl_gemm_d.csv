@@ -1,0 +1,53 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+/various/pmpakos/SpMV-Research/validation_matrices/scircuit.mtx,24,350,170998,170998,958936,3087.627811,848.525947,11.626461,170998,170998,958936
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx,24,350,21200,21200,1488768,41.508631,970.155424,17.118473,21200,21200,1488768
+/various/pmpakos/SpMV-Research/validation_matrices/rgg_n_2_17_s0.mtx,24,350,131072,131072,1457506,1763.205305,873.021578,17.179836,131072,131072,1457506
+/various/pmpakos/SpMV-Research/validation_matrices/bbmat.mtx,24,350,38744,38744,1771722,150.481915,893.784077,20.423550,38744,38744,1771722
+/various/pmpakos/SpMV-Research/validation_matrices/appu.mtx,24,350,14000,14000,1853104,18.268097,961.326192,21.260502,14000,14000,1853104
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/rma10.mtx,24,350,46835,46835,2374001,219.548788,895.195757,27.346951,46835,46835,2374001
+/various/pmpakos/SpMV-Research/validation_matrices/cop20k_A.mtx,24,350,121192,121192,2624331,1475.939360,891.635600,30.495399,121192,121192,2624331
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/cant.mtx,24,350,62451,62451,4007383,384.776267,908.193787,46.099094,62451,62451,4007383
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/pdb1HYS.mtx,24,350,36417,36417,4344765,133.116615,892.655894,49.860813,36417,36417,4344765
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b300_c3.mtx,24,350,42138,42138,4413449,181.087873,878.549991,50.668663,42138,42138,4413449
+/various/pmpakos/SpMV-Research/validation_matrices/Chebyshev4.mtx,24,350,68121,68121,5377761,454.716417,914.385656,61.803455,68121,68121,5377761
+/various/pmpakos/SpMV-Research/validation_matrices/consph.mtx,24,350,83334,83334,6010480,689.010487,903.080853,69.102383,83334,83334,6010480
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/shipsec1.mtx,24,350,140874,140874,7813404,2070.661603,858.737783,89.954708,140874,140874,7813404
+/various/pmpakos/SpMV-Research/validation_matrices/PR02R.mtx,24,350,161070,161070,8185136,2735.330726,849.821048,94.285885,161070,161070,8185136
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/gupta3.mtx,24,350,16783,16783,9323427,25.956155,972.314681,106.762180,16783,16783,9323427
+/various/pmpakos/SpMV-Research/validation_matrices/mip1.mtx,24,350,66463,66463,10352819,437.731680,904.190442,118.732151,66463,66463,10352819
+/various/pmpakos/SpMV-Research/validation_matrices/rail4284.mtx,24,350,4284,1096894,11284032,473.510188,889.186386,129.151844,4284,1096894,11284032
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/crankseg_2.mtx,24,350,63838,63838,14148858,399.391242,914.256418,162.164356,63838,63838,14148858
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b2383.mtx,24,350,38120,38120,16171169,144.640357,900.169532,185.209763,38120,38120,16171169
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/human_gene1.mtx,24,350,22283,22283,24669643,47.429439,938.009724,282.406666,22283,22283,24669643
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed

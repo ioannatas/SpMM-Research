@@ -47,7 +47,7 @@ CSRArrays::spmm(ValueType * x, ValueType * y, INT_T k)
 
 
 struct Matrix_Format *
-csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz)
+csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long n, long nnz , int k=0)
 {
 	struct CSRArrays * csr = new CSRArrays(m, n, nnz);
 	csr->format_name = (char *) "MKL_CSR";
