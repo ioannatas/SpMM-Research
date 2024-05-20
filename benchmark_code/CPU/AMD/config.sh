@@ -337,7 +337,7 @@ progs=(
     # ['csr_cv_stream_opt_compress_d']="${script_dir}/spmv_code_bench/spmv_csr_cv_stream_opt_compress_d.exe"
 
     # MKL IE
-    ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_d.exe"
+    # ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_d.exe"
     ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_f.exe"
 
     # MKL CSR

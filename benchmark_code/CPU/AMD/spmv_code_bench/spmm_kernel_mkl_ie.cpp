@@ -4,6 +4,7 @@
 
 #include <mkl.h>
 
+#include <mkl_spblas.h>
 #include "macros/cpp_defines.h"
 
 #include "spmv_bench_common.h"
@@ -26,7 +27,7 @@ struct CSRArrays : Matrix_Format
 	INT_T * ia;      // the usual rowptr (of size m+1)
 	INT_T * ja;      // the colidx of each NNZ (of size nnz)
 	sparse_matrix_t A;
-	matrix_descr descr;
+	struct matrix_descr descr;
 
 	CSRArrays(long m, long n, long nnz) : Matrix_Format(m, n, nnz)
 	{
@@ -99,7 +100,7 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 
 	time_balance = time_it(1,
 		mkl_sparse_set_mm_hint(csr->A, operation, csr->descr,SPARSE_LAYOUT_ROW_MAJOR, k, expected_calls);
-		// mkl_sparse_set_memory_hint(csr->A, policy);
+		mkl_sparse_set_memory_hint(csr->A, policy);
 		mkl_sparse_optimize(csr->A);
 	);
 	printf("mkl optimize time = %g\n", time_balance);
@@ -130,8 +131,13 @@ void
 compute_sparse_mm(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 {
 		printf("hi\n");
+		MKL_INT k_mkl = k;
+		MKL_INT n_mkl = csr->n;
+		MKL_INT m_mkl = csr->m;
+		const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
+		const sparse_layout_t order = SPARSE_LAYOUT_ROW_MAJOR;
         #if DOUBLE == 0
-		mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, csr->n, 0.0f, y, csr->m);
+		mkl_sparse_s_mm(operation, 1.0, csr->A, csr->descr, order, x, k_mkl, n_mkl, 0.0, y, m_mkl);
         #elif DOUBLE == 1
 		mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, csr->n, 0.0f, y, csr->m);
         #endif
