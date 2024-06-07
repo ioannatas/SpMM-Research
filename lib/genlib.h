@@ -511,7 +511,7 @@ GENLIB_safe_strtold_complex(char * str, long N, long * len_ptr)
 		GENLIB_rule_expand_storage_classes_and_sign(int *,        GENLIB_safe_strtol( str, N, &len, base)),      \
 		GENLIB_rule_expand_storage_classes_and_sign(long *,       GENLIB_safe_strtol( str, N, &len, base)),      \
 		GENLIB_rule_expand_storage_classes_and_sign(long long *,  GENLIB_safe_strtoll(str, N, &len, base)),      \
-		GENLIB_rule_expand_storage_classes(float *,               GENLIB_safe_strtof( str, N, &len)),            \
+		GENLIB_rule_expand_storage_classes(float *,               (float) GENLIB_safe_strtod( str, N, &len)),            \
 		GENLIB_rule_expand_storage_classes(double *,              GENLIB_safe_strtod( str, N, &len)),            \
 		GENLIB_rule_expand_storage_classes(long double *,         GENLIB_safe_strtold(str, N, &len)),            \
 		GENLIB_rule_expand_storage_classes(complex float *,       GENLIB_safe_strtof_complex( str, N, &len)),    \

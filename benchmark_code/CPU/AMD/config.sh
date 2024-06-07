@@ -114,14 +114,14 @@ conf_vars=(
 
     # Path for the mkl library.
     # ['MKL_PATH']='/opt/intel/oneapi/mkl/latest'
-    ['MKL_PATH']="$( options=(
-                        '/opt/intel/oneapi/mkl/latest'
-                        '/various/common_tools/intel_parallel_studio/compilers_and_libraries/linux/mkl'
-                        "${HOME}/spack/23.03/0.20.0/intel-oneapi-mkl-2023.1.0-cafkcjc/mkl/latest"
-                    )
-                    find_valid_dir "${options[@]}"
-                )"
-
+    # ['MKL_PATH']="$( options=(
+    #                     '/opt/intel/oneapi/mkl/latest'
+    #                     '/various/common_tools/intel_parallel_studio/compilers_and_libraries/linux/mkl'
+    #                     "${HOME}/spack/23.03/0.20.0/intel-oneapi-mkl-2023.1.0-cafkcjc/mkl/latest"
+    #                 )
+    #                 find_valid_dir "${options[@]}"
+    #             )"
+    ['MKL_PATH']='/various/pmpakos/intel/oneapi/mkl/2024.1'
     ['AOCL_PATH']="$( options=(
                         '/opt/aoclsparse'
                         '/various/pmpakos/spmv_paper/aocl-sparse/build/release'
@@ -339,6 +339,10 @@ progs=(
     # MKL IE
     # ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_d.exe"
     ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_f.exe"
+
+    # MKL IE COL
+    # ['mkl_ie_col_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_d.exe"
+    # ['mkl_ie_col_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_f.exe"
 
     # MKL CSR
     # ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"

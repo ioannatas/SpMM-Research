@@ -163,13 +163,12 @@ void
 coo_to_csr(_TYPE_I * R, _TYPE_I * C, _TYPE_V * V, long m, long n, long nnz, _TYPE_I * row_ptr, _TYPE_I * col_idx, _TYPE_V * values, int sort_columns, int transpose)
 {
 	_TYPE_I * permutation = (typeof(permutation)) malloc(nnz * sizeof(*permutation));
-
+    // printf("wtf\n");
 	// bucketsort_stable_serial(R, nnz, m, NULL, permutation, row_ptr, NULL);
 	if (!transpose)
 		bucketsort(R, nnz, m, NULL, permutation, row_ptr, NULL);
 	else
 		bucketsort(C, nnz, n, NULL, permutation, row_ptr, NULL);
-
 	// _TYPE_I * permutation_base = (typeof(permutation_base)) malloc(nnz * sizeof(*permutation_base));
 	// bucketsort(C, nnz, n, NULL, permutation_base, NULL, NULL);
 	// _TYPE_I * r_buf = (typeof(r_buf)) malloc(nnz * sizeof(*r_buf));
@@ -185,6 +184,7 @@ coo_to_csr(_TYPE_I * R, _TYPE_I * C, _TYPE_V * V, long m, long n, long nnz, _TYP
 		// }
 	// }
 	// bucketsort_stable(r_buf, nnz, m, NULL, permutation, row_ptr, NULL);
+	
 
 	#pragma omp parallel
 	{
@@ -204,7 +204,6 @@ coo_to_csr(_TYPE_I * R, _TYPE_I * C, _TYPE_V * V, long m, long n, long nnz, _TYP
 		}
 	}
 	free(permutation);
-
 	// free(r_buf);
 	// free(permutation_base);
 

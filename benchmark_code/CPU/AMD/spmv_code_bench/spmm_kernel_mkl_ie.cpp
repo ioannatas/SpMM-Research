@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <omp.h>
 
-#include <mkl.h>
 
 #include <mkl_spblas.h>
 #include "macros/cpp_defines.h"
@@ -65,7 +64,7 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 	struct CSRArrays * csr = new CSRArrays(m, n, nnz);
 	double time, time_balance;
 
-	mkl_verbose(1);
+	// mkl_verbose(1);
 
 	csr->format_name = (char *) "MKL_IE";
 	csr->ia = row_ptr;
@@ -84,7 +83,7 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 	printf("mkl mkl_sparse_s_create_csr + mkl_sparse_order time = %g\n", time);
 
 	csr->descr.type = SPARSE_MATRIX_TYPE_GENERAL;
-	csr->descr.mode = SPARSE_FILL_MODE_UPPER;
+	// csr->descr.mode = SPARSE_FILL_MODE_UPPER;
 	csr->descr.diag = SPARSE_DIAG_NON_UNIT;
 	const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
 	const INT_T expected_calls = 128;
@@ -130,18 +129,19 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 void
 compute_sparse_mm(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 {
-		printf("hi\n");
-		MKL_INT k_mkl = k;
-		MKL_INT n_mkl = csr->n;
-		MKL_INT m_mkl = csr->m;
-		const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
-		const sparse_layout_t order = SPARSE_LAYOUT_ROW_MAJOR;
+		// printf("hi\n");
+		// MKL_INT k_mkl = k;
+		// MKL_INT n_mkl = csr->n;
+		// MKL_INT m_mkl = csr->m;
+		// const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
+		// const sparse_layout_t order = SPARSE_LAYOUT_ROW_MAJOR;
         #if DOUBLE == 0
-		mkl_sparse_s_mm(operation, 1.0, csr->A, csr->descr, order, x, k_mkl, n_mkl, 0.0, y, m_mkl);
+		mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, k, 0.0f, y, k);
+		// mkl_sparse_s_mm(operation, 1.0, csr->A, csr->descr, order, x, n_mkl, k_mkl, 0.0, y, m_mkl);
         #elif DOUBLE == 1
-		mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, csr->n, 0.0f, y, csr->m);
+		mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, k, 0.0f, y, k);
         #endif
-		printf("hi\n");
+		// printf("hi\n");
 }
 
 

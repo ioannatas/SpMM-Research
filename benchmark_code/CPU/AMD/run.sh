@@ -56,11 +56,11 @@ IFS="$IFS_buf"
 
 
 matrices_validation=(
-    scircuit.mtx
+    # scircuit.mtx
     mac_econ_fwd500.mtx
-    raefsky3.mtx
-    rgg_n_2_17_s0.mtx
-    bbmat.mtx
+    # raefsky3.mtx
+    # rgg_n_2_17_s0.mtx
+    # bbmat.mtx
     # appu.mtx
     # conf5_4-8x8-15.mtx
     # mc2depi.mtx

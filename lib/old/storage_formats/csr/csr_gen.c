@@ -91,6 +91,7 @@ csr_sort_columns(_TYPE_I * row_ptr, _TYPE_I * col_idx, _TYPE_V * values, long m,
 	permutation = (typeof(permutation)) malloc(nnz * sizeof(*permutation));
 	C = (typeof(C)) malloc(nnz * sizeof(*C));
 	V = (values != NULL) ? (typeof(V)) malloc(nnz * sizeof(*V)) : NULL;
+	printf("here\n");
 	#pragma omp parallel
 	{
 		int tnum = omp_get_thread_num();
@@ -114,7 +115,7 @@ csr_sort_columns(_TYPE_I * row_ptr, _TYPE_I * col_idx, _TYPE_V * values, long m,
 			if (values != NULL)
 				V[i] = values[i];
 		}
-
+		printf("here2\n");
 		for (i=i_s;i<i_e;i++)
 		{
 			degree = row_ptr[i+1] - row_ptr[i];
@@ -163,10 +164,10 @@ void
 coo_to_csr(_TYPE_I * R, _TYPE_I * C, _TYPE_V * V, long m, long n, long nnz, _TYPE_I * row_ptr, _TYPE_I * col_idx, _TYPE_V * values, int sort_columns)
 {
 	_TYPE_I * permutation = (typeof(permutation)) malloc(nnz * sizeof(*permutation));
-
+	
 	// bucketsort_stable_serial(R, nnz, m, NULL, permutation, row_ptr, NULL);
 	bucketsort(R, nnz, m, NULL, permutation, row_ptr, NULL);
-
+	
 	// _TYPE_I * permutation_base = (typeof(permutation_base)) malloc(nnz * sizeof(*permutation_base));
 	// bucketsort(C, nnz, n, NULL, permutation_base, NULL, NULL);
 	// _TYPE_I * r_buf = (typeof(r_buf)) malloc(nnz * sizeof(*r_buf));
@@ -201,7 +202,7 @@ coo_to_csr(_TYPE_I * R, _TYPE_I * C, _TYPE_V * V, long m, long n, long nnz, _TYP
 
 	// free(r_buf);
 	// free(permutation_base);
-
+    
 	if (sort_columns)
 		csr_sort_columns(row_ptr, col_idx, values, m, n, nnz);
 }

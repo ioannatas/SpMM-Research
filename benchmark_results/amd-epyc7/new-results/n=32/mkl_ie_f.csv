@@ -1,0 +1,53 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+/various/pmpakos/SpMV-Research/validation_matrices/scircuit.mtx,24,32,170998,170998,958936,1.000167,247.164828,7.968410,170998,170998,958936
+./run.sh: line 352: 806897 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx,24,32,21200,21200,1488768,1.000150,481.764354,11.439274,21200,21200,1488768
+/various/pmpakos/SpMV-Research/validation_matrices/rgg_n_2_17_s0.mtx,24,32,131072,131072,1457506,1.000028,376.375691,11.619892,131072,131072,1457506
+/various/pmpakos/SpMV-Research/validation_matrices/bbmat.mtx,24,32,38744,38744,1771722,1.000197,440.094016,13.664967,38744,38744,1771722
+./run.sh: line 352: 807102 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/mc2depi.mtx,24,32,525825,525825,2100225,1.000247,94.201210,18.029312,525825,525825,2100225
+./run.sh: line 352: 807204 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/cop20k_A.mtx,24,32,121192,121192,2624331,1.000005,338.767855,20.484371,121192,121192,2624331
+/various/pmpakos/SpMV-Research/validation_matrices/thermomech_dK.mtx,24,32,204316,204316,2846228,1.000974,121.017618,22.494404,204316,204316,2846228
+/various/pmpakos/SpMV-Research/validation_matrices/webbase-1M.mtx,24,32,1000005,1000005,3105536,1.001648,32.542089,27.508080,1000005,1000005,3105536
+/various/pmpakos/SpMV-Research/validation_matrices/cant.mtx,24,32,62451,62451,4007383,1.000143,559.029940,30.812141,62451,62451,4007383
+/various/pmpakos/SpMV-Research/validation_matrices/ASIC_680k.mtx,24,32,682862,682862,3871773,1.248132,25.412028,32.144199,682862,682862,3871773
+/various/pmpakos/SpMV-Research/validation_matrices/roadNet-TX.mtx,24,32,1393383,1393383,3843320,1.049436,30.001342,34.637543,1393383,1393383,3843320
+/various/pmpakos/SpMV-Research/validation_matrices/pdb1HYS.mtx,24,32,36417,36417,4344765,1.000283,564.867984,33.286850,36417,36417,4344765
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b300_c3.mtx,24,32,42138,42138,4413449,1.000143,375.619100,33.832691,42138,42138,4413449
+/various/pmpakos/SpMV-Research/validation_matrices/Chebyshev4.mtx,24,32,68121,68121,5377761,1.000526,350.187739,41.288925,68121,68121,5377761
+./run.sh: line 352: 807715 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/com-Youtube.mtx,24,32,1134890,1134890,5975248,1.391383,35.180278,49.916790,1134890,1134890,5975248
+./run.sh: line 352: 807817 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/radiation.mtx,24,32,223104,223104,7637688,1.002558,144.319190,59.122013,223104,223104,7637688
+./run.sh: line 352: 807919 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/shipsec1.mtx,24,32,140874,140874,7813404,1.000219,546.943745,60.148937,140874,140874,7813404
+/various/pmpakos/SpMV-Research/validation_matrices/PR02R.mtx,24,32,161070,161070,8185136,1.000255,381.264791,63.062069,161070,161070,8185136
+/various/pmpakos/SpMV-Research/validation_matrices/CurlCurl_2.mtx,24,32,806529,806529,8921789,1.002722,86.555547,71.144516,806529,806529,8921789
+/various/pmpakos/SpMV-Research/validation_matrices/gupta3.mtx,24,32,16783,16783,9323427,1.000586,412.674179,71.196129,16783,16783,9323427
+/various/pmpakos/SpMV-Research/validation_matrices/mip1.mtx,24,32,66463,66463,10352819,1.000548,494.676267,79.239281,66463,66463,10352819
+/various/pmpakos/SpMV-Research/validation_matrices/rail4284.mtx,24,32,4284,1096894,11284032,3.353066,27.568439,86.106678,4284,1096894,11284032
+/various/pmpakos/SpMV-Research/validation_matrices/pwtk.mtx,24,32,217918,217918,11634424,1.000845,524.501782,89.594906,217918,217918,11634424
+/various/pmpakos/SpMV-Research/validation_matrices/crankseg_2.mtx,24,32,63838,63838,14148858,1.000738,446.095528,108.190746,63838,63838,14148858
+/various/pmpakos/SpMV-Research/validation_matrices/Si41Ge41H72.mtx,24,32,185639,185639,15011265,1.003217,286.334290,115.235023,185639,185639,15011265
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b2383.mtx,24,32,38120,38120,16171169,1.000735,440.566769,123.521648,38120,38120,16171169
+/various/pmpakos/SpMV-Research/validation_matrices/in-2004.mtx,24,32,1382908,1382908,16917053,1.278361,108.407975,134.342251,1382908,1382908,16917053
+/various/pmpakos/SpMV-Research/validation_matrices/Ga41As41H72.mtx,24,32,268096,268096,18488476,1.004282,243.891043,142.078587,268096,268096,18488476
+/various/pmpakos/SpMV-Research/validation_matrices/eu-2005.mtx,24,32,862664,862664,19235140,1.099468,143.318702,150.043278,862664,862664,19235140
+/various/pmpakos/SpMV-Research/validation_matrices/wikipedia-20051105.mtx,24,32,1634989,1634989,19753078,2.980374,54.294257,156.941017,1634989,1634989,19753078
+/various/pmpakos/SpMV-Research/validation_matrices/kron_g500-logn18.mtx,24,32,262144,262144,21165908,1.267320,136.817146,162.483067,262144,262144,21165908
+./run.sh: line 352: 808741 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/human_gene1.mtx,24,32,22283,22283,24669643,1.002857,324.317845,188.299446,22283,22283,24669643
+/various/pmpakos/SpMV-Research/validation_matrices/delaunay_n22.mtx,24,32,4194304,4194304,25165738,5.899660,34.944003,207.999348,4194304,4194304,25165738
+/various/pmpakos/SpMV-Research/validation_matrices/GL7d20.mtx,24,32,1437547,1911130,29893084,9.514234,25.738714,233.549942,1437547,1911130,29893084
+/various/pmpakos/SpMV-Research/validation_matrices/sx-stackoverflow.mtx,24,32,2601977,2601977,36233450,7.907455,37.537291,286.365044,2601977,2601977,36233450
+/various/pmpakos/SpMV-Research/validation_matrices/dgreen.mtx,24,32,1200611,1200611,38259877,4.704589,66.621099,296.479668,1200611,1200611,38259877
+/various/pmpakos/SpMV-Research/validation_matrices/mawi_201512012345.mtx,24,32,18571154,18571154,38040320,26.017980,11.977344,361.067944,18571154,18571154,38040320
+/various/pmpakos/SpMV-Research/validation_matrices/ldoor.mtx,24,32,952203,952203,46522475,2.069724,184.136654,358.570686,952203,952203,46522475
+/various/pmpakos/SpMV-Research/validation_matrices/dielFilterV2real.mtx,24,32,1157456,1157456,48538952,2.658016,149.596946,374.738163,1157456,1157456,48538952
+/various/pmpakos/SpMV-Research/validation_matrices/circuit5M.mtx,24,32,5558326,5558326,59524291,10.942946,44.560485,475.337635,5558326,5558326,59524291
+/various/pmpakos/SpMV-Research/validation_matrices/soc-LiveJournal1.mtx,24,32,4847571,4847571,68993773,14.471306,39.056392,544.872734,4847571,4847571,68993773
+/various/pmpakos/SpMV-Research/validation_matrices/bone010.mtx,24,32,986703,986703,71666325,2.169812,270.572038,550.534645,986703,986703,71666325
+/various/pmpakos/SpMV-Research/validation_matrices/audikw_1.mtx,24,32,943695,943695,77651847,3.037248,209.440859,596.036491,943695,943695,77651847
+./run.sh: line 352: 809422 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/pmpakos/SpMV-Research/validation_matrices/kmer_V2a.mtx,24,32,55042369,55042369,117217600,57.265896,16.768210,1104.269295,55042369,55042369,117217600

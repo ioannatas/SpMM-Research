@@ -690,8 +690,17 @@ child_proc_label:
 					}
 					free(MTX->V);
 				}
-				else
-					mtx_val = (double *) MTX->V;
+				else{
+					// mtx_val = (double *) MTX->V;
+					mtx_val = (typeof(mtx_val)) malloc(mtx_nnz * sizeof(*mtx_val));
+					_Pragma("omp parallel for")
+					for (long i=0;i<mtx_nnz;i++)
+					{
+						mtx_val[i] = ((ValueType *) MTX->V)[i];
+					}
+					free(MTX->V);
+				}
+					
 
 			}
 		);
@@ -778,7 +787,7 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-	for( n=64 ; n <78; n*=4){
+	for( n=128 ; n <130; n*=4){
 		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
 		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
 		#pragma omp parallel for
