@@ -74,8 +74,8 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
         for (long j = row_ptr[i]; j < row_ptr[i + 1]; ++j) {
 			// printf("%ld\n",j);
             dense_matrix[i * n + col_ind[j]] = values[j];
-			if((i * n + col_ind[j])>=m*n)
-				printf("hey %ld < %ld", i * n + col_ind[j], m*n);
+			// if((i * n + col_ind[j])>=m*n)
+				// printf("hey %ld < %ld", i * n + col_ind[j], m*n);
 			// if(j>=n)
 			// 	printf("hey %ld < %ld", j, n);
 

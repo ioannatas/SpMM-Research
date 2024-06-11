@@ -1,0 +1,53 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+/various/pmpakos/SpMV-Research/validation_matrices/scircuit.mtx,24,1000,170998,170998,958936,7082.497566,1056.904126,7.968410,170998,170998,958936
+/various/pmpakos/SpMV-Research/validation_matrices/mac_econ_fwd500.mtx,24,1000,206500,206500,1273389,10455.688391,1044.064780,10.502926,206500,206500,1273389
+/various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx,24,1000,21200,21200,1488768,106.722725,1078.089418,11.439274,21200,21200,1488768
+/various/pmpakos/SpMV-Research/validation_matrices/rgg_n_2_17_s0.mtx,24,1000,131072,131072,1457506,4335.887581,1014.335918,11.619892,131072,131072,1457506
+/various/pmpakos/SpMV-Research/validation_matrices/bbmat.mtx,24,1000,38744,38744,1771722,368.202444,1043.667622,13.664967,38744,38744,1771722
+/various/pmpakos/SpMV-Research/validation_matrices/appu.mtx,24,1000,14000,14000,1853104,39.983662,1254.912558,14.191471,14000,14000,1853104
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/rma10.mtx,24,1000,46835,46835,2374001,531.115483,1057.284954,18.290855,46835,46835,2374001
+/various/pmpakos/SpMV-Research/validation_matrices/cop20k_A.mtx,24,1000,121192,121192,2624331,3572.171156,1052.581205,20.484371,121192,121192,2624331
+/various/pmpakos/SpMV-Research/validation_matrices/thermomech_dK.mtx,24,1000,204316,204316,2846228,10255.714677,1042.026565,22.494404,204316,204316,2846228
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/cant.mtx,24,1000,62451,62451,4007383,940.844031,1061.209490,30.812141,62451,62451,4007383
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/pdb1HYS.mtx,24,1000,36417,36417,4344765,323.275264,1050.209209,33.286850,36417,36417,4344765
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b300_c3.mtx,24,1000,42138,42138,4413449,431.271176,1053.992136,33.832691,42138,42138,4413449
+/various/pmpakos/SpMV-Research/validation_matrices/Chebyshev4.mtx,24,1000,68121,68121,5377761,1118.310420,1062.281512,41.288925,68121,68121,5377761
+/various/pmpakos/SpMV-Research/validation_matrices/consph.mtx,24,1000,83334,83334,6010480,1678.804298,1058.971689,46.174221,83334,83334,6010480
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/radiation.mtx,24,1000,223104,223104,7637688,11760.227890,1083.525013,59.122013,223104,223104,7637688
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/shipsec1.mtx,24,1000,140874,140874,7813404,4796.956804,1059.097274,60.148937,140874,140874,7813404
+/various/pmpakos/SpMV-Research/validation_matrices/PR02R.mtx,24,1000,161070,161070,8185136,6293.665754,1055.274899,63.062069,161070,161070,8185136
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/gupta3.mtx,24,1000,16783,16783,9323427,60.825901,1185.470088,71.196129,16783,16783,9323427
+/various/pmpakos/SpMV-Research/validation_matrices/mip1.mtx,24,1000,66463,66463,10352819,1062.845668,1063.970630,79.239281,66463,66463,10352819
+/various/pmpakos/SpMV-Research/validation_matrices/rail4284.mtx,24,1000,4284,1096894,11284032,804.574711,1495.160140,86.106678,4284,1096894,11284032
+/various/pmpakos/SpMV-Research/validation_matrices/pwtk.mtx,24,1000,217918,217918,11634424,11391.102016,1067.235917,89.594906,217918,217918,11634424
+/various/pmpakos/SpMV-Research/validation_matrices/crankseg_2.mtx,24,1000,63838,63838,14148858,983.146295,1061.158760,108.190746,63838,63838,14148858
+/various/pmpakos/SpMV-Research/validation_matrices/Si41Ge41H72.mtx,24,1000,185639,185639,15011265,8395.717601,1050.801257,115.235023,185639,185639,15011265
+/various/pmpakos/SpMV-Research/validation_matrices/TSOPF_RS_b2383.mtx,24,1000,38120,38120,16171169,354.401455,1049.663879,123.521648,38120,38120,16171169
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/human_gene1.mtx,24,1000,22283,22283,24669643,121.377519,1047.246767,188.299446,22283,22283,24669643
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed
+Memory allocation failed

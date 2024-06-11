@@ -787,7 +787,7 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-	for( n=128 ; n <130; n*=4){
+	for( n=10000 ; n <11000; n*=4){
 		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
 		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
 		#pragma omp parallel for

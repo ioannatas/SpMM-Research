@@ -1,0 +1,9 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+Memory allocation failed
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/raefsky3.mtx,24,10000,21200,21200,1488768,1388.025299,828.923220,17.118473,21200,21200,1488768
+/various/pmpakos/SpMV-Research/validation_matrices/rgg_n_2_17_s0.mtx,24,10000,131072,131072,1457506,53184.502822,826.941360,17.179836,131072,131072,1457506
+/various/pmpakos/SpMV-Research/validation_matrices/bbmat.mtx,24,10000,38744,38744,1771722,4633.992607,829.265391,20.423550,38744,38744,1771722
+/various/pmpakos/SpMV-Research/validation_matrices/appu.mtx,24,10000,14000,14000,1853104,620.169922,809.068583,21.260502,14000,14000,1853104
+Memory allocation failed
+/various/pmpakos/SpMV-Research/validation_matrices/rma10.mtx,24,10000,46835,46835,2374001,6700.340005,838.077484,27.346951,46835,46835,2374001
