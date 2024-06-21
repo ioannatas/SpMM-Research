@@ -48,10 +48,10 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=0
+    ['output_to_files']=1
     # ['output_to_files']=1
 
-    ['NUM_COLS']=64
+    ['NUM_COLS']=8
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -304,8 +304,7 @@ declare -A progs
 # SpMV kernels to benchmark (uncomment the ones you want).
 progs=(
     # Custom csr
-    # ['csr_naive_d']="${script_dir}/spmv_code_bench/spmm_csr_naive_d.exe"
-    ['csr_naive_f']="${script_dir}/spmv_code_bench/spmm_csr_naive_f.exe"
+    # ['csr_naive_d']="${script_dir}/spmv_code_bench/spmv_csr_naive_d.exe"
     # ['csr_d']="${script_dir}/spmv_code_bench/spmv_csr_d.exe"
     # ['csr_kahan_d']="${script_dir}/spmv_code_bench/spmv_csr_kahan_d.exe"
     # ['csr_prefetch_d']="${script_dir}/spmv_code_bench/spmv_csr_prefetch_d.exe"
@@ -341,15 +340,15 @@ progs=(
 
     # MKL IE
     # ['mkl_ie_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_d.exe"
-    # ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_f.exe"
+    ['mkl_ie_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_f.exe"
 
     # MKL IE COL
     # ['mkl_ie_col_d']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_d.exe"
-    # ['mkl_ie_col_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_f.exe"
+    ['mkl_ie_col_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_f.exe"
 
     # MKL CSR
     # ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
-    # ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmv_mkl_csr_f.exe"
+    ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmv_mkl_csr_f.exe"
     # MKL GEMM
     # ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
     # ['mkl_gemm_f']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_f.exe"

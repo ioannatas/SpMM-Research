@@ -555,7 +555,8 @@ main(int argc, char **argv)
 	INT_T csr_m = 0;
 	INT_T csr_k = 0;
 	INT_T csr_nnz = 0;
-	INT_T n = 0;
+	INT_T n;
+	INT_T num_cols = atoi(getenv("NUM_COLS"));;
 
 	struct Matrix_Format * MF;   // Real matrices.
 	csr_matrix * AM = NULL;
@@ -787,7 +788,7 @@ child_proc_label:
 		free(AM->col_ind);
 		AM->col_ind = NULL;
 	}
-	for( n=10000 ; n <11000; n*=4){
+	for( n=num_cols ; n <num_cols + 1; n*=4){
 		x_ref = (typeof(x_ref)) aligned_alloc(64, csr_k * n * sizeof(*x_ref));
 		x = (typeof(x)) aligned_alloc(64, csr_k * n * sizeof(*x));
 		#pragma omp parallel for

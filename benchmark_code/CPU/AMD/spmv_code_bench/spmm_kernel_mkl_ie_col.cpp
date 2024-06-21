@@ -136,7 +136,7 @@ compute_sparse_mm(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 		// const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
 		// const sparse_layout_t order = SPARSE_LAYOUT_ROW_MAJOR;
         #if DOUBLE == 0
-		mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0, csr->A, csr->descr, SPARSE_LAYOUT_COLUMN_MAJOR, x, k_mkl, n_mkl, 0.0, y, m_mkl);
+		mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0, csr->A, csr->descr, SPARSE_LAYOUT_COLUMN_MAJOR, x, k, csr->n, 0.0, y, csr->m);
 		// mkl_sparse_s_mm(operation, 1.0, csr->A, csr->descr, order, x, n_mkl, k_mkl, 0.0, y, m_mkl);
         #elif DOUBLE == 1
 		mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_COLUMN_MAJOR, x, k, csr->n, 0.0f, y, csr->m);

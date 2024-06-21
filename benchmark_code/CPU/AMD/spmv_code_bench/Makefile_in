@@ -49,7 +49,7 @@ ifeq ($(ARCH), x86_64)
 else ifeq ($(ARCH), aarch64)
 endif
 
-spmv_csr_naive$(SUFFIX).exe: spmv_kernel_csr.cpp $(LIB_OBJ)
+spmm_csr_naive$(SUFFIX).exe: spmm_kernel_csr.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_CUSTOM) -D'NAIVE' $^ -o $@ $(LDFLAGS)
 spmv_csr$(SUFFIX).exe: spmv_kernel_csr.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_CUSTOM) $^ -o $@ $(LDFLAGS)
