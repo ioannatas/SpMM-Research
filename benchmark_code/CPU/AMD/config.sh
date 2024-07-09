@@ -48,7 +48,7 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=0
+    ['output_to_files']=1
     # ['output_to_files']=1
 
     ['NUM_COLS']=64
@@ -304,7 +304,7 @@ declare -A progs
 # SpMV kernels to benchmark (uncomment the ones you want).
 progs=(
     # Custom csr
-    # ['csr_naive_d']="${script_dir}/spmv_code_bench/spmm_csr_naive_d.exe"
+    ['csr_naive_d']="${script_dir}/spmv_code_bench/spmm_csr_naive_d.exe"
     ['csr_naive_f']="${script_dir}/spmv_code_bench/spmm_csr_naive_f.exe"
     # ['csr_d']="${script_dir}/spmv_code_bench/spmv_csr_d.exe"
     # ['csr_kahan_d']="${script_dir}/spmv_code_bench/spmv_csr_kahan_d.exe"

@@ -50,5 +50,4 @@ matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_fo
 /various/pmpakos/SpMV-Research/validation_matrices/bone010.mtx,24,42,986703,986703,71666325,2.595386,296.894686,550.534645,986703,986703,71666325
 /various/pmpakos/SpMV-Research/validation_matrices/audikw_1.mtx,24,42,943695,943695,77651847,4.027811,207.286931,596.036491,943695,943695,77651847
 /various/pmpakos/SpMV-Research/validation_matrices/cage15.mtx,24,42,5154859,5154859,99199551,17.337626,61.519009,776.496742,5154859,5154859,99199551
-./run.sh: line 352: 1037829 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
 /various/pmpakos/SpMV-Research/validation_matrices/kmer_V2a.mtx,24,42,55042369,55042369,117217600,1.000000,353183269.814176,1104.269295,55042369,55042369,117217600

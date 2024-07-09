@@ -65,15 +65,8 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 	return csr;
 }
 
+void subkernel_csr(CSRArrays * restrict csr, ValueType * restrict x, ValueType * restrict y, long i_s, long i_e){
 
-void
-compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
-{
-	
-	// int num_threads = omp_get_max_threads();
-	// printf("threads: %d\n", num_threads);
-	#pragma omp parallel
-	{
 		for (long n = 0; n < k; n++) { 
 		#pragma omp for
 		for (long i = 0; i < csr->m; i++) {
@@ -93,7 +86,20 @@ compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
                 y[i * k + n] = sum;
             }
         }
-	}
+	
+}
+
+void
+compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
+{
+	
+	// int num_threads = omp_get_max_threads();
+	// printf("threads: %d\n", num_threads);
+    #pragma omp parallel
+	{
+        
+    }
+	
 }
 
 
