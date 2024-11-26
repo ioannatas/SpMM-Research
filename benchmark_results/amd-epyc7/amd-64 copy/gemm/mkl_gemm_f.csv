@@ -1,0 +1,23 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+/home/users/u101091/validation_matrices/scircuit.mtx,64,1000,170998,170998,958936,3850.908421,1943.832488,7.968410,170998,170998,958936
+../run.sh: line 352: 32677 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/home/users/u101091/validation_matrices/raefsky3.mtx,64,1000,21200,21200,1488768,49.939821,2303.905750,11.439274,21200,21200,1488768
+../run.sh: line 352:  1613 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/home/users/u101091/validation_matrices/bbmat.mtx,64,1000,38744,38744,1771722,230.905778,1664.232797,13.664967,38744,38744,1771722
+../run.sh: line 352:  2086 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+Memory allocation failed
+../run.sh: line 352:  2350 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+../run.sh: line 352:  2468 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/home/users/u101091/validation_matrices/thermomech_dK.mtx,64,1000,204316,204316,2846228,5339.070707,2001.608092,22.494404,204316,204316,2846228
+Memory allocation failed
+/home/users/u101091/validation_matrices/cant.mtx,64,1000,62451,62451,4007383,623.204121,1602.095656,30.812141,62451,62451,4007383
+Memory allocation failed
+../run.sh: line 352:  3137 Segmentation fault      "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/home/users/u101091/validation_matrices/pdb1HYS.mtx,64,1000,36417,36417,4344765,200.082542,1696.833000,33.286850,36417,36417,4344765
+/home/users/u101091/validation_matrices/TSOPF_RS_b300_c3.mtx,64,1000,42138,42138,4413449,282.614278,1608.398662,33.832691,42138,42138,4413449
+/home/users/u101091/validation_matrices/Chebyshev4.mtx,64,1000,68121,68121,5377761,732.311619,1622.206247,41.288925,68121,68121,5377761
+/home/users/u101091/validation_matrices/consph.mtx,64,1000,83334,83334,6010480,1097.173642,1620.350831,46.174221,83334,83334,6010480
+Memory allocation failed
+Memory allocation failed
+/home/users/u101091/validation_matrices/radiation.mtx,64,1000,223104,223104,7637688,6248.982271,2039.132217,59.122013,223104,223104,7637688
+Memory allocation failed

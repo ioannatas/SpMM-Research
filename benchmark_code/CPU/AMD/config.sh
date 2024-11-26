@@ -48,7 +48,7 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=1
+    ['output_to_files']=0
     # ['output_to_files']=1
 
     ['NUM_COLS']=64
@@ -66,6 +66,9 @@ conf_vars=(
     # Benchmark with the artificially generated matrices (1) or the real validation matrices (0).
     ['USE_ARTIFICIAL_MATRICES']=0
     # ['USE_ARTIFICIAL_MATRICES']=1
+
+     # Benchmark with the dlcm dataset (1) or matrix market (0).
+    ['USE_DLCM_MATRICES']=1
 
     # Maximum number of the machine's cores.
     # ['max_cores']=160
@@ -186,6 +189,7 @@ conf_vars=(
                         "$HOME/Data/graphs/validation_matrices"
                         # "${script_dir}/../../../validation_matrices"
                         '/various/pmpakos/SpMV-Research/validation_matrices'
+                        # '/various/itasou/dlcm'
                         # "$HOME/matrices"
                     )
                     find_valid_dir "${options[@]}"
@@ -210,6 +214,7 @@ conf_vars['cpu_affinity']="$(calc_cpu_pinning "${conf_vars["cores"]}" "${conf_va
 
 
 path_artificial="${script_dir}/../../../matrix_generation_parameters"
+path_dlmc="/various/itasou/dlmc"
 
 
 # Artificial matrices to benchmark.
@@ -224,6 +229,12 @@ artificial_matrices_files=(
     # The synthetic dataset studied in the paper.
     # "$path_artificial"/synthetic_matrices_small_dataset.txt
     # "$path_artificial"/synthetic_matrices_small_dataset5.txt
+)
+
+dlmc_matrices_files=(
+    "$path_dlmc/rn50_matrices_small.txt"
+    # "$path_dlcm/transformer_matrices_small.txt"
+    
 )
 
 
@@ -304,8 +315,8 @@ declare -A progs
 # SpMV kernels to benchmark (uncomment the ones you want).
 progs=(
     # Custom csr
-    ['csr_naive_d']="${script_dir}/spmv_code_bench/spmm_csr_naive_d.exe"
-    ['csr_naive_f']="${script_dir}/spmv_code_bench/spmm_csr_naive_f.exe"
+    # ['csr_naive_d']="${script_dir}/spmv_code_bench/spmm_csr_naive_d.exe"
+    # ['csr_naive_f']="${script_dir}/spmv_code_bench/spmm_csr_naive_f.exe"
     # ['csr_d']="${script_dir}/spmv_code_bench/spmv_csr_d.exe"
     # ['csr_kahan_d']="${script_dir}/spmv_code_bench/spmv_csr_kahan_d.exe"
     # ['csr_prefetch_d']="${script_dir}/spmv_code_bench/spmv_csr_prefetch_d.exe"
@@ -348,8 +359,8 @@ progs=(
     # ['mkl_ie_col_f']="${script_dir}/spmv_code_bench/spmm_mkl_ie_col_f.exe"
 
     # MKL CSR
-    # ['mkl_csr_d']="${script_dir}/spmv_code_bench/spmv_mkl_csr_d.exe"
-    # ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmv_mkl_csr_f.exe"
+    # ['mkl_csr_d']="${script_dir}/spmm_code_bench/spmm_mkl_csr_d.exe"
+    ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmm_mkl_csr_f.exe"
     # MKL GEMM
     # ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
     # ['mkl_gemm_f']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_f.exe"

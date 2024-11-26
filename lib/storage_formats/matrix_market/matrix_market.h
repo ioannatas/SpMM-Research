@@ -35,7 +35,7 @@ struct Matrix_Market {
 	int skew_symmetric;
 
 	long m;
-	long n;
+	long k;
 	long nnz;
 	long nnz_sym;
 

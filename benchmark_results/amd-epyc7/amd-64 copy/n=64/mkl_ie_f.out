@@ -1,0 +1,654 @@
+GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;RAPL_REGISTERS=0;COOLDOWN=0;cpu_pinning_step=1;path_tamu=/home/users/u101091/Data/graphs/tamu;SPARSEX_LIB_PATH=;BOOST_LIB_PATH=;USE_ARTIFICIAL_MATRICES=0;cores=128;path_M3E=/home/users/u101091/Data/graphs/M3E-Matrix-Collection;PRINT_STATISTICS=1;MKL_PATH=/apps/USE/easybuild/release/2023.1/software/imkl/2023.1.0/mkl/2023.1.0;path_validation=/home/users/u101091/validation_matrices;AOCL_PATH=;cpu_affinity=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127;force_retry_on_error=0;NUM_COLS=64;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;LLVM_LIB_PATH=;LLVM_INC_PATH=;USE_PROCESSES=0;cpu_pinning_group_size=1;SPARSEX_CONF_PATH=;path_openFoam=;SPARSEX_INC_PATH=;VC_TOLERANCE=0;output_to_files=1;BOOST_INC_PATH=;max_cores=256;
+program: /mnt/tier2/users/u101091/SpMM-Research/benchmark_code/CPU/AMD/spmv_code_bench/spmm_mkl_ie_f.exe
+number of matrices: 52
+max threads 128
+Temps: sensor0 57000 loc1 50000 Tccd8 45750 Tctl 54250 Tccd1 50750 Tccd2 46750 Tccd3 47000 Tccd4 46250 Tccd5 49750 Tccd6 47750 Tccd7 48250 Tccd8 44750 Tctl 51125 Tccd1 45250 Tccd2 45250 Tccd3 45250 Tccd4 43750 Tccd5 45000 Tccd6 44250 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/scircuit.mtx
+max threads 128
+time read: 0.385734
+time coo to csr: 0.018495
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.101099
+mkl optimize time = 0.0348791
+time convert to format: 0.135987
+time warm up 0.222993
+number of loops = 7235
+Test failed! (26.1359)
+errors spmv: mae=1.10175e-06, max_ae=0.00102874, mse=1.00107e-10, mape=2.26429e+07, smape=8.6443, lnQ_error=-0.284117, mlare=-0.318629, gmare=0.480144
+/home/users/u101091/validation_matrices/scircuit.mtx,128,64,170998,170998,958936,1.000039,888.016943,7.968410,170998,170998,958936
+Temps: sensor0 57000 loc1 50000 Tccd8 45500 Tctl 55625 Tccd1 50500 Tccd2 46250 Tccd3 46250 Tccd4 45750 Tccd5 49750 Tccd6 47500 Tccd7 47000 Tccd8 43500 Tctl 50500 Tccd1 45000 Tccd2 44250 Tccd3 44250 Tccd4 43000 Tccd5 44500 Tccd6 43250 Tccd7 44250 
+File: /home/users/u101091/validation_matrices/mac_econ_fwd500.mtx
+max threads 128
+time read: 0.268676
+time coo to csr: 0.016628
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0193649
+mkl optimize time = 0.00103401
+time convert to format: 0.020407
+time warm up 0.222936
+number of loops = 6561
+Test failed! (0.428571)
+errors spmv: mae=7.56986e-05, max_ae=0.00581557, mse=1.59566e-07, mape=2.08801e+07, smape=2.34453, lnQ_error=0.0367297, mlare=-1.05427, gmare=0.0882525
+/home/users/u101091/validation_matrices/mac_econ_fwd500.mtx,128,64,206500,206500,1273389,1.000057,1069.341788,10.502926,206500,206500,1273389
+Temps: sensor0 57000 loc1 50000 Tccd8 45750 Tctl 56625 Tccd1 51000 Tccd2 46250 Tccd3 46500 Tccd4 46000 Tccd5 49500 Tccd6 47750 Tccd7 47000 Tccd8 43750 Tctl 50625 Tccd1 44750 Tccd2 44750 Tccd3 44750 Tccd4 43500 Tccd5 45000 Tccd6 43750 Tccd7 44250 
+File: /home/users/u101091/validation_matrices/raefsky3.mtx
+max threads 128
+time read: 0.420404
+time coo to csr: 0.009999
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0201521
+mkl optimize time = 0.000974481
+time convert to format: 0.021133
+time warm up 0.229679
+number of loops = 8044
+Test failed! (5.72844e-05)
+errors spmv: mae=1.4548e-08, max_ae=2.03403e-06, mse=6.41017e-15, mape=408.718, smape=18.1096, lnQ_error=0.12981, mlare=-0.457955, gmare=0.348373
+/home/users/u101091/validation_matrices/raefsky3.mtx,128,64,21200,21200,1488768,1.000014,1532.862397,11.439274,21200,21200,1488768
+Temps: sensor0 57000 loc1 50000 Tccd8 50000 Tctl 56750 Tccd1 51750 Tccd2 47250 Tccd3 47500 Tccd4 46500 Tccd5 50500 Tccd6 48750 Tccd7 49250 Tccd8 44750 Tctl 51125 Tccd1 46000 Tccd2 45000 Tccd3 45000 Tccd4 44000 Tccd5 46000 Tccd6 44250 Tccd7 45000 
+File: /home/users/u101091/validation_matrices/rgg_n_2_17_s0.mtx
+max threads 128
+time read: 0.152146
+time coo to csr: 0.015428
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0202551
+mkl optimize time = 0.00102168
+time convert to format: 0.021283
+time warm up 0.257167
+number of loops = 6620
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/rgg_n_2_17_s0.mtx,128,64,131072,131072,1457506,1.000077,1234.936600,11.619892,131072,131072,1457506
+Temps: sensor0 57000 loc1 50000 Tccd8 45750 Tctl 57125 Tccd1 51000 Tccd2 46750 Tccd3 47250 Tccd4 46000 Tccd5 50000 Tccd6 48000 Tccd7 50000 Tccd8 44250 Tctl 51125 Tccd1 45250 Tccd2 45000 Tccd3 45250 Tccd4 43250 Tccd5 45750 Tccd6 43750 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/bbmat.mtx
+max threads 128
+time read: 0.547932
+time coo to csr: 0.012955
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0413181
+mkl optimize time = 0.00382881
+time convert to format: 0.045154
+time warm up 0.263866
+number of loops = 6688
+Test failed! (0.0117843)
+errors spmv: mae=4.92553e-06, max_ae=0.000570885, mse=4.15735e-10, mape=0.000295106, smape=0.000147645, lnQ_error=-1.61778e-07, mlare=-6.42887, gmare=3.72507e-07
+/home/users/u101091/validation_matrices/bbmat.mtx,128,64,38744,38744,1771722,1.000132,1516.506659,13.664967,38744,38744,1771722
+Temps: sensor0 57000 loc1 50000 Tccd8 46500 Tctl 56625 Tccd1 51500 Tccd2 47000 Tccd3 47500 Tccd4 46250 Tccd5 50250 Tccd6 48500 Tccd7 46750 Tccd8 44250 Tctl 51250 Tccd1 45750 Tccd2 45500 Tccd3 45000 Tccd4 43750 Tccd5 45750 Tccd6 44250 Tccd7 45000 
+File: /home/users/u101091/validation_matrices/appu.mtx
+max threads 128
+time read: 0.345793
+time coo to csr: 0.008812
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0287265
+mkl optimize time = 0.00296423
+time convert to format: 0.031699
+time warm up 0.277240
+number of loops = 4262
+Test failed! (7.54791e-07)
+errors spmv: mae=2.05526e-06, max_ae=2.18278e-05, mse=8.33958e-12, mape=1.36053e-05, smape=6.80265e-06, lnQ_error=1.06612e-11, mlare=-10.61, gmare=2.45483e-11
+/home/users/u101091/validation_matrices/appu.mtx,128,64,14000,14000,1853104,1.000214,1010.718270,14.191471,14000,14000,1853104
+Temps: sensor0 57000 loc1 50000 Tccd8 47000 Tctl 55625 Tccd1 52000 Tccd2 47500 Tccd3 48250 Tccd4 46500 Tccd5 50750 Tccd6 48750 Tccd7 48250 Tccd8 44250 Tctl 50750 Tccd1 45750 Tccd2 45500 Tccd3 45750 Tccd4 43750 Tccd5 46500 Tccd6 44750 Tccd7 45250 
+File: /home/users/u101091/validation_matrices/mc2depi.mtx
+max threads 128
+time read: 0.503606
+time coo to csr: 0.029192
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0197927
+mkl optimize time = 0.0011024
+time convert to format: 0.020906
+time warm up 0.216880
+number of loops = 4442
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/mc2depi.mtx,128,64,525825,525825,2100225,1.000131,1193.980612,18.029312,525825,525825,2100225
+Temps: sensor0 57000 loc1 50000 Tccd8 46000 Tctl 56625 Tccd1 51000 Tccd2 46750 Tccd3 46750 Tccd4 45750 Tccd5 50000 Tccd6 47250 Tccd7 46750 Tccd8 43500 Tctl 50750 Tccd1 44750 Tccd2 45250 Tccd3 44500 Tccd4 43250 Tccd5 45000 Tccd6 43750 Tccd7 44250 
+File: /home/users/u101091/validation_matrices/rma10.mtx
+max threads 128
+time read: 0.587852
+time coo to csr: 0.014649
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0198664
+mkl optimize time = 0.00098885
+time convert to format: 0.020863
+time warm up 0.256712
+number of loops = 5443
+Test failed! (53.158)
+errors spmv: mae=0.0370672, max_ae=10.4954, mse=0.0582646, mape=1.13448, smape=0.253436, lnQ_error=-0.00714888, mlare=-1.78712, gmare=0.0163262
+/home/users/u101091/validation_matrices/rma10.mtx,128,64,46835,46835,2374001,1.000018,1653.947042,18.290855,46835,46835,2374001
+Temps: sensor0 57000 loc1 50000 Tccd8 46500 Tctl 56625 Tccd1 51500 Tccd2 47250 Tccd3 47500 Tccd4 46500 Tccd5 50250 Tccd6 48500 Tccd7 47250 Tccd8 44250 Tctl 51375 Tccd1 46000 Tccd2 45750 Tccd3 45000 Tccd4 43750 Tccd5 45750 Tccd6 44500 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/cop20k_A.mtx
+max threads 128
+time read: 0.485473
+time coo to csr: 0.018053
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0215581
+mkl optimize time = 0.000997741
+time convert to format: 0.022564
+time warm up 0.243617
+number of loops = 2087
+Test failed! (0.00901205)
+errors spmv: mae=1.08779e-06, max_ae=8.20162e-05, mse=1.13739e-11, mape=4.57993e-05, smape=2.29175e-05, lnQ_error=-3.608e-08, mlare=-7.08052, gmare=8.30772e-08
+/home/users/u101091/validation_matrices/cop20k_A.mtx,128,64,121192,121192,2624331,1.000301,700.842052,20.484371,121192,121192,2624331
+Temps: sensor0 57000 loc1 50000 Tccd8 45250 Tctl 56000 Tccd1 51500 Tccd2 46500 Tccd3 47000 Tccd4 45500 Tccd5 49750 Tccd6 47750 Tccd7 47000 Tccd8 43250 Tctl 50625 Tccd1 45250 Tccd2 44750 Tccd3 44500 Tccd4 43000 Tccd5 45000 Tccd6 43500 Tccd7 43750 
+File: /home/users/u101091/validation_matrices/thermomech_dK.mtx
+max threads 128
+time read: 1.121998
+time coo to csr: 0.020163
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0198331
+mkl optimize time = 0.00104428
+time convert to format: 0.020885
+time warm up 0.223704
+number of loops = 1420
+Test failed! (897)
+errors spmv: mae=11348.3, max_ae=102720, mse=2.32412e+08, mape=3.01841e+19, smape=35.8803, lnQ_error=-1.43056, mlare=-0.0164213, gmare=0.962894
+/home/users/u101091/validation_matrices/thermomech_dK.mtx,128,64,204316,204316,2846228,1.000280,517.185469,22.494404,204316,204316,2846228
+Temps: sensor0 57000 loc1 50000 Tccd8 45250 Tctl 55375 Tccd1 50250 Tccd2 45750 Tccd3 46500 Tccd4 45250 Tccd5 49500 Tccd6 47500 Tccd7 46500 Tccd8 43000 Tctl 50125 Tccd1 44500 Tccd2 44250 Tccd3 44000 Tccd4 42750 Tccd5 44250 Tccd6 43500 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/webbase-1M.mtx
+max threads 128
+time read: 1.028863
+time coo to csr: 0.062671
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0205671
+mkl optimize time = 0.00129114
+time convert to format: 0.021871
+time warm up 0.204736
+number of loops = 200
+Test failed! (1.54541e-05)
+errors spmv: mae=7.5449e-08, max_ae=0.00454359, mse=4.47209e-11, mape=3.12357e-06, smape=1.56179e-06, lnQ_error=7.9288e-10, mlare=-8.73858, gmare=1.82567e-09
+/home/users/u101091/validation_matrices/webbase-1M.mtx,128,64,1000005,1000005,3105536,1.005237,79.087513,27.508080,1000005,1000005,3105536
+Temps: sensor0 57000 loc1 50000 Tccd8 44500 Tctl 55125 Tccd1 50000 Tccd2 45250 Tccd3 45750 Tccd4 44250 Tccd5 48500 Tccd6 46750 Tccd7 46000 Tccd8 42250 Tctl 49250 Tccd1 43500 Tccd2 43500 Tccd3 43000 Tccd4 42250 Tccd5 44000 Tccd6 42250 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/cant.mtx
+max threads 128
+time read: 0.826184
+time coo to csr: 0.020148
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.020695
+mkl optimize time = 0.00098886
+time convert to format: 0.021692
+time warm up 0.259435
+number of loops = 3485
+Test failed! (1793.5)
+errors spmv: mae=0.000270985, max_ae=0.00105134, mse=1.1312e-07, mape=253.206, smape=60.3442, lnQ_error=0.227646, mlare=-0.16174, gmare=0.689065
+/home/users/u101091/validation_matrices/cant.mtx,128,64,62451,62451,4007383,1.000373,1786.947297,30.812141,62451,62451,4007383
+Temps: sensor0 57000 loc1 50000 Tccd8 46250 Tctl 55625 Tccd1 51750 Tccd2 47000 Tccd3 46750 Tccd4 46000 Tccd5 49750 Tccd6 48000 Tccd7 47500 Tccd8 43750 Tctl 50750 Tccd1 45000 Tccd2 45000 Tccd3 44750 Tccd4 43000 Tccd5 45500 Tccd6 43750 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/ASIC_680k.mtx
+max threads 128
+time read: 1.057728
+time coo to csr: 0.065704
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0251643
+mkl optimize time = 0.00116723
+time convert to format: 0.026343
+time warm up 0.209760
+number of loops = 128
+Test failed! (0.000271298)
+errors spmv: mae=8.8252e-09, max_ae=0.00485306, mse=3.46007e-11, mape=1.61635e-06, smape=8.09817e-07, lnQ_error=-3.48157e-09, mlare=-8.09601, gmare=8.01662e-09
+/home/users/u101091/validation_matrices/ASIC_680k.mtx,128,64,682862,682862,3871773,3.723897,17.034610,32.144199,682862,682862,3871773
+Temps: sensor0 57000 loc1 50000 Tccd8 44000 Tctl 54500 Tccd1 50250 Tccd2 44750 Tccd3 45500 Tccd4 44250 Tccd5 48250 Tccd6 46250 Tccd7 45250 Tccd8 42250 Tctl 49250 Tccd1 43500 Tccd2 43750 Tccd3 43000 Tccd4 41750 Tccd5 44000 Tccd6 43000 Tccd7 43250 
+File: /home/users/u101091/validation_matrices/roadNet-TX.mtx
+max threads 128
+time read: 0.269641
+time coo to csr: 0.064033
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.14264
+mkl optimize time = 0.00485741
+time convert to format: 0.147508
+time warm up 0.203321
+number of loops = 196
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/roadNet-TX.mtx,128,64,1393383,1393383,3843320,1.002714,96.160213,34.637543,1393383,1393383,3843320
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 55250 Tccd1 51000 Tccd2 45750 Tccd3 45500 Tccd4 44750 Tccd5 48250 Tccd6 46500 Tccd7 45000 Tccd8 42750 Tctl 49375 Tccd1 43750 Tccd2 43250 Tccd3 43250 Tccd4 41750 Tccd5 44000 Tccd6 42250 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/pdb1HYS.mtx
+max threads 128
+time read: 0.492607
+time coo to csr: 0.018600
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0195418
+mkl optimize time = 0.00108734
+time convert to format: 0.020636
+time warm up 0.268248
+number of loops = 3195
+Test failed! (485.354)
+errors spmv: mae=1.11992e-05, max_ae=0.000130335, mse=2.46746e-10, mape=1.12044e+08, smape=73.308, lnQ_error=0.444114, mlare=0.250528, gmare=1.78044
+/home/users/u101091/validation_matrices/pdb1HYS.mtx,128,64,36417,36417,4344765,1.000242,1776.404663,33.286850,36417,36417,4344765
+Temps: sensor0 57000 loc1 50000 Tccd8 46000 Tctl 55750 Tccd1 51250 Tccd2 47250 Tccd3 47250 Tccd4 46250 Tccd5 50000 Tccd6 47750 Tccd7 47250 Tccd8 43500 Tctl 50875 Tccd1 45250 Tccd2 45000 Tccd3 44750 Tccd4 43500 Tccd5 45500 Tccd6 44000 Tccd7 44750 
+File: /home/users/u101091/validation_matrices/TSOPF_RS_b300_c3.mtx
+max threads 128
+time read: 1.366912
+time coo to csr: 0.056166
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0203196
+mkl optimize time = 0.00110169
+time convert to format: 0.021430
+time warm up 0.249038
+number of loops = 2197
+Test failed! (1)
+errors spmv: mae=4.9532e-08, max_ae=0.000136256, mse=1.93335e-12, mape=0.0397086, smape=0.00989127, lnQ_error=-0.000137429, mlare=-3.49977, gmare=0.000316393
+/home/users/u101091/validation_matrices/TSOPF_RS_b300_c3.mtx,128,64,42138,42138,4413449,1.000306,1240.753158,33.832691,42138,42138,4413449
+Temps: sensor0 57000 loc1 50000 Tccd8 45000 Tctl 54500 Tccd1 50750 Tccd2 46000 Tccd3 47000 Tccd4 45250 Tccd5 49000 Tccd6 47000 Tccd7 46750 Tccd8 44000 Tctl 50500 Tccd1 45500 Tccd2 44750 Tccd3 45250 Tccd4 43750 Tccd5 45750 Tccd6 44000 Tccd7 45000 
+File: /home/users/u101091/validation_matrices/Chebyshev4.mtx
+max threads 128
+time read: 1.284650
+time coo to csr: 0.038328
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.035029
+mkl optimize time = 0.00124297
+time convert to format: 0.036286
+time warm up 0.233757
+number of loops = 302
+Test failed! (16.9231)
+errors spmv: mae=0.00168911, max_ae=37.2322, mse=0.0427435, mape=84.2587, smape=13.297, lnQ_error=0.00843476, mlare=-1.70749, gmare=0.0196116
+/home/users/u101091/validation_matrices/Chebyshev4.mtx,128,64,68121,68121,5377761,1.003137,207.232653,41.288925,68121,68121,5377761
+Temps: sensor0 57000 loc1 50000 Tccd8 43750 Tctl 54750 Tccd1 49250 Tccd2 44750 Tccd3 44750 Tccd4 44250 Tccd5 48000 Tccd6 46500 Tccd7 45000 Tccd8 44250 Tctl 49000 Tccd1 43500 Tccd2 42750 Tccd3 43500 Tccd4 41750 Tccd5 43250 Tccd6 42000 Tccd7 42750 
+File: /home/users/u101091/validation_matrices/consph.mtx
+max threads 128
+time read: 1.245206
+time coo to csr: 0.026027
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.141778
+mkl optimize time = 0.00444103
+time convert to format: 0.146231
+time warm up 0.260143
+number of loops = 2354
+Test failed! (19115.7)
+errors spmv: mae=0.000783841, max_ae=0.0228083, mse=2.43568e-06, mape=1.54395e+10, smape=58.616, lnQ_error=0.445535, mlare=0.252745, gmare=1.78956
+/home/users/u101091/validation_matrices/consph.mtx,128,64,83334,83334,6010480,1.000305,1810.478320,46.174221,83334,83334,6010480
+Temps: sensor0 57000 loc1 50000 Tccd8 45500 Tctl 54375 Tccd1 51000 Tccd2 46500 Tccd3 46750 Tccd4 45500 Tccd5 49250 Tccd6 47750 Tccd7 46500 Tccd8 44000 Tctl 50750 Tccd1 45250 Tccd2 45500 Tccd3 45000 Tccd4 43750 Tccd5 45000 Tccd6 43500 Tccd7 44000 
+File: /home/users/u101091/validation_matrices/com-Youtube.mtx
+max threads 128
+time read: 0.438489
+time coo to csr: 0.083738
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0241655
+mkl optimize time = 0.00133065
+time convert to format: 0.025508
+time warm up 0.213640
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/com-Youtube.mtx,128,64,1134890,1134890,5975248,2.263041,43.259698,49.916790,1134890,1134890,5975248
+Temps: sensor0 57000 loc1 50000 Tccd8 44500 Tctl 54625 Tccd1 49250 Tccd2 44750 Tccd3 45500 Tccd4 44500 Tccd5 48000 Tccd6 46250 Tccd7 45000 Tccd8 42500 Tctl 49000 Tccd1 43500 Tccd2 42750 Tccd3 43500 Tccd4 42250 Tccd5 43750 Tccd6 42250 Tccd7 42500 
+File: /home/users/u101091/validation_matrices/rajat30.mtx
+max threads 128
+time read: 1.425583
+time coo to csr: 0.089547
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.071875
+mkl optimize time = 0.00509642
+time convert to format: 0.076984
+time warm up 0.209458
+number of loops = 128
+Test failed! (398.63)
+errors spmv: mae=3.4324e-05, max_ae=12.9161, mse=0.000375236, mape=9.43402e+06, smape=59.5071, lnQ_error=-1.28366, mlare=-0.0232099, gmare=0.94796
+/home/users/u101091/validation_matrices/rajat30.mtx,128,64,643994,643994,6175377,3.791728,26.683713,49.571033,643994,643994,6175377
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 54750 Tccd1 49500 Tccd2 44750 Tccd3 45250 Tccd4 44250 Tccd5 48250 Tccd6 46000 Tccd7 44750 Tccd8 42250 Tctl 49000 Tccd1 43500 Tccd2 43500 Tccd3 42750 Tccd4 42000 Tccd5 43500 Tccd6 42000 Tccd7 42750 
+File: /home/users/u101091/validation_matrices/radiation.mtx
+max threads 128
+time read: 1.986223
+time coo to csr: 0.047625
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0772519
+mkl optimize time = 0.00445815
+time convert to format: 0.081722
+time warm up 0.230349
+number of loops = 978
+Test failed! (3.30392e+13)
+errors spmv: mae=5.02029e+06, max_ae=1.24623e+09, mse=4.89357e+14, mape=8.72349e+12, smape=2.12185, lnQ_error=-0.00490836, mlare=-1.9493, gmare=0.0112383
+/home/users/u101091/validation_matrices/radiation.mtx,128,64,223104,223104,7637688,1.000647,955.498525,59.122013,223104,223104,7637688
+Temps: sensor0 57000 loc1 50000 Tccd8 45000 Tctl 54500 Tccd1 50000 Tccd2 46000 Tccd3 46250 Tccd4 45000 Tccd5 49250 Tccd6 47250 Tccd7 46250 Tccd8 43250 Tctl 50250 Tccd1 44250 Tccd2 43750 Tccd3 43500 Tccd4 42500 Tccd5 44500 Tccd6 43250 Tccd7 43750 
+File: /home/users/u101091/validation_matrices/Stanford_Berkeley.mtx
+max threads 128
+time read: 1.197545
+time coo to csr: 0.088833
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0222844
+mkl optimize time = 0.00118463
+time convert to format: 0.023482
+time warm up 0.207312
+number of loops = 164
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/Stanford_Berkeley.mtx,128,64,683446,683446,7583376,1.005058,158.389154,60.463711,683446,683446,7583376
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 54875 Tccd1 49500 Tccd2 44750 Tccd3 45500 Tccd4 44750 Tccd5 48250 Tccd6 46250 Tccd7 45000 Tccd8 42250 Tctl 49250 Tccd1 44000 Tccd2 42750 Tccd3 43250 Tccd4 41750 Tccd5 43500 Tccd6 42250 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/shipsec1.mtx
+max threads 128
+time read: 0.865099
+time coo to csr: 0.032545
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0199791
+mkl optimize time = 0.00113364
+time convert to format: 0.021123
+time warm up 0.234621
+number of loops = 1773
+Test failed! (21316.2)
+errors spmv: mae=5099.52, max_ae=1.71225e+06, mse=6.23396e+08, mape=2.06737e+15, smape=20.2491, lnQ_error=0.193057, mlare=-0.252001, gmare=0.559757
+/home/users/u101091/validation_matrices/shipsec1.mtx,128,64,140874,140874,7813404,1.000107,1773.016235,60.148937,140874,140874,7813404
+Temps: sensor0 57000 loc1 50000 Tccd8 45500 Tctl 55750 Tccd1 51750 Tccd2 46250 Tccd3 46250 Tccd4 45250 Tccd5 49250 Tccd6 47750 Tccd7 45750 Tccd8 43750 Tctl 50500 Tccd1 44750 Tccd2 44500 Tccd3 44250 Tccd4 42500 Tccd5 44750 Tccd6 43500 Tccd7 45500 
+File: /home/users/u101091/validation_matrices/PR02R.mtx
+max threads 128
+time read: 1.541609
+time coo to csr: 0.043058
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0207701
+mkl optimize time = 0.00102558
+time convert to format: 0.021806
+time warm up 0.214534
+number of loops = 1760
+Test failed! (46.5933)
+errors spmv: mae=4.48613, max_ae=12662.7, mse=14054.1, mape=0.77015, smape=0.220481, lnQ_error=-0.000644347, mlare=-2.82899, gmare=0.00148256
+/home/users/u101091/validation_matrices/PR02R.mtx,128,64,161070,161070,8185136,1.000512,1843.003314,63.062069,161070,161070,8185136
+Temps: sensor0 57000 loc1 50000 Tccd8 46000 Tctl 56000 Tccd1 51000 Tccd2 47000 Tccd3 46750 Tccd4 45750 Tccd5 50000 Tccd6 47750 Tccd7 46000 Tccd8 44000 Tctl 50875 Tccd1 45000 Tccd2 44750 Tccd3 45000 Tccd4 43000 Tccd5 45250 Tccd6 43500 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/CurlCurl_2.mtx
+max threads 128
+time read: 1.399754
+time coo to csr: 0.083817
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0201453
+mkl optimize time = 0.00015335
+time convert to format: 0.020310
+time warm up 0.204592
+number of loops = 159
+Test failed! (127)
+errors spmv: mae=343.032, max_ae=8168, mse=496701, mape=2.22285e+16, smape=8.69896, lnQ_error=-0.654897, mlare=-0.108664, gmare=0.778638
+/home/users/u101091/validation_matrices/CurlCurl_2.mtx,128,64,806529,806529,8921789,1.005512,180.580973,71.144516,806529,806529,8921789
+Temps: sensor0 57000 loc1 50000 Tccd8 45250 Tctl 55250 Tccd1 49750 Tccd2 46500 Tccd3 45500 Tccd4 45000 Tccd5 48500 Tccd6 46500 Tccd7 45750 Tccd8 43000 Tctl 49500 Tccd1 43500 Tccd2 43000 Tccd3 43750 Tccd4 42250 Tccd5 44500 Tccd6 42750 Tccd7 44000 
+File: /home/users/u101091/validation_matrices/gupta3.mtx
+max threads 128
+time read: 0.567104
+time coo to csr: 0.058069
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0284023
+mkl optimize time = 0.00013465
+time convert to format: 0.028547
+time warm up 0.229254
+number of loops = 885
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/gupta3.mtx,128,64,16783,16783,9323427,1.000385,1055.751445,71.196129,16783,16783,9323427
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 49000 Tccd1 53000 Tccd2 44750 Tccd3 45000 Tccd4 44250 Tccd5 48250 Tccd6 46250 Tccd7 45000 Tccd8 42000 Tctl 49250 Tccd1 43000 Tccd2 43500 Tccd3 43000 Tccd4 41750 Tccd5 43500 Tccd6 42000 Tccd7 44000 
+File: /home/users/u101091/validation_matrices/mip1.mtx
+max threads 128
+time read: 0.612317
+time coo to csr: 0.077504
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0221002
+mkl optimize time = 0.00110984
+time convert to format: 0.023221
+time warm up 0.258040
+number of loops = 359
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/mip1.mtx,128,64,66463,66463,10352819,1.002205,474.686091,79.239281,66463,66463,10352819
+Temps: sensor0 57000 loc1 50000 Tccd8 44000 Tctl 51875 Tccd1 50000 Tccd2 44750 Tccd3 45500 Tccd4 44500 Tccd5 48000 Tccd6 46000 Tccd7 45250 Tccd8 42500 Tctl 50125 Tccd1 44000 Tccd2 44000 Tccd3 43750 Tccd4 42250 Tccd5 44000 Tccd6 42500 Tccd7 43750 
+File: /home/users/u101091/validation_matrices/rail4284.mtx
+max threads 128
+time read: 1.402929
+time coo to csr: 0.060724
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.026409
+mkl optimize time = 0.00131208
+time convert to format: 0.027732
+time warm up 0.204604
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/rail4284.mtx,128,64,4284,1096894,11284032,6.495915,28.460592,86.106678,4284,1096894,11284032
+Temps: sensor0 57000 loc1 50000 Tccd8 44000 Tctl 50625 Tccd1 49500 Tccd2 44750 Tccd3 45250 Tccd4 45000 Tccd5 48250 Tccd6 46250 Tccd7 45250 Tccd8 41750 Tctl 49500 Tccd1 43500 Tccd2 43250 Tccd3 43500 Tccd4 41750 Tccd5 43750 Tccd6 42500 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/pwtk.mtx
+max threads 128
+time read: 1.456960
+time coo to csr: 0.074438
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.144132
+mkl optimize time = 0.067104
+time convert to format: 0.211247
+time warm up 0.224814
+number of loops = 1323
+Test failed! (724.184)
+errors spmv: mae=0.0355783, max_ae=5.62773, mse=0.0135319, mape=4.8458e+10, smape=0.853265, lnQ_error=0.000686863, mlare=-2.80057, gmare=0.00158281
+/home/users/u101091/validation_matrices/pwtk.mtx,128,64,217918,217918,11634424,1.000251,1969.725325,89.594906,217918,217918,11634424
+Temps: sensor0 57000 loc1 50000 Tccd8 45250 Tctl 53750 Tccd1 51250 Tccd2 46250 Tccd3 46000 Tccd4 45500 Tccd5 49000 Tccd6 47500 Tccd7 46500 Tccd8 43250 Tctl 50250 Tccd1 44750 Tccd2 44250 Tccd3 44250 Tccd4 42750 Tccd5 44750 Tccd6 43500 Tccd7 45250 
+File: /home/users/u101091/validation_matrices/crankseg_2.mtx
+max threads 128
+time read: 1.198777
+time coo to csr: 0.078484
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0205046
+mkl optimize time = 0.0011064
+time convert to format: 0.021623
+time warm up 0.227835
+number of loops = 589
+Test failed! (0.0148256)
+errors spmv: mae=3.25117, max_ae=8984.23, mse=1310.25, mape=0.000463138, smape=0.000231492, lnQ_error=8.82525e-08, mlare=-6.69206, gmare=2.03209e-07
+/home/users/u101091/validation_matrices/crankseg_2.mtx,128,64,63838,63838,14148858,1.001359,1065.263017,108.190746,63838,63838,14148858
+Temps: sensor0 57000 loc1 50000 Tccd8 45500 Tctl 55250 Tccd1 51250 Tccd2 47250 Tccd3 46250 Tccd4 45250 Tccd5 49750 Tccd6 47250 Tccd7 46000 Tccd8 43000 Tctl 50250 Tccd1 44750 Tccd2 44250 Tccd3 44250 Tccd4 42500 Tccd5 44500 Tccd6 43500 Tccd7 44250 
+File: /home/users/u101091/validation_matrices/Si41Ge41H72.mtx
+max threads 128
+time read: 1.736007
+time coo to csr: 0.089128
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0229042
+mkl optimize time = 0.0013653
+time convert to format: 0.024281
+time warm up 0.209517
+number of loops = 470
+Test failed! (2.17431e-05)
+errors spmv: mae=5.62226e-07, max_ae=4.38758e-06, mse=4.13148e-13, mape=0.000491906, smape=0.000245955, lnQ_error=-1.73619e-06, mlare=-5.39819, gmare=3.99771e-06
+/home/users/u101091/validation_matrices/Si41Ge41H72.mtx,128,64,185639,185639,15011265,1.001499,901.725640,115.235023,185639,185639,15011265
+Temps: sensor0 57000 loc1 50000 Tccd8 46250 Tctl 55625 Tccd1 51250 Tccd2 46000 Tccd3 46500 Tccd4 45500 Tccd5 49250 Tccd6 47750 Tccd7 46500 Tccd8 43000 Tctl 50750 Tccd1 44750 Tccd2 44750 Tccd3 44500 Tccd4 42500 Tccd5 45000 Tccd6 43250 Tccd7 46250 
+File: /home/users/u101091/validation_matrices/TSOPF_RS_b2383.mtx
+max threads 128
+time read: 2.558474
+time coo to csr: 0.158452
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0231203
+mkl optimize time = 0.000937061
+time convert to format: 0.024068
+time warm up 0.218395
+number of loops = 658
+Test failed! (0.231231)
+errors spmv: mae=3.6373e-06, max_ae=0.00117397, mse=1.23103e-09, mape=0.0265932, smape=0.0134184, lnQ_error=-9.1151e-06, mlare=-4.67803, gmare=2.09881e-05
+/home/users/u101091/validation_matrices/TSOPF_RS_b2383.mtx,128,64,38120,38120,16171169,1.000995,1360.646186,123.521648,38120,38120,16171169
+Temps: sensor0 57000 loc1 50000 Tccd8 44500 Tctl 51750 Tccd1 50250 Tccd2 47000 Tccd3 45500 Tccd4 44750 Tccd5 48500 Tccd6 46500 Tccd7 45750 Tccd8 44750 Tctl 51625 Tccd1 45250 Tccd2 44750 Tccd3 46000 Tccd4 44250 Tccd5 46250 Tccd6 44750 Tccd7 46500 
+File: /home/users/u101091/validation_matrices/in-2004.mtx
+max threads 128
+time read: 1.623815
+time coo to csr: 0.175910
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.033147
+mkl optimize time = 0.00111447
+time convert to format: 0.034272
+time warm up 0.202638
+number of loops = 187
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/in-2004.mtx,128,64,1382908,1382908,16917053,1.002575,403.886739,134.342251,1382908,1382908,16917053
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 54125 Tccd1 49250 Tccd2 44750 Tccd3 45250 Tccd4 44000 Tccd5 47500 Tccd6 46000 Tccd7 45000 Tccd8 42250 Tctl 48625 Tccd1 43250 Tccd2 43000 Tccd3 43000 Tccd4 41500 Tccd5 43250 Tccd6 42000 Tccd7 43250 
+File: /home/users/u101091/validation_matrices/Ga41As41H72.mtx
+max threads 128
+time read: 1.840214
+time coo to csr: 0.106539
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.15172
+mkl optimize time = 0.0152293
+time convert to format: 0.166962
+time warm up 0.216312
+number of loops = 269
+Test failed! (2.85402)
+errors spmv: mae=1.52611e-06, max_ae=0.000373148, mse=4.6889e-11, mape=0.00539915, smape=0.0024281, lnQ_error=7.43463e-06, mlare=-4.76652, gmare=1.7119e-05
+/home/users/u101091/validation_matrices/Ga41As41H72.mtx,128,64,268096,268096,18488476,1.001372,635.723047,142.078587,268096,268096,18488476
+Temps: sensor0 57000 loc1 50000 Tccd8 45000 Tctl 55125 Tccd1 50250 Tccd2 45250 Tccd3 46000 Tccd4 44750 Tccd5 48750 Tccd6 47000 Tccd7 46000 Tccd8 42750 Tctl 50000 Tccd1 44500 Tccd2 44000 Tccd3 44250 Tccd4 42500 Tccd5 44000 Tccd6 43250 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/eu-2005.mtx
+max threads 128
+time read: 1.868488
+time coo to csr: 0.145357
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0217678
+mkl optimize time = 0.00020532
+time convert to format: 0.021984
+time warm up 0.203513
+number of loops = 177
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/eu-2005.mtx,128,64,862664,862664,19235140,1.001020,435.347218,150.043278,862664,862664,19235140
+Temps: sensor0 57000 loc1 50000 Tccd8 43500 Tctl 54875 Tccd1 51250 Tccd2 45750 Tccd3 45250 Tccd4 44250 Tccd5 48250 Tccd6 46250 Tccd7 45000 Tccd8 42750 Tctl 49125 Tccd1 43500 Tccd2 42750 Tccd3 43000 Tccd4 41500 Tccd5 43500 Tccd6 42250 Tccd7 42750 
+File: /home/users/u101091/validation_matrices/wikipedia-20051105.mtx
+max threads 128
+time read: 1.708953
+time coo to csr: 0.130385
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0220341
+mkl optimize time = 0.00028416
+time convert to format: 0.022331
+time warm up 0.203108
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/wikipedia-20051105.mtx,128,64,1634989,1634989,19753078,6.218992,52.039696,156.941017,1634989,1634989,19753078
+Temps: sensor0 57000 loc1 50000 Tccd8 43750 Tctl 54500 Tccd1 49000 Tccd2 45000 Tccd3 45000 Tccd4 44250 Tccd5 48000 Tccd6 46500 Tccd7 44500 Tccd8 42000 Tctl 48500 Tccd1 43500 Tccd2 43500 Tccd3 42750 Tccd4 41500 Tccd5 43250 Tccd6 42000 Tccd7 45000 
+File: /home/users/u101091/validation_matrices/kron_g500-logn18.mtx
+max threads 128
+time read: 1.318603
+time coo to csr: 0.156257
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0882535
+mkl optimize time = 0.00440403
+time convert to format: 0.092671
+time warm up 0.219871
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/kron_g500-logn18.mtx,128,64,262144,262144,21165908,1.415242,245.033805,162.483067,262144,262144,21165908
+Temps: sensor0 57000 loc1 50000 Tccd8 44750 Tctl 55250 Tccd1 51000 Tccd2 45250 Tccd3 45750 Tccd4 45000 Tccd5 49000 Tccd6 46750 Tccd7 45500 Tccd8 42250 Tctl 49750 Tccd1 43750 Tccd2 43750 Tccd3 44250 Tccd4 41750 Tccd5 44000 Tccd6 43000 Tccd7 44000 
+File: /home/users/u101091/validation_matrices/rajat31.mtx
+max threads 128
+time read: 3.153300
+time coo to csr: 0.253797
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0206298
+mkl optimize time = 0.00044085
+time convert to format: 0.021083
+time warm up 0.202051
+number of loops = 128
+Test failed! (6.40303e-05)
+errors spmv: mae=2.65671e-08, max_ae=3.24168e-07, mse=4.24964e-15, mape=0.000525129, smape=0.00026256, lnQ_error=2.26891e-06, mlare=-5.28197, gmare=5.22438e-06
+/home/users/u101091/validation_matrices/rajat31.mtx,128,64,4690002,4690002,20316253,1.697166,196.127879,172.891651,4690002,4690002,20316253
+Temps: sensor0 56000 loc1 50000 Tccd8 44000 Tctl 54625 Tccd1 49750 Tccd2 44750 Tccd3 45500 Tccd4 44000 Tccd5 48000 Tccd6 46500 Tccd7 44750 Tccd8 42250 Tctl 49000 Tccd1 43500 Tccd2 43500 Tccd3 43250 Tccd4 42000 Tccd5 43250 Tccd6 42250 Tccd7 44250 
+File: /home/users/u101091/validation_matrices/human_gene1.mtx
+max threads 128
+time read: 2.236000
+time coo to csr: 0.157076
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.163072
+mkl optimize time = 0.0268984
+time convert to format: 0.189983
+time warm up 0.231709
+number of loops = 338
+Test failed! (4.27213e-06)
+errors spmv: mae=2.81015e-05, max_ae=0.00141148, mse=5.86704e-09, mape=3.1712e-05, smape=1.5856e-05, lnQ_error=4.32073e-10, mlare=-9.00223, gmare=9.94884e-10
+/home/users/u101091/validation_matrices/human_gene1.mtx,128,64,22283,22283,24669643,1.001496,1065.712866,188.299446,22283,22283,24669643
+Temps: sensor0 56000 loc1 50000 Tccd8 44250 Tctl 54000 Tccd1 50000 Tccd2 45250 Tccd3 45750 Tccd4 44500 Tccd5 48500 Tccd6 47000 Tccd7 45250 Tccd8 43750 Tctl 50375 Tccd1 44000 Tccd2 43750 Tccd3 43750 Tccd4 42500 Tccd5 44250 Tccd6 42500 Tccd7 45500 
+File: /home/users/u101091/validation_matrices/delaunay_n22.mtx
+max threads 128
+time read: 1.644745
+time coo to csr: 0.259950
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0214535
+mkl optimize time = 0.00048842
+time convert to format: 0.021954
+time warm up 0.202303
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/delaunay_n22.mtx,128,64,4194304,4194304,25165738,4.377061,94.199163,207.999348,4194304,4194304,25165738
+Temps: sensor0 56000 loc1 50000 Tccd8 44000 Tctl 54750 Tccd1 49250 Tccd2 45000 Tccd3 45500 Tccd4 43750 Tccd5 47750 Tccd6 45750 Tccd7 45000 Tccd8 42250 Tctl 48875 Tccd1 43250 Tccd2 42750 Tccd3 43500 Tccd4 41750 Tccd5 43250 Tccd6 42000 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/GL7d20.mtx
+max threads 128
+time read: 2.511730
+time coo to csr: 0.172357
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.150841
+mkl optimize time = 0.0215861
+time convert to format: 0.172440
+time warm up 0.203823
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/GL7d20.mtx,128,64,1437547,1911130,29893084,17.979375,27.240562,233.549942,1437547,1911130,29893084
+Temps: sensor0 56000 loc1 50000 Tccd8 43500 Tctl 53875 Tccd1 49250 Tccd2 44750 Tccd3 45250 Tccd4 44250 Tccd5 47750 Tccd6 45750 Tccd7 45000 Tccd8 42000 Tctl 48875 Tccd1 43250 Tccd2 42750 Tccd3 43000 Tccd4 41250 Tccd5 43250 Tccd6 42000 Tccd7 42750 
+File: /home/users/u101091/validation_matrices/sx-stackoverflow.mtx
+max threads 128
+time read: 2.842701
+time coo to csr: 0.318462
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.201151
+mkl optimize time = 0.0145885
+time convert to format: 0.215753
+time warm up 0.202391
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/sx-stackoverflow.mtx,128,64,2601977,2601977,36233450,15.909576,37.313932,286.365044,2601977,2601977,36233450
+Temps: sensor0 56000 loc1 50000 Tccd8 43750 Tctl 54500 Tccd1 49500 Tccd2 44750 Tccd3 45500 Tccd4 44250 Tccd5 48000 Tccd6 45500 Tccd7 45250 Tccd8 42250 Tctl 48750 Tccd1 43500 Tccd2 43000 Tccd3 42500 Tccd4 41750 Tccd5 43500 Tccd6 41750 Tccd7 43250 
+File: /home/users/u101091/validation_matrices/dgreen.mtx
+max threads 128
+time read: 3.446261
+time coo to csr: 0.220219
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0795341
+mkl optimize time = 0.00512554
+time convert to format: 0.084672
+time warm up 0.202650
+number of loops = 128
+Test failed! (3.25094e+12)
+errors spmv: mae=2.21225e+07, max_ae=5.44924e+10, mse=1.86228e+17, mape=5.99312e+08, smape=1.99054, lnQ_error=-0.00370066, mlare=-2.07135, gmare=0.00848489
+/home/users/u101091/validation_matrices/dgreen.mtx,128,64,1200611,1200611,38259877,9.135529,68.616694,296.479668,1200611,1200611,38259877
+Temps: sensor0 56000 loc1 50000 Tccd8 44500 Tctl 54625 Tccd1 49500 Tccd2 45000 Tccd3 45500 Tccd4 44500 Tccd5 48500 Tccd6 46500 Tccd7 45750 Tccd8 42000 Tctl 49125 Tccd1 43500 Tccd2 42750 Tccd3 43000 Tccd4 41750 Tccd5 43500 Tccd6 42250 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/mawi_201512012345.mtx
+max threads 128
+time read: 1.993675
+time coo to csr: 0.829121
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.470895
+mkl optimize time = 0.00484663
+time convert to format: 0.475754
+time warm up 0.204288
+number of loops = 128
+Test failed! (0.0921416)
+errors spmv: mae=0.104099, max_ae=1.93323e+06, mse=201246, mape=4.96157e-07, smape=2.6006e-07, lnQ_error=-2.26061e-09, mlare=-8.28356, gmare=5.20525e-09
+/home/users/u101091/validation_matrices/mawi_201512012345.mtx,128,64,18571154,18571154,38040320,113.105743,5.510353,361.067944,18571154,18571154,38040320
+Temps: sensor0 56000 loc1 49000 Tccd8 43250 Tctl 52625 Tccd1 48750 Tccd2 44250 Tccd3 44750 Tccd4 43750 Tccd5 47000 Tccd6 45750 Tccd7 44500 Tccd8 41250 Tctl 48875 Tccd1 43000 Tccd2 42000 Tccd3 42500 Tccd4 41000 Tccd5 43000 Tccd6 41500 Tccd7 44500 
+File: /home/users/u101091/validation_matrices/ldoor.mtx
+max threads 128
+time read: 3.180416
+time coo to csr: 0.220727
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.126836
+mkl optimize time = 0.00595265
+time convert to format: 0.132800
+time warm up 0.202500
+number of loops = 128
+Test failed! (7.4)
+errors spmv: mae=0.102687, max_ae=46.3649, mse=0.283312, mape=0.00640654, smape=0.00268687, lnQ_error=-1.4623e-05, mlare=-4.47275, gmare=3.36702e-05
+/home/users/u101091/validation_matrices/ldoor.mtx,128,64,952203,952203,46522475,1.909958,399.078977,358.570686,952203,952203,46522475
+Temps: sensor0 56000 loc1 49000 Tccd8 43500 Tctl 54625 Tccd1 49000 Tccd2 46000 Tccd3 45250 Tccd4 45000 Tccd5 48250 Tccd6 45500 Tccd7 45000 Tccd8 42250 Tctl 49000 Tccd1 42750 Tccd2 42500 Tccd3 43250 Tccd4 41750 Tccd5 43750 Tccd6 41750 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/dielFilterV2real.mtx
+max threads 128
+time read: 3.455194
+time coo to csr: 0.242820
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0620381
+mkl optimize time = 0.00507462
+time convert to format: 0.067125
+time warm up 0.202477
+number of loops = 128
+Test failed! (0.00480735)
+errors spmv: mae=2.50708e-07, max_ae=2.36467e-05, mse=5.44727e-13, mape=4.87504e-05, smape=2.43614e-05, lnQ_error=2.13311e-08, mlare=-7.30877, gmare=4.91166e-08
+/home/users/u101091/validation_matrices/dielFilterV2real.mtx,128,64,1157456,1157456,48538952,3.261243,243.852456,374.738163,1157456,1157456,48538952
+Temps: sensor0 56000 loc1 49000 Tccd8 43250 Tctl 54875 Tccd1 49250 Tccd2 44750 Tccd3 45000 Tccd4 44500 Tccd5 48000 Tccd6 45750 Tccd7 45000 Tccd8 42000 Tctl 48750 Tccd1 43250 Tccd2 42500 Tccd3 43000 Tccd4 41750 Tccd5 43000 Tccd6 41750 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/circuit5M.mtx
+max threads 128
+time read: 7.209241
+time coo to csr: 0.669067
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.299087
+mkl optimize time = 0.00535446
+time convert to format: 0.304456
+time warm up 0.202019
+number of loops = 128
+Test failed! (3.34702)
+errors spmv: mae=4.64314e-09, max_ae=0.00439278, mse=1.28949e-11, mape=146.625, smape=92.9212, lnQ_error=-2.51027, mlare=-0.00134335, gmare=0.996912
+/home/users/u101091/validation_matrices/circuit5M.mtx,128,64,5558326,5558326,59524291,17.942167,54.354971,475.337635,5558326,5558326,59524291
+Temps: sensor0 56000 loc1 49000 Tccd8 44250 Tctl 54250 Tccd1 49500 Tccd2 44500 Tccd3 45500 Tccd4 44500 Tccd5 48000 Tccd6 45750 Tccd7 45000 Tccd8 41750 Tctl 49250 Tccd1 43250 Tccd2 42750 Tccd3 43250 Tccd4 41500 Tccd5 43250 Tccd6 42000 Tccd7 43000 
+File: /home/users/u101091/validation_matrices/soc-LiveJournal1.mtx
+max threads 128
+time read: 4.164808
+time coo to csr: 0.581942
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.13486
+mkl optimize time = 0.00500293
+time convert to format: 0.139875
+time warm up 0.202624
+number of loops = 128
+errors spmv: mae=0, max_ae=0, mse=0, mape=0, smape=0, lnQ_error=0, mlare=-inf, gmare=0
+/home/users/u101091/validation_matrices/soc-LiveJournal1.mtx,128,64,4847571,4847571,68993773,41.536608,27.214402,544.872734,4847571,4847571,68993773
+Temps: sensor0 57000 loc1 49000 Tccd8 44250 Tctl 54875 Tccd1 50250 Tccd2 45000 Tccd3 45500 Tccd4 44250 Tccd5 48500 Tccd6 46250 Tccd7 45000 Tccd8 42750 Tctl 49375 Tccd1 44000 Tccd2 43250 Tccd3 43250 Tccd4 42000 Tccd5 44250 Tccd6 42500 Tccd7 42500 
+File: /home/users/u101091/validation_matrices/bone010.mtx
+max threads 128
+time read: 3.428273
+time coo to csr: 0.301668
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.174369
+mkl optimize time = 0.00511282
+time convert to format: 0.179497
+time warm up 0.204384
+number of loops = 162
+Test failed! (22.1111)
+errors spmv: mae=0.000622434, max_ae=0.0030365, mse=5.09015e-07, mape=196.822, smape=33.9021, lnQ_error=0.0217534, mlare=-1.28934, gmare=0.0513647
+/home/users/u101091/validation_matrices/bone010.mtx,128,64,986703,986703,71666325,1.003302,1481.181466,550.534645,986703,986703,71666325
+Temps: sensor0 57000 loc1 50000 Tccd8 44500 Tctl 55000 Tccd1 50000 Tccd2 45250 Tccd3 45500 Tccd4 44500 Tccd5 48500 Tccd6 46750 Tccd7 45250 Tccd8 43500 Tctl 49500 Tccd1 43750 Tccd2 43000 Tccd3 44000 Tccd4 41750 Tccd5 44250 Tccd6 42500 Tccd7 43500 
+File: /home/users/u101091/validation_matrices/audikw_1.mtx
+max threads 128
+time read: 4.726346
+time coo to csr: 0.326432
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.0513805
+mkl optimize time = 0.0263632
+time convert to format: 0.077757
+time warm up 0.207912
+number of loops = 128
+Test failed! (140.169)
+errors spmv: mae=0.174192, max_ae=627.1, mse=4.06302, mape=0.863728, smape=0.209963, lnQ_error=-0.000113611, mlare=-3.58242, gmare=0.000261565
+/home/users/u101091/validation_matrices/audikw_1.mtx,128,64,943695,943695,77651847,3.240361,392.625395,596.036491,943695,943695,77651847
+Temps: sensor0 57000 loc1 50000 Tccd8 43500 Tctl 55125 Tccd1 50000 Tccd2 45250 Tccd3 45500 Tccd4 45000 Tccd5 48750 Tccd6 46500 Tccd7 45000 Tccd8 42750 Tctl 49375 Tccd1 43750 Tccd2 43750 Tccd3 43750 Tccd4 41500 Tccd5 43750 Tccd6 42500 Tccd7 43250 
+File: /home/users/u101091/validation_matrices/cage15.mtx
+max threads 128
+time read: 8.982029
+time coo to csr: 0.747333
+mkl mkl_sparse_s_create_csr + mkl_sparse_order time = 0.218551
+mkl optimize time = 0.0270918
+time convert to format: 0.246108
+time warm up 0.221926
+number of loops = 128
+Test failed! (4.70378e-07)
+errors spmv: mae=4.6959e-08, max_ae=5.38304e-07, mse=4.67005e-15, mape=4.505e-06, smape=2.2525e-06, lnQ_error=-1.5692e-08, mlare=-7.44211, gmare=3.61321e-08
+/home/users/u101091/validation_matrices/cage15.mtx,128,64,5154859,5154859,99199551,8.479523,191.671790,776.496742,5154859,5154859,99199551
+Temps: sensor0 57000 loc1 50000 Tccd8 44250 Tctl 54500 Tccd1 49750 Tccd2 45000 Tccd3 45500 Tccd4 44750 Tccd5 48500 Tccd6 46250 Tccd7 45500 Tccd8 43000 Tctl 49500 Tccd1 43500 Tccd2 42750 Tccd3 43750 Tccd4 41750 Tccd5 43500 Tccd6 42250 Tccd7 43250 
+File: /home/users/u101091/validation_matrices/kmer_V2a.mtx
+/home/users/u101091/validation_matrices/kmer_V2a.mtx,128,64,55042369,55042369,117217600,1.000000,541557674.319291,1104.269295,55042369,55042369,117217600

@@ -238,7 +238,7 @@ mtx_parse_header(struct File_Atoms * A, struct Matrix_Market * MTX)
 	MTX->symmetric = symmetric;
 	MTX->skew_symmetric = skew_symmetric;
 	MTX->m = M;
-	MTX->n = N;
+	MTX->k = N;
 	MTX->nnz = nnz;
 	MTX->nnz_sym = nnz_sym;
 
@@ -382,16 +382,16 @@ mtx_plot_base(struct Matrix_Market * MTX, char * filename, int plot_density)
 	// int num_pixels = 1024;
 	int num_pixels = 2000;
 	int num_pixels_x = num_pixels, num_pixels_y = num_pixels;
-	// if (MTX->m < MTX->n)
-		// num_pixels_x *= ((double) MTX->m) / ((double) MTX->n);
-	// else if (MTX->m > MTX->n)
-		// num_pixels_y *= ((double) MTX->n) / ((double) MTX->m);
+	// if (MTX->m < MTX->k)
+		// num_pixels_x *= ((double) MTX->m) / ((double) MTX->k);
+	// else if (MTX->m > MTX->k)
+		// num_pixels_y *= ((double) MTX->k) / ((double) MTX->m);
 
 	fig = malloc(sizeof(*fig));
 
 	figure_init(fig, num_pixels_x, num_pixels_y);
 	figure_axes_flip_y(fig);
-	figure_set_bounds_x(fig, 0, MTX->n - 1);
+	figure_set_bounds_x(fig, 0, MTX->k - 1);
 	figure_set_bounds_y(fig, 0, MTX->m - 1);
 
 	figure_enable_legend(fig);
@@ -406,7 +406,7 @@ mtx_plot_base(struct Matrix_Market * MTX, char * filename, int plot_density)
 	if (!strcmp(MTX->format, "coordinate"))
 		s = figure_add_series(fig, MTX->C, MTX->R, MTX->V, MTX->nnz, 0, , , mtx_functor_get_value(MTX));
 	else
-		s = figure_add_series(fig, NULL, NULL, MTX->V, MTX->n, MTX->m, , , mtx_functor_get_value(MTX));
+		s = figure_add_series(fig, NULL, NULL, MTX->V, MTX->k, MTX->m, , , mtx_functor_get_value(MTX));
 
 	if (plot_density)
 		figure_series_type_density_map(s);

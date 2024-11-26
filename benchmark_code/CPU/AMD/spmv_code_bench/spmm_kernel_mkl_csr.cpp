@@ -68,6 +68,21 @@ compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
     matdescra[1] = 'L';
     matdescra[2] = 'N';
     matdescra[3] = 'C';
+	// printf("heyy%d %d %d %d\n", csr->m, k, csr->n, csr->nnz);
+	// for (long i=0;i<csr->nnz +VECTOR_ELEM_NUM ;i++)
+	// {
+	// 	// if (csr->a[i]==NULL)
+	// 		printf(" %f ", csr->a[i]);
+	// 	// if (csr->ja[i]==NULL)
+	// 		printf("COLS %ld %ld\n", i, csr->ja[i]);
+	// }
+	// printf("oops\n");
+	// for (long i=0;i<csr->m+1 +VECTOR_ELEM_NUM;i++)
+	// {
+	// 	// if (csr->ia[i]==0)
+	// 		printf(" %ld", csr->ia[i]);
+	// }
+	// printf("\noops2\n");
 	#if DOUBLE == 0
 		// mkl_cspblas_scsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
 		mkl_scsrmm(&transa, &csr->m, &k, &csr->n, &alpha, matdescra, csr->a, csr->ja, csr->ia,  &(csr->ia[1]), &(x[0]), &k,  &beta, &(y[0]), &k);
@@ -75,6 +90,7 @@ compute_csr(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 		// mkl_cspblas_dcsrgemv(&transa, &csr->m , csr->a , csr->ia , csr->ja , x , y);
 		mkl_dcsrmm(&transa, &csr->m, &k, &csr->n, &alpha, matdescra, csr->a, csr->ja, csr->ia,  &(csr->ia[1]), &(x[0]), &k,  &beta, &(y[0]), &k);
 	#endif
+	// printf("oops3\n");
 }
 
 

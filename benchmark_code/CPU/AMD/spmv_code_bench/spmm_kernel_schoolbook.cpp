@@ -78,9 +78,7 @@ void subkernel_csr(CSRArrays * restrict csr, ValueType * restrict x, ValueType *
                 val = 0;
 				
 				for (long j = csr->ia[i]; j < csr->ia[i + 1]; j++) {
-					val = csr->a[j] * x[n * csr->n + csr->ja[j]];// - compensation;
-                    // tmp = sum + val;
-                    // compensation = (tmp - sum) - val;
+					val = csr->a[j] * x[n * csr->n + csr->ja[j]];
                     sum += val;
                 }
                 y[i * k + n] = sum;

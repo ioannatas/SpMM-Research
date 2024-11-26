@@ -489,8 +489,21 @@ matrices=(
     # "$path_selected_sorted"/circuit5M.mtx
 )
 
+if ((USE_DLCM_MATRICES)); then
+    prog_args=()
+    tmp=()
 
-if ((!USE_ARTIFICIAL_MATRICES)); then
+    for f in "${dlmc_matrices_files[@]}"; do
+        # IFS=$'\n' read -d '' -a tmp < "$f"
+        mapfile -t tmp < "$f"
+        for item in "${tmp[@]}"; do
+            prog_args+=("${path_dlmc}/${item}")
+        done
+        # prog_args+=("${path_dlmc}/${tmp[@]}")
+        # item="${path_dlmc}/${tmp[@]}"
+        # echo $item
+    done
+elif ((!USE_ARTIFICIAL_MATRICES)); then
     prog_args=("${matrices[@]}")
 else
     prog_args=()

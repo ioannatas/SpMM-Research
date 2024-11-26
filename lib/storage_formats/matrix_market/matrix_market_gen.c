@@ -41,7 +41,7 @@ mtx_parse_array_format(char ** lines, long * lengths, struct Matrix_Market * MTX
 	long M, N;
 
 	M = MTX->m;
-	N = MTX->n;
+	N = MTX->k;
 	_Pragma("omp parallel")
 	{
 		char * ptr;
@@ -195,7 +195,7 @@ mtx_to_string(struct Matrix_Market * MTX)
 
 	v = vector_new(0);
 
-	len = snprintf(buf, buf_n, "%ld %ld %ld\n", MTX->m, MTX->n, MTX->nnz);
+	len = snprintf(buf, buf_n, "%ld %ld %ld\n", MTX->m, MTX->k, MTX->nnz);
 	vector_push_back_array(v, buf, len);
 
 	for (i=0;i<MTX->nnz;i++)
@@ -246,7 +246,7 @@ mtx_to_string_par(struct Matrix_Market * MTX, char ** str_ptr)
 
 		if (tnum == 0)
 		{
-			len = snprintf(buf, buf_n, "%ld %ld %ld\n", MTX->m, MTX->n, MTX->nnz);
+			len = snprintf(buf, buf_n, "%ld %ld %ld\n", MTX->m, MTX->k, MTX->nnz);
 			vector_push_back_array(v, buf, len);
 		}
 

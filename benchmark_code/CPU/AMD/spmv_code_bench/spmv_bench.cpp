@@ -26,6 +26,7 @@ extern "C"{
 	#include "string_util.h"
 	#include "parallel_io.h"
 	#include "storage_formats/matrix_market/matrix_market.h"
+	#include "storage_formats/dlcm_matrices/dlcm_matrix.h"
 	#include "storage_formats/openfoam/openfoam_matrix.h"
 	#include "read_mtx.h"
 
@@ -264,6 +265,7 @@ compute(char * matrix_name,
 	long i, j;
 	double J_estimated, W_avg;
 	int use_artificial_matrices = atoi(getenv("USE_ARTIFICIAL_MATRICES"));
+	int use_dlcm_matrices = atoi(getenv("USE_DLCM_MATRICES"));
 
 	if (!print_labels)
 	{
@@ -539,6 +541,7 @@ main(int argc, char **argv)
 	__attribute__((unused)) int num_threads;
 
 	struct Matrix_Market * MTX;
+	struct DLCM_Matrix * SMTX;
 	double * mtx_val = NULL;
 	INT_T * mtx_rowind = NULL;
 	INT_T * mtx_colind = NULL;
@@ -567,6 +570,7 @@ main(int argc, char **argv)
 	__attribute__((unused)) long i, j;
 
 	int use_artificial_matrices = atoi(getenv("USE_ARTIFICIAL_MATRICES"));
+	int use_dlcm_matrices = atoi(getenv("USE_DLCM_MATRICES"));
 
 	// Wake omp up from eternal slumber.
 	#pragma omp parallel
@@ -634,7 +638,26 @@ child_proc_label:
 		snprintf(matrix_name, sizeof(matrix_name), "%s", file_in);
 
 		time = time_it(1,
-			if (is_directory(file_in))
+			if (use_dlcm_matrices)
+			{
+				long expand_symmetry = 1;
+				long pattern_dummy_vals = 1;
+				SMTX = smtx_read(file_in, expand_symmetry, pattern_dummy_vals);
+				mtx_rowind = SMTX->R;
+				mtx_colind = SMTX->C;
+				mtx_m = SMTX->m;
+				mtx_k = SMTX->k;
+				mtx_nnz = SMTX->nnz;
+				mtx_val = (typeof(mtx_val)) malloc(mtx_nnz * sizeof(*mtx_val));
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_nnz;i++)
+				{
+					mtx_val[i] = ((ValueType *) SMTX->V)[i];
+				}
+				free(SMTX->V);
+
+			}
+			else if (is_directory(file_in))
 			{
 				int nnz_non_diag, N;
 				int * rowind, * colind;
@@ -654,7 +677,7 @@ child_proc_label:
 				}
 				free(rowind);
 				free(colind);
-			}
+			} 
 			else
 			{
 
@@ -665,7 +688,7 @@ child_proc_label:
 				mtx_rowind = MTX->R;
 				mtx_colind = MTX->C;
 				mtx_m = MTX->m;
-				mtx_k = MTX->n;
+				mtx_k = MTX->k;
 				mtx_nnz = MTX->nnz;
 				if (!strcmp(MTX->field, "integer"))
 				{
@@ -706,29 +729,65 @@ child_proc_label:
 			}
 		);
 		printf("time read: %lf\n", time);
-		time = time_it(1,
-			csr_a_ref = (typeof(csr_a_ref)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a_ref));
-			csr_a = (typeof(csr_a)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a));
-			csr_ja = (typeof(csr_ja)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_ja));
-			csr_ia = (typeof(csr_ia)) aligned_alloc(64, (mtx_m+1 + VECTOR_ELEM_NUM) * sizeof(*csr_ia));
-			csr_m = mtx_m;
-			csr_k = mtx_k;
-			csr_nnz = mtx_nnz;
-			_Pragma("omp parallel for")
-			for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
-			{
-				csr_a_ref[i] = 0.0;
-				csr_ja[i] = 0;
-			}
-			_Pragma("omp parallel for")
-			for (long i=0;i<mtx_m+1 + VECTOR_ELEM_NUM;i++)
-				csr_ia[i] = 0;
-			coo_to_csr(mtx_rowind, mtx_colind, mtx_val, mtx_m, mtx_k, mtx_nnz, csr_ia, csr_ja, csr_a_ref, 1, 0);
-			_Pragma("omp parallel for")
-			for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
-				csr_a[i] = (ValueType) csr_a_ref[i];
-		);
-		printf("time coo to csr: %lf\n", time);
+		if (use_dlcm_matrices)
+		{
+			time = time_it(1,
+				csr_a_ref = (typeof(csr_a_ref)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a_ref));
+				csr_a = (typeof(csr_a)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a));
+				csr_ja = (typeof(csr_ja)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_ja));
+				csr_ia = (typeof(csr_ia)) aligned_alloc(64, (mtx_m+1 + VECTOR_ELEM_NUM) * sizeof(*csr_ia));
+				csr_m = mtx_m;
+				csr_k = mtx_k;
+				csr_nnz = mtx_nnz;
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_nnz ;i++)
+				{
+					csr_a[i] = (ValueType) mtx_val[i];
+					// printf("%ld %ld ", csr_ja[i], mtx_colind[i]);
+					csr_ja[i] = (INT_T) mtx_colind[i];
+					printf(" %f %f ", mtx_val[i], csr_a[i]);
+					// csr_ja[i]=0;
+				}
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_m+1 ;i++)
+					csr_ia[i] = (INT_T) mtx_rowind[i];
+				_Pragma("omp parallel for")
+				for (long i=0;i<VECTOR_ELEM_NUM;i++)
+				{
+					csr_ia[mtx_m+1 + i] = 0;
+					csr_a[mtx_nnz + i] = 0.0;
+					csr_ja[mtx_nnz + i] = 0;
+				}
+			);
+			printf("\ntime copy: %lf\n", time);
+		}
+		else
+		{
+			time = time_it(1,
+				csr_a_ref = (typeof(csr_a_ref)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a_ref));
+				csr_a = (typeof(csr_a)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_a));
+				csr_ja = (typeof(csr_ja)) aligned_alloc(64, (mtx_nnz + VECTOR_ELEM_NUM) * sizeof(*csr_ja));
+				csr_ia = (typeof(csr_ia)) aligned_alloc(64, (mtx_m+1 + VECTOR_ELEM_NUM) * sizeof(*csr_ia));
+				csr_m = mtx_m;
+				csr_k = mtx_k;
+				csr_nnz = mtx_nnz;
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
+				{
+					csr_a_ref[i] = 0.0;
+					csr_ja[i] = 0;
+				}
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_m+1 + VECTOR_ELEM_NUM;i++)
+					csr_ia[i] = 0;
+				coo_to_csr(mtx_rowind, mtx_colind, mtx_val, mtx_m, mtx_k, mtx_nnz, csr_ia, csr_ja, csr_a_ref, 1, 0);
+				_Pragma("omp parallel for")
+				for (long i=0;i<mtx_nnz + VECTOR_ELEM_NUM;i++)
+					csr_a[i] = (ValueType) csr_a_ref[i];
+			);
+			printf("time coo to csr: %lf\n", time);
+		}
+		
 		free(mtx_rowind);
 		free(mtx_colind);
 		free(mtx_val);

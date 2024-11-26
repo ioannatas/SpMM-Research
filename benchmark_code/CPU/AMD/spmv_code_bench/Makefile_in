@@ -29,7 +29,7 @@ define Rule_Auto_Dependencies =
 endef
 
 
-LIB_SRC = spmv_bench.cpp pthread_functions.c omp_functions.c topology.c hash.c random.c hashtable.c bitstream.c bytestream.c array_metrics.c string_util.c io.c parallel_io.c plot.c read_mtx.c matrix_market.c openfoam_matrix.c rapl.c csr_converter.c csr_converter_double.c kmeans.c kmeans_char.c csr_util.c artificial_matrix_generation.c ordered_set.c
+LIB_SRC = spmv_bench.cpp pthread_functions.c omp_functions.c topology.c hash.c random.c hashtable.c bitstream.c bytestream.c array_metrics.c string_util.c io.c parallel_io.c plot.c read_mtx.c matrix_market.c dlcm_matrix.c openfoam_matrix.c rapl.c csr_converter.c csr_converter_double.c kmeans.c kmeans_char.c csr_util.c artificial_matrix_generation.c ordered_set.c
 
 LIB_OBJ := $(LIB_SRC)
 LIB_OBJ := $(patsubst %.c,obj/%$(SUFFIX).o,$(LIB_OBJ))
@@ -139,7 +139,7 @@ spmv_dia$(SUFFIX).exe: spmv_kernel_dia.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS_MKL)
 spmv_mkl_csc$(SUFFIX).exe: spmv_kernel_mkl_csc.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-spmv_mkl_csr$(SUFFIX).exe: spmv_kernel_mkl_csr.cpp $(LIB_OBJ)
+spmm_mkl_csr$(SUFFIX).exe: spmm_kernel_mkl_csr.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
 spmm_mkl_ie$(SUFFIX).exe: spmm_kernel_mkl_ie.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
@@ -305,6 +305,8 @@ $(call Rule_Auto_Dependencies,obj/plot$(SUFFIX).o,$(library)/plot/plot.c,$(CFLAG
 $(call Rule_Auto_Dependencies,obj/read_mtx$(SUFFIX).o,read_mtx.c,$(CFLAGS))
 	$(CC) $(CFLAGS) -c $< -o $@
 $(call Rule_Auto_Dependencies,obj/matrix_market$(SUFFIX).o,$(library)/storage_formats/matrix_market/matrix_market.c,$(CFLAGS))
+	$(CC) $(CFLAGS) -c $< -o $@
+$(call Rule_Auto_Dependencies,obj/dlcm_matrix$(SUFFIX).o,$(library)/storage_formats/dlcm_matrices/dlcm_matrix.c,$(CFLAGS))
 	$(CC) $(CFLAGS) -c $< -o $@
 $(call Rule_Auto_Dependencies,obj/openfoam_matrix$(SUFFIX).o,$(library)/storage_formats/openfoam/openfoam_matrix.c,$(CFLAGS))
 	$(CC) $(CFLAGS) -c $< -o $@
