@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <omp.h>
+#include <mkl.h>
 
 
 #include <mkl_spblas.h>
@@ -135,6 +136,9 @@ compute_sparse_mm(CSRArrays * csr, ValueType * x , ValueType * y, INT_T k)
 		// MKL_INT m_mkl = csr->m;
 		// const sparse_operation_t operation = SPARSE_OPERATION_NON_TRANSPOSE;
 		// const sparse_layout_t order = SPARSE_LAYOUT_ROW_MAJOR;
+		// int num_threads = mkl_get_max_threads();
+		// mkl_set_num_threads(num_threads);
+    	// printf("MKL is using %d threads.\n", num_threads);
         #if DOUBLE == 0
 		mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, 1.0f, csr->A, csr->descr, SPARSE_LAYOUT_ROW_MAJOR, x, k, k, 0.0f, y, k);
 		// mkl_sparse_s_mm(operation, 1.0, csr->A, csr->descr, order, x, n_mkl, k_mkl, 0.0, y, m_mkl);

@@ -339,7 +339,7 @@ compute(char * matrix_name,
 
 		time = 0;
 		num_loops = 0;
-		while (time < 1.0 || num_loops < min_num_loops)
+		while (/*time < 1.0 ||*/ num_loops < min_num_loops)
 		{
 			rapl_read_start(regs, regs_n);
 
@@ -640,6 +640,7 @@ child_proc_label:
 		time = time_it(1,
 			if (use_dlcm_matrices)
 			{
+						printf("hi\n");
 				long expand_symmetry = 1;
 				long pattern_dummy_vals = 1;
 				SMTX = smtx_read(file_in, expand_symmetry, pattern_dummy_vals);
@@ -648,13 +649,23 @@ child_proc_label:
 				mtx_m = SMTX->m;
 				mtx_k = SMTX->k;
 				mtx_nnz = SMTX->nnz;
+				// mtx_rowind = (typeof(mtx_rowind)) aligned_alloc(64, mtx_nnz * sizeof(*mtx_rowind));
+				// mtx_colind = (typeof(mtx_colind)) aligned_alloc(64, mtx_nnz * sizeof(*mtx_colind));
 				mtx_val = (typeof(mtx_val)) malloc(mtx_nnz * sizeof(*mtx_val));
 				_Pragma("omp parallel for")
 				for (long i=0;i<mtx_nnz;i++)
 				{
+					// mtx_colind[i] = SMTX->C[i];
 					mtx_val[i] = ((ValueType *) SMTX->V)[i];
+					// printf("%f %f ", ((ValueType *) SMTX->V)[i], mtx_val[i]);
 				}
+				// for (long i=0;i<mtx_m+1 ;i++){
+				// 	mtx_rowind[i] = SMTX->R[i];
+				// 	// printf("%d %d ", SMTX->R[i], mtx_rowind[i]);
+				// }
 				free(SMTX->V);
+				// free(SMTX->R);
+				// free(SMTX->C);
 
 			}
 			else if (is_directory(file_in))
@@ -744,13 +755,16 @@ child_proc_label:
 				{
 					csr_a[i] = (ValueType) mtx_val[i];
 					// printf("%ld %ld ", csr_ja[i], mtx_colind[i]);
-					csr_ja[i] = (INT_T) mtx_colind[i];
-					printf(" %f %f ", mtx_val[i], csr_a[i]);
+					csr_ja[i] =  mtx_colind[i];
+					// printf("%d %d ", csr_ja[i], mtx_colind[i]);
+					// printf(" %f %f ", mtx_val[i], csr_a[i]);
 					// csr_ja[i]=0;
 				}
 				_Pragma("omp parallel for")
-				for (long i=0;i<mtx_m+1 ;i++)
-					csr_ia[i] = (INT_T) mtx_rowind[i];
+				for (long i=0;i<mtx_m+1 ;i++){
+					csr_ia[i] =  mtx_rowind[i];
+					// printf("%d %d ", csr_ia[i], mtx_rowind[i]);
+				}
 				_Pragma("omp parallel for")
 				for (long i=0;i<VECTOR_ELEM_NUM;i++)
 				{
@@ -787,10 +801,15 @@ child_proc_label:
 			);
 			printf("time coo to csr: %lf\n", time);
 		}
-		
+		// for (long i=0;i<mtx_m+1 ;i++)
+		// 	printf("%d ", csr_ia[i]);
+		// printf("hey1 %d \n", mtx_m);
+		// for (long i=0;i<mtx_m+1 ;i++)
+		// 	printf("%d ", mtx_rowind[i]);
 		free(mtx_rowind);
 		free(mtx_colind);
 		free(mtx_val);
+		// printf("hey\n");
 	}
 	else
 	{
@@ -954,7 +973,7 @@ child_proc_label:
 		printf("time convert to format: %lf\n", time);
 
 		long min_num_loops;
-		min_num_loops = 128;
+		min_num_loops = 1;
 
 		prefetch_distance = 1;
 		time = time_it(1,

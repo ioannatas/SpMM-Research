@@ -1,0 +1,53 @@
+SPARSEX_LIB_PATH=/various/pmpakos/epyc5_libs/sparsex/build/lib;PRINT_STATISTICS=1;LLVM_INC_PATH=;AOCL_PATH=/various/pmpakos/spmv_paper/aocl-sparse/build/release;SPARSEX_INC_PATH=/various/pmpakos/epyc5_libs/sparsex/build/include;max_cores=96;NUM_COLS=512;LLVM_LIB_PATH=;USE_ARTIFICIAL_MATRICES=0;VC_TOLERANCE=0;SPARSE_ATTENTION_TYPE=band_and_decay;GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;cores=1;BOOST_LIB_PATH=;path_validation=/various/pmpakos/SpMV-Research/validation_matrices;output_to_files=1;force_retry_on_error=0;path_tamu=/home/users/itasou/Data/graphs/tamu;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;BAND_SIZE=3;MKL_PATH=/various/pmpakos/intel/oneapi/mkl/2024.1;SPARSEX_CONF_PATH=/various/pmpakos/epyc5_libs/sparsex/build/bin;cpu_pinning_group_size=1;path_M3E=/home/users/itasou/Data/graphs/M3E-Matrix-Collection;cpu_affinity=0;USE_PROCESSES=0;cpu_pinning_step=1;RAPL_REGISTERS=0;USE_DLCM_MATRICES=1;TACO_PATH=/various/itasou/taco;BOOST_INC_PATH=;path_openFoam=/various/dgal/graphs/matrices_openFoam;COOLDOWN=0;
+program: /home/users/itasou/SpMM/SpMM-Research/benchmark_code/CPU/AMD/sddmm_code_bench/sddmm_taco_f.exe
+number of matrices: 4
+max threads 96
+Temps: Tctl 37125 Tdie 37125 Tccd1 34250 Tccd3 36750 Tccd5 33500 Tccd7 37250 Tctl 38250 Tdie 38375 Tccd1 38750 Tccd3 36500 Tccd5 36500 Tccd7 37000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx
+max threads 1
+hi
+line:1
+rows: 512
+time read: 0.101576
+
+time copy: 0.000388
+error creating mask: 9067 25959time convert to format: 0.375306
+time warm up 0.041798
+number of loops = 1
+Test failed! (1)
+errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,1,512,512,512,128761,0.001307,20.331487,0.200008,512,512,25959
+Temps: Tctl 37875 Tdie 37875 Tccd1 35000 Tccd3 36500 Tccd5 34250 Tccd7 37750 Tctl 38500 Tdie 38500 Tccd1 39000 Tccd3 37000 Tccd5 36500 Tccd7 37000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,1,512,512,512,132877,0.001317,20.178385,0.200008,512,512,25959
+corrupted double-linked list
+Temps: Tctl 38125 Tdie 38125 Tccd1 34500 Tccd3 36750 Tccd5 34000 Tccd7 38000 Tctl 38500 Tdie 38500 Tccd1 39000 Tccd3 37000 Tccd5 36750 Tccd7 37500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx
+max threads 1
+hi
+line:1
+rows: 512
+time read: 0.111382
+
+time copy: 0.000431
+error creating mask: 9025 25959time convert to format: 0.379678
+time warm up 0.042097
+number of loops = 1
+Test failed! (1)
+errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,1,512,512,512,142349,0.000659,40.348531,0.200008,512,512,25959
+Temps: Tctl 38250 Tdie 38250 Tccd1 34750 Tccd3 37000 Tccd5 34250 Tccd7 38250 Tctl 38750 Tdie 38750 Tccd1 39250 Tccd3 36750 Tccd5 36750 Tccd7 37500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx
+max threads 1
+hi
+line:1
+rows: 512
+time read: 0.098156
+
+time copy: 0.000361
+error creating mask: 9018 25959time convert to format: 0.375044
+time warm up 0.041879
+number of loops = 1
+Test failed! (1)
+errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,1,512,512,512,122501,0.000651,40.863284,0.200008,512,512,25959

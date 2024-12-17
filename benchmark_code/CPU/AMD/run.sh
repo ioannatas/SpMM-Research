@@ -33,6 +33,7 @@ export LD_LIBRARY_PATH="${AOCL_PATH}/lib:${MKL_PATH}/lib/intel64:${LD_LIBRARY_PA
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${BOOST_LIB_PATH}:${LLVM_LIB_PATH}:${SPARSEX_LIB_PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/gcc/gcc-12.2.0/gcc_bin/lib64"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/epyc1/cuda/cuda_11_4_4/lib64"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${TACO_PATH}/build/lib"
 
 # Encourages idle threads to spin rather than sleep.
 # export OMP_WAIT_POLICY='active'

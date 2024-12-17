@@ -84,6 +84,7 @@ smtx_parse_array_format(char ** lines, long * lengths, struct DLCM_Matrix * MTX)
 					if (len==0){
 						error("Error parsing MARKET matrix '%s': badly formed or missing value at matrix position (%ld)\n", MTX->filename, j);
 					}
+					// printf("%d %d ", R[j],MTX->R[j]);
 					k += len;
 				}
 			// }
@@ -93,12 +94,13 @@ smtx_parse_array_format(char ** lines, long * lengths, struct DLCM_Matrix * MTX)
 				ptr = lines[1];
 				k = 0;
 				// long len, j = 0;
-				printf("columns: %ld\n", K);
+				// printf("columns: %ld\n", K);
 				for (j=0;j<nnz;j++)
 				{
 					len = gen_strtonum(ptr + k, lengths[1] - k, &C[j]);
 					if (len == 0)
 						error("Error parsing MARKET matrix '%s': badly formed or missing value at matrix position (%ld, %ld)\n", MTX->filename, 1, j);
+					// printf("%d ", C[j]);
 					k += len;
 				}
 			// }
@@ -224,7 +226,13 @@ smtx_parse_data(char ** lines, long * lengths, struct DLCM_Matrix * MTX, long ex
 	// if (!strcmp(MTX->format, "coordinate"))
 	// 	smtx_parse_coordinate_format(lines, lengths, MTX, expand_symmetry);
 	// else
+
 	smtx_parse_array_format(lines, lengths, MTX);
+	// printf("HI\n");
+	// 	for (long j=0;j<MTX->m+1;j++)
+	// {
+	// 	printf("%d ",MTX->R[j]);
+	// }
 }
 
 

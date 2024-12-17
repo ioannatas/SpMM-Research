@@ -48,10 +48,14 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=0
+    ['output_to_files']=1
     # ['output_to_files']=1
 
-    ['NUM_COLS']=64
+    ['NUM_COLS']=512
+
+    ['BAND_SIZE']=3
+
+    ['SPARSE_ATTENTION_TYPE']='band_and_decay'
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -88,14 +92,14 @@ conf_vars=(
     # ['cores']=64
     # ['cores']=48
     # ['cores']=32
-    ['cores']=24
+    # ['cores']=24
     # ['cores']=16
     # ['cores']=12
     # ['cores']=8
     # ['cores']=6
     # ['cores']=4
     # ['cores']=2
-    # ['cores']=1
+    ['cores']=1
     # ['cores']='1 2 4 8 16 24 48'
     # ['cores']='24 48'
     # ['cores']='1 2 4 8'
@@ -126,6 +130,7 @@ conf_vars=(
     #                 )
     #                 find_valid_dir "${options[@]}"
     #             )"
+    ['TACO_PATH']='/various/itasou/taco'
     ['MKL_PATH']='/various/pmpakos/intel/oneapi/mkl/2024.1'
     ['AOCL_PATH']="$( options=(
                         '/opt/aoclsparse'
@@ -232,7 +237,7 @@ artificial_matrices_files=(
 )
 
 dlmc_matrices_files=(
-    "$path_dlmc/rn50_matrices_small.txt"
+    "$path_dlmc/transformer_matrices_small.txt"
     # "$path_dlcm/transformer_matrices_small.txt"
     
 )
@@ -360,7 +365,7 @@ progs=(
 
     # MKL CSR
     # ['mkl_csr_d']="${script_dir}/spmm_code_bench/spmm_mkl_csr_d.exe"
-    ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmm_mkl_csr_f.exe"
+    # ['mkl_csr_f']="${script_dir}/spmv_code_bench/spmm_mkl_csr_f.exe"
     # MKL GEMM
     # ['mkl_gemm_d']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_d.exe"
     # ['mkl_gemm_f']="${script_dir}/spmv_code_bench/spmm_mkl_gemm_f.exe"
@@ -399,6 +404,10 @@ progs=(
     # ['mkl_bsr_64_d']="${script_dir}/spmv_code_bench/spmv_mkl_bsr_64_d.exe"
     # ['mkl_coo_d']="${script_dir}/spmv_code_bench/spmv_mkl_coo_d.exe"
     # ['mkl_csc_d']="${script_dir}/spmv_code_bench/spmv_mkl_csc_d.exe"
+
+    ##SDDMM kernels##
+
+    ['sddmm_taco_f']="${script_dir}/sddmm_code_bench/sddmm_taco_f.exe"    
 
 )
 

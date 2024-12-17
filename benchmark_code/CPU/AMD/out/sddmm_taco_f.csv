@@ -1,0 +1,7 @@
+matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,1,512,512,512,128761,0.001307,20.331487,0.200008,512,512,25959
+./run.sh: line 353: 2383927 Aborted                 "$prog" "${prog_args[@]}" 2> 'tmp.err'
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,1,512,512,512,132877,0.001317,20.178385,0.200008,512,512,25959
+corrupted double-linked list
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,1,512,512,512,142349,0.000659,40.348531,0.200008,512,512,25959
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,1,512,512,512,122501,0.000651,40.863284,0.200008,512,512,25959

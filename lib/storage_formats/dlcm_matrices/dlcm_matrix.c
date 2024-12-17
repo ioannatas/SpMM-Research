@@ -269,7 +269,7 @@ smtx_read(char * filename, long expand_symmetry, long pattern_dummy_vals)
 	printf("line:%ld\n",i);
 	if (!strcmp(MTX->format, "csr"))
 	{
-		MTX->R = malloc((MTX->k +1) * sizeof(*(MTX->R)));
+		MTX->R = malloc((MTX->m +1) * sizeof(*(MTX->R)));
 		MTX->C = malloc(MTX->nnz * sizeof(*(MTX->C)));
 	}
 	else
