@@ -1,53 +1,535 @@
-SPARSEX_LIB_PATH=/various/pmpakos/epyc5_libs/sparsex/build/lib;PRINT_STATISTICS=1;LLVM_INC_PATH=;AOCL_PATH=/various/pmpakos/spmv_paper/aocl-sparse/build/release;SPARSEX_INC_PATH=/various/pmpakos/epyc5_libs/sparsex/build/include;max_cores=96;NUM_COLS=512;LLVM_LIB_PATH=;USE_ARTIFICIAL_MATRICES=0;VC_TOLERANCE=0;SPARSE_ATTENTION_TYPE=band_and_decay;GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;cores=1;BOOST_LIB_PATH=;path_validation=/various/pmpakos/SpMV-Research/validation_matrices;output_to_files=1;force_retry_on_error=0;path_tamu=/home/users/itasou/Data/graphs/tamu;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;BAND_SIZE=3;MKL_PATH=/various/pmpakos/intel/oneapi/mkl/2024.1;SPARSEX_CONF_PATH=/various/pmpakos/epyc5_libs/sparsex/build/bin;cpu_pinning_group_size=1;path_M3E=/home/users/itasou/Data/graphs/M3E-Matrix-Collection;cpu_affinity=0;USE_PROCESSES=0;cpu_pinning_step=1;RAPL_REGISTERS=0;USE_DLCM_MATRICES=1;TACO_PATH=/various/itasou/taco;BOOST_INC_PATH=;path_openFoam=/various/dgal/graphs/matrices_openFoam;COOLDOWN=0;
+SPARSEX_LIB_PATH=/various/pmpakos/epyc5_libs/sparsex/build/lib;PRINT_STATISTICS=1;LLVM_INC_PATH=;AOCL_PATH=/various/pmpakos/spmv_paper/aocl-sparse/build/release;SPARSEX_INC_PATH=/various/pmpakos/epyc5_libs/sparsex/build/include;max_cores=96;NUM_COLS=512;LLVM_LIB_PATH=;USE_ARTIFICIAL_MATRICES=0;VC_TOLERANCE=0;SPARSE_ATTENTION_TYPE=band_and_random;GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;cores=24;BOOST_LIB_PATH=;path_validation=/various/pmpakos/SpMV-Research/validation_matrices;output_to_files=1;force_retry_on_error=0;path_tamu=/home/users/itasou/Data/graphs/tamu;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;BAND_SIZE=3;MKL_PATH=/various/pmpakos/intel/oneapi/mkl/2024.1;SPARSEX_CONF_PATH=/various/pmpakos/epyc5_libs/sparsex/build/bin;cpu_pinning_group_size=1;path_M3E=/home/users/itasou/Data/graphs/M3E-Matrix-Collection;cpu_affinity=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23;USE_PROCESSES=0;cpu_pinning_step=1;RAPL_REGISTERS=0;USE_DLCM_MATRICES=1;TACO_PATH=/various/itasou/taco;BOOST_INC_PATH=;path_openFoam=/various/dgal/graphs/matrices_openFoam;COOLDOWN=0;
 program: /home/users/itasou/SpMM/SpMM-Research/benchmark_code/CPU/AMD/sddmm_code_bench/sddmm_taco_f.exe
-number of matrices: 4
+number of matrices: 2716
 max threads 96
-Temps: Tctl 37125 Tdie 37125 Tccd1 34250 Tccd3 36750 Tccd5 33500 Tccd7 37250 Tctl 38250 Tdie 38375 Tccd1 38750 Tccd3 36500 Tccd5 36500 Tccd7 37000 
+Temps: Tctl 45125 Tdie 45125 Tccd1 42000 Tccd3 44750 Tccd5 41750 Tccd7 45500 Tctl 45250 Tdie 45250 Tccd1 45250 Tccd3 43000 Tccd5 42750 Tccd7 43250 
 File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx
-max threads 1
-hi
+max threads 24
 line:1
 rows: 512
-time read: 0.101576
+time read: 0.697451
 
-time copy: 0.000388
-error creating mask: 9067 25959time convert to format: 0.375306
-time warm up 0.041798
+time copy: 0.000377
+csr_to_format
+time convert to format: 0.408719
+time warm up 0.097236
+0xa0cae80
+0x9ff1480
 number of loops = 1
+before acccuracy
 Test failed! (1)
-errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,1,512,512,512,128761,0.001307,20.331487,0.200008,512,512,25959
-Temps: Tctl 37875 Tdie 37875 Tccd1 35000 Tccd3 36500 Tccd5 34250 Tccd7 37750 Tctl 38500 Tdie 38500 Tccd1 39000 Tccd3 37000 Tccd5 36500 Tccd7 37000 
+errors spmv: mae=0.249119, max_ae=5.12, mse=1.27549, mape=4.86561, smape=4.86561, lnQ_error=-0.796151, mlare=-0.0756692, gmare=0.8401
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,24,512,512,512,128761,0.003704,7.261851,0.202351,512,512,26266
+Temps: Tctl 46000 Tdie 46000 Tccd1 42750 Tccd3 45750 Tccd5 42250 Tccd7 46000 Tctl 44750 Tdie 44750 Tccd1 44250 Tccd3 43250 Tccd5 42750 Tccd7 44000 
 File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,1,512,512,512,132877,0.001317,20.178385,0.200008,512,512,25959
-corrupted double-linked list
-Temps: Tctl 38125 Tdie 38125 Tccd1 34500 Tccd3 36750 Tccd5 34000 Tccd7 38000 Tctl 38500 Tdie 38500 Tccd1 39000 Tccd3 37000 Tccd5 36750 Tccd7 37500 
+max threads 24
+line:1
+rows: 512
+time read: 0.428026
+
+time copy: 0.000207
+csr_to_format
+time convert to format: 0.389187
+time warm up 0.102133
+0x132412f0
+0x1325ad60
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242686, max_ae=5.12, mse=1.24255, mape=4.73997, smape=4.73997, lnQ_error=-0.775593, mlare=-0.0796947, gmare=0.832349
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,132877,0.004093,6.570810,0.202351,512,512,26266
+Temps: Tctl 46625 Tdie 46625 Tccd1 43000 Tccd3 45000 Tccd5 42250 Tccd7 46500 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43250 Tccd5 42500 Tccd7 43750 
 File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx
-max threads 1
-hi
+max threads 24
 line:1
 rows: 512
-time read: 0.111382
+time read: 0.647118
 
-time copy: 0.000431
-error creating mask: 9025 25959time convert to format: 0.379678
-time warm up 0.042097
+time copy: 0.000352
+csr_to_format
+time convert to format: 0.417418
+time warm up 0.097657
+0x2fa36af0
+0x2fa50560
 number of loops = 1
+before acccuracy
 Test failed! (1)
-errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,1,512,512,512,142349,0.000659,40.348531,0.200008,512,512,25959
-Temps: Tctl 38250 Tdie 38250 Tccd1 34750 Tccd3 37000 Tccd5 34250 Tccd7 38250 Tctl 38750 Tdie 38750 Tccd1 39250 Tccd3 36750 Tccd5 36750 Tccd7 37500 
+errors spmv: mae=0.247365, max_ae=5.12, mse=1.26651, mape=4.83134, smape=4.83134, lnQ_error=-0.790544, mlare=-0.0767446, gmare=0.838022
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,24,512,512,512,142349,0.003765,7.143997,0.202351,512,512,26266
+Temps: Tctl 46500 Tdie 46500 Tccd1 42500 Tccd3 46000 Tccd5 43000 Tccd7 46000 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43250 Tccd5 42500 Tccd7 43500 
 File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx
-max threads 1
-hi
+max threads 24
 line:1
 rows: 512
-time read: 0.098156
+time read: 0.406776
 
-time copy: 0.000361
-error creating mask: 9018 25959time convert to format: 0.375044
-time warm up 0.041879
+time copy: 0.000129
+csr_to_format
+time convert to format: 0.387937
+time warm up 0.100988
+0x1fdf4950
+0x1fd1b0e0
 number of loops = 1
+before acccuracy
 Test failed! (1)
-errors spmv: mae=5.26829e+151, max_ae=1.34078e+154, mse=inf, mape=1.18631e+169, smape=0.392927, lnQ_error=0, mlare=-inf, gmare=0
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,1,512,512,512,122501,0.000651,40.863284,0.200008,512,512,25959
+errors spmv: mae=0.242491, max_ae=5.12, mse=1.24156, mape=4.73616, smape=4.73616, lnQ_error=-0.77497, mlare=-0.0798203, gmare=0.832108
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,24,512,512,512,122501,0.004100,6.559865,0.202351,512,512,26266
+Temps: Tctl 47125 Tdie 47125 Tccd1 43000 Tccd3 46250 Tccd5 42750 Tccd7 46750 Tctl 44750 Tdie 44750 Tccd1 44500 Tccd3 43250 Tccd5 42750 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv1.smtx
+max threads 24
+line:1
+rows: 2048
+time read: 2.007648
+
+time copy: 0.001432
+csr_to_format
+time convert to format: 0.687707
+time warm up 0.100846
+0x192be10
+0x253b960
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.244655, max_ae=5.12, mse=1.25264, mape=4.77843, smape=4.77843, lnQ_error=-0.781886, mlare=-0.0784382, gmare=0.83476
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv1.smtx,24,512,2048,512,657561,0.051224,8.388739,3.209385,2048,512,419636
+Temps: Tctl 48500 Tdie 48500 Tccd1 43750 Tccd3 46750 Tccd5 43750 Tccd7 47250 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43250 Tccd5 42750 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv2.smtx
+max threads 24
+line:1
+rows: 512
+time read: 2.952964
+
+time copy: 0.000700
+csr_to_format
+time convert to format: 0.420716
+time warm up 0.097601
+0x5024770
+0x503e1e0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=nan, max_ae=inf, mse=-nan, mape=-nan, smape=-nan, lnQ_error=-inf, mlare=0, gmare=1
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv2.smtx,24,512,512,2048,587093,0.003841,7.003005,0.202351,512,512,26266
+Temps: Tctl 46875 Tdie 46875 Tccd1 43500 Tccd3 46500 Tccd5 43250 Tccd7 47250 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43250 Tccd5 42750 Tccd7 43250 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.483936
+
+time copy: 0.000180
+csr_to_format
+time convert to format: 0.387252
+time warm up 0.101140
+0xf6d3f50
+0xf6ed9c0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242686, max_ae=5.12, mse=1.24255, mape=4.73997, smape=4.73997, lnQ_error=-0.775593, mlare=-0.0796947, gmare=0.832349
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx,24,512,512,512,158760,0.004056,6.631468,0.202351,512,512,26266
+Temps: Tctl 47750 Tdie 47750 Tccd1 43750 Tccd3 46750 Tccd5 43500 Tccd7 48250 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43250 Tccd5 42750 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_output_transform.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.505475
+
+time copy: 0.000192
+csr_to_format
+time convert to format: 0.393025
+time warm up 0.100442
+0x5b67d40
+0x5b817b0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242491, max_ae=5.12, mse=1.24156, mape=4.73616, smape=4.73616, lnQ_error=-0.77497, mlare=-0.0798203, gmare=0.832108
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,161312,0.004043,6.652791,0.202351,512,512,26266
+Temps: Tctl 48500 Tdie 48500 Tccd1 44250 Tccd3 47750 Tccd5 44250 Tccd7 47500 Tctl 44750 Tdie 44750 Tccd1 44750 Tccd3 43500 Tccd5 42750 Tccd7 43000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_q.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.652514
+
+time copy: 0.000329
+csr_to_format
+time convert to format: 0.416819
+time warm up 0.103107
+0xfc63cf0
+0xfc7d760
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.244831, max_ae=5.12, mse=1.25353, mape=4.78185, smape=4.78185, lnQ_error=-0.782446, mlare=-0.0783275, gmare=0.834973
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_q.smtx,24,512,512,512,154701,0.004034,6.667401,0.202351,512,512,26266
+Temps: Tctl 47875 Tdie 47875 Tccd1 44250 Tccd3 46500 Tccd5 44000 Tccd7 47750 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43250 Tccd5 42750 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_v.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.514478
+
+time copy: 0.000162
+csr_to_format
+time convert to format: 0.384312
+time warm up 0.101296
+0x15e4dc20
+0x15e67690
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.24717, max_ae=5.12, mse=1.26551, mape=4.82753, smape=4.82753, lnQ_error=-0.789921, mlare=-0.0768651, gmare=0.83779
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_v.smtx,24,512,512,512,163812,0.004061,6.622779,0.202351,512,512,26266
+Temps: Tctl 48750 Tdie 48750 Tccd1 44750 Tccd3 46750 Tccd5 43750 Tccd7 47750 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43250 Tccd5 42750 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.702198
+
+time copy: 0.000288
+csr_to_format
+time convert to format: 0.409289
+time warm up 0.097276
+0x32b2e570
+0x32b47fe0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248924, max_ae=5.12, mse=1.27449, mape=4.8618, smape=4.8618, lnQ_error=-0.795528, mlare=-0.0757878, gmare=0.83987
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx,24,512,512,512,138452,0.003713,7.243077,0.202351,512,512,26266
+Temps: Tctl 47500 Tdie 47500 Tccd1 43750 Tccd3 46750 Tccd5 43750 Tccd7 47250 Tctl 44750 Tdie 44750 Tccd1 45250 Tccd3 43500 Tccd5 42750 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_output_transform.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.590761
+
+time copy: 0.000247
+csr_to_format
+time convert to format: 0.386300
+time warm up 0.101777
+0x2e1a4870
+0x2e1be2e0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248534, max_ae=5.12, mse=1.2725, mape=4.85418, smape=4.85418, lnQ_error=-0.794282, mlare=-0.0760258, gmare=0.83941
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,140197,0.004068,6.611351,0.202351,512,512,26266
+Temps: Tctl 48375 Tdie 48375 Tccd1 44500 Tccd3 47500 Tccd5 44000 Tccd7 47500 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43250 Tccd5 43500 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_q.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.756554
+
+time copy: 0.000300
+csr_to_format
+time convert to format: 0.418899
+time warm up 0.097426
+0x21b282d0
+0x21b41d40
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.253018, max_ae=5.12, mse=1.29545, mape=4.94175, smape=4.94175, lnQ_error=-0.80861, mlare=-0.0733377, gmare=0.844622
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_q.smtx,24,512,512,512,139415,0.004103,6.555196,0.202351,512,512,26266
+Temps: Tctl 47750 Tdie 47750 Tccd1 44000 Tccd3 46750 Tccd5 44000 Tccd7 47500 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43500 Tccd5 42750 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_v.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.690587
+
+time copy: 0.000386
+csr_to_format
+time convert to format: 0.405222
+time warm up 0.097779
+0x168d300
+0x15b3900
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242686, max_ae=5.12, mse=1.24255, mape=4.73997, smape=4.73997, lnQ_error=-0.775593, mlare=-0.0796947, gmare=0.832349
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_v.smtx,24,512,512,512,130440,0.003812,7.055600,0.202351,512,512,26266
+Temps: Tctl 47625 Tdie 47625 Tccd1 44250 Tccd3 47250 Tccd5 43750 Tccd7 47500 Tctl 44750 Tdie 44750 Tccd1 45500 Tccd3 43250 Tccd5 43000 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv1.smtx
+max threads 24
+line:1
+rows: 2048
+time read: 2.036302
+
+time copy: 0.000629
+csr_to_format
+time convert to format: 0.680003
+time warm up 0.101233
+0x1744d7d0
+0x1805d320
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.245119, max_ae=5.12, mse=1.25501, mape=4.78748, smape=4.78748, lnQ_error=-0.783368, mlare=-0.0781455, gmare=0.835323
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv1.smtx,24,512,2048,512,615379,0.051083,8.411976,3.209385,2048,512,419636
+Temps: Tctl 49625 Tdie 49625 Tccd1 44500 Tccd3 47250 Tccd5 44750 Tccd7 48000 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43500 Tccd5 43500 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv2.smtx
+max threads 24
+line:1
+rows: 512
+time read: 2.002293
+
+time copy: 0.000550
+csr_to_format
+time convert to format: 0.386152
+time warm up 0.100770
+0x3784e10
+0x379e880
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248087, max_ae=5.12, mse=1.26594, mape=4.8618, smape=4.8618, lnQ_error=-0.795457, mlare=-0.0758014, gmare=0.839844
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv2.smtx,24,512,512,2048,552458,0.003847,6.992082,0.202351,512,512,26266
+Temps: Tctl 49625 Tdie 49625 Tccd1 44750 Tccd3 47500 Tccd5 45250 Tccd7 48250 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43750 Tccd5 42750 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.385863
+
+time copy: 0.000162
+csr_to_format
+time convert to format: 0.385999
+time warm up 0.101549
+0x1d313e00
+0x1d239dd0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248924, max_ae=5.12, mse=1.27449, mape=4.8618, smape=4.8618, lnQ_error=-0.795528, mlare=-0.0757878, gmare=0.83987
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx,24,512,512,512,122396,0.004147,6.485177,0.202351,512,512,26266
+Temps: Tctl 49500 Tdie 49500 Tccd1 45250 Tccd3 47750 Tccd5 45000 Tccd7 50000 Tctl 44750 Tdie 44750 Tccd1 45000 Tccd3 43250 Tccd5 43500 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_output_transform.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.522429
+
+time copy: 0.000153
+csr_to_format
+time convert to format: 0.385061
+time warm up 0.101470
+0x3d6bba90
+0x3d6d5500
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.252823, max_ae=5.12, mse=1.29445, mape=4.93794, smape=4.93794, lnQ_error=-0.807987, mlare=-0.0734524, gmare=0.844399
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,163814,0.004130,6.512689,0.202351,512,512,26266
+Temps: Tctl 49875 Tdie 49875 Tccd1 44750 Tccd3 47750 Tccd5 44750 Tccd7 49000 Tctl 45000 Tdie 45000 Tccd1 45250 Tccd3 43500 Tccd5 43250 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_q.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.388364
+
+time copy: 0.000142
+csr_to_format
+time convert to format: 0.383790
+time warm up 0.101004
+0x2ba36e00
+0x2b95d400
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242686, max_ae=5.12, mse=1.24255, mape=4.73997, smape=4.73997, lnQ_error=-0.775593, mlare=-0.0796947, gmare=0.832349
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_q.smtx,24,512,512,512,119017,0.003831,7.020864,0.202351,512,512,26266
+Temps: Tctl 49750 Tdie 49750 Tccd1 45250 Tccd3 48250 Tccd5 45250 Tccd7 48500 Tctl 45000 Tdie 45000 Tccd1 45250 Tccd3 43500 Tccd5 43000 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_v.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.488395
+
+time copy: 0.000149
+csr_to_format
+time convert to format: 0.386513
+time warm up 0.101043
+0x1c703af0
+0x1c71d560
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.24756, max_ae=5.12, mse=1.26751, mape=4.83515, smape=4.83515, lnQ_error=-0.791167, mlare=-0.0766242, gmare=0.838254
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_v.smtx,24,512,512,512,156550,0.004032,6.671420,0.202351,512,512,26266
+Temps: Tctl 49875 Tdie 49875 Tccd1 45750 Tccd3 48000 Tccd5 45250 Tccd7 49000 Tctl 45000 Tdie 45000 Tccd1 45500 Tccd3 43750 Tccd5 42750 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.412585
+
+time copy: 0.000193
+csr_to_format
+time convert to format: 0.387220
+time warm up 0.100862
+0x230ab950
+0x22fd20e0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.242491, max_ae=5.12, mse=1.24156, mape=4.73616, smape=4.73616, lnQ_error=-0.77497, mlare=-0.0798203, gmare=0.832108
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx,24,512,512,512,130692,0.003987,6.746813,0.202351,512,512,26266
+Temps: Tctl 50000 Tdie 50000 Tccd1 45250 Tccd3 48250 Tccd5 45000 Tccd7 49000 Tctl 45000 Tdie 45000 Tccd1 45000 Tccd3 43750 Tccd5 43250 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_output_transform.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.450959
+
+time copy: 0.000151
+csr_to_format
+time convert to format: 0.389337
+time warm up 0.100775
+0x1ecd9d30
+0x1ecf37a0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.247365, max_ae=5.12, mse=1.26651, mape=4.83134, smape=4.83134, lnQ_error=-0.790544, mlare=-0.0767446, gmare=0.838022
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,144385,0.003727,7.216625,0.202351,512,512,26266
+Temps: Tctl 50000 Tdie 50000 Tccd1 45500 Tccd3 48500 Tccd5 45500 Tccd7 49000 Tctl 45000 Tdie 45000 Tccd1 45000 Tccd3 43750 Tccd5 43000 Tccd7 44250 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_q.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.424342
+
+time copy: 0.000178
+csr_to_format
+time convert to format: 0.388660
+time warm up 0.101310
+0xe4751f0
+0xe48ec60
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248144, max_ae=5.12, mse=1.2705, mape=4.84657, smape=4.84657, lnQ_error=-0.793036, mlare=-0.0762646, gmare=0.838949
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_q.smtx,24,512,512,512,131820,0.004108,6.546820,0.202351,512,512,26266
+Temps: Tctl 49875 Tdie 49875 Tccd1 45750 Tccd3 48250 Tccd5 45250 Tccd7 49500 Tctl 45000 Tdie 45000 Tccd1 45500 Tccd3 43500 Tccd5 42750 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_v.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.414590
+
+time copy: 0.000168
+csr_to_format
+time convert to format: 0.387641
+time warm up 0.101228
+0x3e722ff0
+0x3e73ca60
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248729, max_ae=5.12, mse=1.27349, mape=4.85799, smape=4.85799, lnQ_error=-0.794905, mlare=-0.0759067, gmare=0.83964
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_v.smtx,24,512,512,512,133155,0.004067,6.613790,0.202351,512,512,26266
+Temps: Tctl 50125 Tdie 50125 Tccd1 45500 Tccd3 48250 Tccd5 45250 Tccd7 49500 Tctl 45000 Tdie 45000 Tccd1 45000 Tccd3 43250 Tccd5 43250 Tccd7 43750 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv1.smtx
+max threads 24
+line:1
+rows: 2048
+time read: 1.856151
+
+time copy: 0.000475
+csr_to_format
+time convert to format: 0.685312
+time warm up 0.100871
+0x271bed50
+0x27dcd470
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.246547, max_ae=5.12, mse=1.26232, mape=4.81536, smape=4.81536, lnQ_error=-0.78793, mlare=-0.0772517, gmare=0.837044
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv1.smtx,24,512,2048,512,629035,0.050607,8.491060,3.209385,2048,512,419636
+Temps: Tctl 50875 Tdie 50875 Tccd1 46000 Tccd3 48500 Tccd5 45500 Tccd7 50000 Tctl 45000 Tdie 45000 Tccd1 45500 Tccd3 44000 Tccd5 43000 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv2.smtx
+max threads 24
+line:1
+rows: 512
+time read: 2.730139
+
+time copy: 0.000808
+csr_to_format
+time convert to format: 0.417609
+time warm up 0.097393
+0x2e0452f0
+0x2e05ed60
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=nan, max_ae=5.12, mse=-nan, mape=nan, smape=nan, lnQ_error=-0.768649, mlare=-0.0811069, gmare=0.829647
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv2.smtx,24,512,512,2048,550086,0.003789,7.097960,0.202351,512,512,26266
+Temps: Tctl 49250 Tdie 49250 Tccd1 46750 Tccd3 48250 Tccd5 45500 Tccd7 49000 Tctl 45250 Tdie 45250 Tccd1 45250 Tccd3 43750 Tccd5 43250 Tccd7 44250 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.600073
+
+time copy: 0.000312
+csr_to_format
+time convert to format: 0.394181
+time warm up 0.099920
+0x4b1da50
+0x4a43a50
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.247365, max_ae=5.12, mse=1.26651, mape=4.83134, smape=4.83134, lnQ_error=-0.790544, mlare=-0.0767446, gmare=0.838022
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx,24,512,512,512,129969,0.004193,6.414541,0.202351,512,512,26266
+Temps: Tctl 49625 Tdie 49625 Tccd1 45750 Tccd3 48750 Tccd5 45500 Tccd7 48750 Tctl 45250 Tdie 45250 Tccd1 45500 Tccd3 43500 Tccd5 43250 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_output_transform.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.525978
+
+time copy: 0.000152
+csr_to_format
+time convert to format: 0.386616
+time warm up 0.100766
+0x37cfe6a0
+0x37d18110
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248339, max_ae=5.12, mse=1.2715, mape=4.85038, smape=4.85038, lnQ_error=-0.793659, mlare=-0.0761451, gmare=0.83918
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,164324,0.003772,7.130890,0.202351,512,512,26266
+Temps: Tctl 50375 Tdie 50375 Tccd1 45500 Tccd3 48250 Tccd5 45500 Tccd7 49250 Tctl 45250 Tdie 45250 Tccd1 45500 Tccd3 43500 Tccd5 42750 Tccd7 44250 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_q.smtx
+terminate called after throwing an instance of 'taco::TacoException'
+  what():  Error at /various/itasou/taco/src/codegen/module.cpp:156 in compile:
+ Compilation command failed:
+cc -O3 -ffast-math -std=c99 -shared -fPIC -fopenmp /tmp/taco_tmp_nXrYxI/x19ni901ycx6.c  -o /tmp/taco_tmp_nXrYxI/x19ni901ycx6.so -lm
+returned 2
+Temps: Tctl 49750 Tdie 49750 Tccd1 45250 Tccd3 48250 Tccd5 45250 Tccd7 49250 Tctl 45250 Tdie 45250 Tccd1 45000 Tccd3 43500 Tccd5 43500 Tccd7 43500 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_v.smtx
+max threads 24
+line:1
+rows: 512
+time read: 0.639416
+
+time copy: 0.000282
+csr_to_format
+time convert to format: 0.389061
+time warm up 0.100426
+0x1dc75b50
+0x1dc8f5c0
+number of loops = 1
+before acccuracy
+Test failed! (1)
+errors spmv: mae=0.248924, max_ae=5.12, mse=1.27449, mape=4.8618, smape=4.8618, lnQ_error=-0.795528, mlare=-0.0757878, gmare=0.83987
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_v.smtx,24,512,512,512,157607,0.004056,6.632071,0.202351,512,512,26266
+Temps: Tctl 50500 Tdie 50500 Tccd1 46000 Tccd3 48500 Tccd5 45500 Tccd7 49500 Tctl 45250 Tdie 45250 Tccd1 45000 Tccd3 43500 Tccd5 43250 Tccd7 44000 
+File: /various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_k.smtx

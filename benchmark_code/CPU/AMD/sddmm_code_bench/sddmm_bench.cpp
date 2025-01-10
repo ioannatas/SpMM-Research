@@ -102,6 +102,7 @@ reference_to_double(void * A, long i)
 void
 CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, INT_T csr_k, __attribute__((unused)) INT_T csr_nnz, INT_T n, double * x_ref, double * z_ref,ValueType * y)
 {
+	// printf("accuracy\n");
 	__attribute__((unused)) ReferenceType epsilon_relaxed = 1e-4;
 	#if DOUBLE == 0
 		ReferenceType epsilon = 1e-7;
@@ -113,32 +114,38 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 	ReferenceType * y_test = (typeof(y_test)) malloc(Mask->nnz * sizeof(*y_test));
 	#pragma omp parallel
 	{
-		ReferenceType sum;
+		ValueType sum;
 		long i, j;
 		#pragma omp for
 		for(i=0;i<Mask->nnz;i++)
 		{
 			y_gold[i] = 0;
 			y_test[i] = y[i];
+			// printf(" %f ",y[i]);
 		}
-		long line=0;
+		// printf("initiation %ld %ld\n", Mask->m, Mask->nnz);
+		long nnz=0;
 		#pragma omp for
 		for (i = 0; i < Mask->m; i++) {
-			for (j = Mask->csr_ia[i]; i < Mask->csr_ia[i+1]; i++) {
-				ReferenceType val, tmp, compensation;
+			// printf("%ld ", Mask->csr_ia[i]);
+			for (j = Mask->csr_ia[i]; j < Mask->csr_ia[i+1]; j++) {
+				ValueType val, tmp, compensation;
 				compensation = 0;
-				sum = 0;
+				sum = 0.0f;
 				for (long k = 0; k < n; k++) {
-					val = x_ref[line*n+k] * z_ref[csr_m*k] - compensation;
+					val = x_ref[i*n+k] * z_ref[csr_m*k+csr_ja[j]] - compensation;
 					tmp = sum + val;
 					compensation = (tmp - sum) - val;
-					sum += tmp;    
+					sum = tmp;  
 				}
-				y_gold[i * n + j] = sum;
+				
+				y_gold[nnz] = sum;
+				nnz++;
 			}
-			line++;
+			// line++;
         }
 	}
+	// printf("end\n");
 
 	ReferenceType maxDiff = 0, diff;
 	// int cnt=0;
@@ -146,10 +153,13 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 	{
 		diff = Abs(y_gold[i] - y_test[i]);
 		// maxDiff = Max(maxDiff, diff);
+		// printf(" %f", y_gold[i]); 
 		if (y_gold[i] > epsilon)
-		{
+		{ 
 			diff = diff / abs(y_gold[i]);
 			maxDiff = Max(maxDiff, diff);
+			// std::cout << y_gold[i] << y_test[i];
+			// printf("error: i=%ld %f %f \n", i, y_gold[i], y_test[i]); 
 		}
 		// if (i<100) 
 		// 	printf("error: i=%ld/%d , a=%.10g f=%.10g\n", i, csr_m-1, (double) y_gold[i], (double) y_test[i]);
@@ -297,7 +307,9 @@ compute(char * matrix_name,
 		time_warm_up = time_it(1,
 			MF->sddmm(y);
 		);
-
+		
+		
+	
 		// /* Calculate number of loops so that the total running time is at least 1 second for stability reasons
 		// (some cpus show frequency inconsistencies when running times are too small). */
 		// long num_calc_loops_runs_1 = 5;
@@ -348,7 +360,9 @@ compute(char * matrix_name,
 			time += time_it(1,
 				MF->sddmm(y);
 			);
-
+		// 	for (int i=0;i<Mask->nnz;i++)
+		// 	printf("%lf ",y[i]);
+		// printf("sddmm \n");
 			rapl_read_end(regs, regs_n);
 
 			num_loops++;
@@ -452,7 +466,7 @@ compute(char * matrix_name,
 		#endif
 		buf[i] = '\0';
 		fprintf(stderr, "%s\n", buf);
-
+		printf("before acccuracy\n");
 		CheckAccuracy(Mask, csr_ia, csr_ja, csr_a_ref, csr_m, csr_k, csr_nnz, n, x_ref, z_ref, y);
 	}
 	else
@@ -564,8 +578,10 @@ main(int argc, char **argv)
 	INT_T n;
 	INT_T num_cols = atoi(getenv("NUM_COLS"));
 	INT_T band_size = atoi(getenv("BAND_SIZE"));
-	double sparsity=0.8;
+	// double sparsity=0.8;
 	char * sparse_attention_type = getenv("SPARSE_ATTENTION_TYPE");
+	double sparsity = atof(getenv("SPARSITY"));
+	printf("sparsity: %lf\n", sparsity);
 
 	struct Matrix_Format * MF;   // Real matrices.
 	csr_matrix * AM = NULL;
@@ -648,7 +664,6 @@ child_proc_label:
 		time = time_it(1,
 			if (use_dlcm_matrices)
 			{
-						printf("hi\n");
 				long expand_symmetry = 1;
 				long pattern_dummy_vals = 1;
 				SMTX = smtx_read(file_in, expand_symmetry, pattern_dummy_vals);
@@ -817,7 +832,7 @@ child_proc_label:
 		free(mtx_rowind);
 		free(mtx_colind);
 		free(mtx_val);
-		// printf("hey\n");
+		
 	}
 	else
 	{
@@ -883,16 +898,15 @@ child_proc_label:
 		#pragma omp parallel for
 		for(int i=0;i<csr_m * n;++i)
 		{
-			x_ref[i] = 1.0;
+			x_ref[i] = 0.1;
 			x[i] = x_ref[i];
-			z_ref[i] = 1.0;
+			z_ref[i] = 0.1;
 			z[i] = z_ref[i];
 		}
 		y = (typeof(y)) aligned_alloc(64, mask->nnz * sizeof(sizeof(*y)));
 		#pragma omp parallel for
 		for(long i=0;i<mask->nnz;i++)
 			y[i] = 0.0;
-
 		#if 0
 			_Pragma("omp parallel")
 			{
@@ -980,6 +994,14 @@ child_proc_label:
 			}
 			else
 			{
+			// for (long i = 0; i < mask->m; ++i) {
+			// 	for (long j = mask->csr_ia[i]; j < mask->csr_ia[i+1]; ++j) {
+			// 		// if (j>csr->m)
+			// 			// printf("%ld \n", j);
+			// 		// csr->Mask.insert({i,col_ind[j]}, values[j]);
+			// 		printf("%ld ", mask->csr_ja[j]);
+			// 	}
+			// }
 				MF = csr_to_format(mask->csr_ia, mask->csr_ja, mask->csr_a, mask->m, mask->nnz, n, x, z);
 			}
 		);
@@ -1017,7 +1039,9 @@ child_proc_label:
 	free_csr_matrix(AM);
 	free(x);
 	free(y);
+	free(z);
 	delete MF;
+	delete mask;
 	return 0;
 }
 

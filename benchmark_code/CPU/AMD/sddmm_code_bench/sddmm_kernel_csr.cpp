@@ -156,7 +156,7 @@ struct CSRArrays : Matrix_Format
 		#endif
 	}
 
-	void spmv(ValueType * x, ValueType * y);
+	void sddmm(ValueType * x, ValueType * y);
 	void statistics_start();
 	int statistics_print_data(__attribute__((unused)) char * buf, __attribute__((unused)) long buf_n);
 };
@@ -171,7 +171,7 @@ void compute_csr_vector_perfect_nnz_balance(CSRArrays * restrict csr, ValueType 
 
 
 void
-CSRArrays::spmv(ValueType * x, ValueType * y)
+CSRArrays::sddmm(ValueType * x, ValueType * y)
 {
 	num_loops++;
 	#if defined(CUSTOM_PREFETCH)

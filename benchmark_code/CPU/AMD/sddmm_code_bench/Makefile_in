@@ -161,9 +161,12 @@ LDFLAGS_MKL += -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -
 sddmm_mkl_gemm$(SUFFIX).exe: sddmm_kernel_mkl_gemm.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
 
+sddmm_taco_naive$(SUFFIX).exe: sddmm_taco_naive.cpp $(LIB_OBJ)
+	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
+
 CPPFLAGS_TACO = 
 CPPFLAGS_TACO += -std=c++11 -O3 -DNDEBUG -DTACO -I'$(TACO_PATH)/include'
-CPPFLAGS_TACO += -Wno-deprecated-declarations -m64 -mavx2
+CPPFLAGS_TACO += -Wno-deprecated-declarations -m64 -mavx2 -fopenmp
 
 LDFLAGS_TACO = 
 LDFLAGS_TACO += -L'$(TACO_PATH)/build/lib'

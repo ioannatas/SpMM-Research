@@ -45,13 +45,16 @@ void
 CSRTensors::sddmm(ValueType * y)
 {
 	compute_csr(this, y);
+	// for (int i=0;i<this->nnz;i++)
+	// 		printf("%lf ",y[i]);
+	// 	printf("sddmm \n");
 }
 
 
 struct Matrix_Format *
 csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long nnz , long n, ValueType *x, ValueType *z)
 {
-	
+	printf("csr_to_format\n");
 	struct CSRTensors * csr = new CSRTensors(m, n, nnz);
 	csr->x=csr->x;
 	csr->format_name = (char *) "TACO_CSR";
@@ -63,14 +66,33 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
     }
     csr->x.pack();
 	csr->z.pack();
-	long line=0;
 	for (long i = 0; i < csr->m; ++i) {
-		for (long j = row_ptr[i]; i < row_ptr[i+1]; ++i) {
-        	csr->Mask.insert({line,col_ind[j]}, values[j]);
+		for (INT_T j = row_ptr[i]; j < row_ptr[i+1]; ++j) {
+			// if (j>csr->m)
+				// printf("%ld \n", j);
+        	csr->Mask.insert({i,col_ind[j]}, values[j]);
+			// printf("%ld ", col_ind[j]);
 		}
-		line++;
     }
-    csr->Mask.pack();
+	
+	
+	csr->Mask.pack();
+	// const auto& values_1 = csr->Mask.getStorage().getValues();
+	// const ValueType* data_1 = static_cast<const ValueType*>(values_1.getData());
+	// long zeros=0;
+	
+	// for (long i = 0; i < csr->m; ++i) {
+	// 	for (long j = 0; j < csr->m; ++j) {
+	// 		if (data_1[zeros] != 0.0){
+	// 			if (data_1[zeros] !=values[zeros]){
+	// 				// printf("error %ld %ld %f %f\n", i, j, data_1[zeros], values[zeros]);
+	// 			}
+	// 			zeros++;
+	// 		}
+	// 	}
+
+	// }
+    // printf("ZEROS %ld %ld %ld\n", zeros, csr->nnz, row_ptr[csr->m]);
 	csr->row_ptr=row_ptr;
 	csr->col_ind=col_ind;
 	return csr;
@@ -83,10 +105,19 @@ compute_csr(CSRTensors * csr, ValueType * y)
 {
 	Tensor<ValueType> A(csr->Mask.getDimensions(), Format({Sparse, Sparse}));
 	IndexVar i, j, k;
+	// ParallelSchedule *sched;
+	// int *chunk_size;
+	// taco_get_parallel_schedule(sched, chunk_size);
+	int threads = atoi(getenv("cores"));
+	taco_set_num_threads(threads);
+	int threads_used = taco_get_num_threads();
+	// printf("threads %d %d\n", threads_used, threads);
   	A(i,j) = csr->Mask(i,j) * csr->x(i,k) * csr->z(k,j);
 	A.compile();
 	A.assemble();
   	A.compute();
+	std::cout << A.getStorage().getValues().getData() << std::endl;
+	// printf("compute\n");
 	// long nnz=0;
 	// for (long m = 0; m < csr->m; ++i) {
 	// 	for (long n = csr->row_ptr[m]; n < csr->row_ptr[m+1]; ++n) {
@@ -94,12 +125,23 @@ compute_csr(CSRTensors * csr, ValueType * y)
 	// 		nnz++;
 	// 	}
     // }
-	// const auto& storage = A.getStorage();
-	// const auto& values = A.getStorage().getValues();
+	const auto& storage = A.getStorage();
+	const auto& values = A.getStorage().getValues();
+	const ValueType* data = static_cast<const ValueType*>(values.getData());
+	// const auto& values_1 = csr->z.getStorage().getValues();
+	// const ValueType* data_1 = static_cast<const ValueType*>(values_1.getData());
+	// long nnz=0;
+	// #pragma omp parallel for
     // for (long j = 0; j < csr->nnz ; ++j) {
-    //     y[j] =*(values[j]); // Extract values directly from the tensor storage
+	// 	if (data[j] != 0.0){
+	// 		y[j] =data[j]; 
+	// 		// nnz++;
+	// 		// std::cout << y[j] << std::endl;
+	// 		// printf("%f ", data[j]);
+	// 	}
 	// 	// y[j] = static_cast<ValueType>(values[j].operator ValueType());
     // }
+	// printf("nnz %ld %ld\n", nnz, csr->nnz);
 
 }
 

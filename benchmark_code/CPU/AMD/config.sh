@@ -48,14 +48,16 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=1
+    ['output_to_files']=0
     # ['output_to_files']=1
 
-    ['NUM_COLS']=512
+    ['NUM_COLS']=128
 
-    ['BAND_SIZE']=3
+    ['BAND_SIZE']=100
 
-    ['SPARSE_ATTENTION_TYPE']='band_and_decay'
+    ['SPARSITY']=0.95
+
+    ['SPARSE_ATTENTION_TYPE']='band_and_random'
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -92,14 +94,14 @@ conf_vars=(
     # ['cores']=64
     # ['cores']=48
     # ['cores']=32
-    # ['cores']=24
+    ['cores']=24
     # ['cores']=16
     # ['cores']=12
     # ['cores']=8
     # ['cores']=6
     # ['cores']=4
     # ['cores']=2
-    ['cores']=1
+    # ['cores']=1
     # ['cores']='1 2 4 8 16 24 48'
     # ['cores']='24 48'
     # ['cores']='1 2 4 8'
@@ -407,7 +409,8 @@ progs=(
 
     ##SDDMM kernels##
 
-    ['sddmm_taco_f']="${script_dir}/sddmm_code_bench/sddmm_taco_f.exe"    
+    # ['sddmm_taco_f']="${script_dir}/sddmm_code_bench/sddmm_taco_f.exe"   
+    ['sddmm_taco_naive_f']="${script_dir}/sddmm_code_bench/sddmm_taco_naive_f.exe"  
 
 )
 

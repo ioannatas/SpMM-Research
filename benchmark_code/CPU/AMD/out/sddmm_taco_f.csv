@@ -1,7 +1,36 @@
 matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time,gflops,csr_mem_footprint,m,n,nnz
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,1,512,512,512,128761,0.001307,20.331487,0.200008,512,512,25959
-./run.sh: line 353: 2383927 Aborted                 "$prog" "${prog_args[@]}" 2> 'tmp.err'
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,1,512,512,512,132877,0.001317,20.178385,0.200008,512,512,25959
-corrupted double-linked list
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,1,512,512,512,142349,0.000659,40.348531,0.200008,512,512,25959
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,1,512,512,512,122501,0.000651,40.863284,0.200008,512,512,25959
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,24,512,512,512,128761,0.003704,7.261851,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,132877,0.004093,6.570810,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx,24,512,512,512,142349,0.003765,7.143997,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx,24,512,512,512,122501,0.004100,6.559865,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv1.smtx,24,512,2048,512,657561,0.051224,8.388739,3.209385,2048,512,419636
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_ffn_conv2.smtx,24,512,512,2048,587093,0.003841,7.003005,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx,24,512,512,512,158760,0.004056,6.631468,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,161312,0.004043,6.652791,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_q.smtx,24,512,512,512,154701,0.004034,6.667401,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_v.smtx,24,512,512,512,163812,0.004061,6.622779,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx,24,512,512,512,138452,0.003713,7.243077,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,140197,0.004068,6.611351,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_q.smtx,24,512,512,512,139415,0.004103,6.555196,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_v.smtx,24,512,512,512,130440,0.003812,7.055600,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv1.smtx,24,512,2048,512,615379,0.051083,8.411976,3.209385,2048,512,419636
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_ffn_conv2.smtx,24,512,512,2048,552458,0.003847,6.992082,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx,24,512,512,512,122396,0.004147,6.485177,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,163814,0.004130,6.512689,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_q.smtx,24,512,512,512,119017,0.003831,7.020864,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_v.smtx,24,512,512,512,156550,0.004032,6.671420,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx,24,512,512,512,130692,0.003987,6.746813,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_output_transform.smtx,24,512,512,512,144385,0.003727,7.216625,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_q.smtx,24,512,512,512,131820,0.004108,6.546820,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_v.smtx,24,512,512,512,133155,0.004067,6.613790,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv1.smtx,24,512,2048,512,629035,0.050607,8.491060,3.209385,2048,512,419636
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_ffn_conv2.smtx,24,512,512,2048,550086,0.003789,7.097960,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx,24,512,512,512,129969,0.004193,6.414541,0.202351,512,512,26266
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_output_transform.smtx,24,512,512,512,164324,0.003772,7.130890,0.202351,512,512,26266
+./run.sh: line 353: 3490742 Aborted                 "$prog" "${prog_args[@]}" 2> 'tmp.err'
+terminate called after throwing an instance of 'taco::TacoException'
+  what():  Error at /various/itasou/taco/src/codegen/module.cpp:156 in compile:
+ Compilation command failed:
+cc -O3 -ffast-math -std=c99 -shared -fPIC -fopenmp /tmp/taco_tmp_nXrYxI/x19ni901ycx6.c  -o /tmp/taco_tmp_nXrYxI/x19ni901ycx6.so -lm
+returned 2
+/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_v.smtx,24,512,512,512,157607,0.004056,6.632071,0.202351,512,512,26266
