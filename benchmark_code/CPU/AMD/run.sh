@@ -491,19 +491,56 @@ matrices=(
 )
 
 if ((USE_DLCM_MATRICES)); then
+    prog_args_k=()
+    prog_args_q=()
+    prog_args_v=()
     prog_args=()
     tmp=()
-
-    for f in "${dlmc_matrices_files[@]}"; do
-        # IFS=$'\n' read -d '' -a tmp < "$f"
-        mapfile -t tmp < "$f"
-        for item in "${tmp[@]}"; do
-            prog_args+=("${path_dlmc}/${item}")
+    if ((PIPELINE)); then
+        for f in "${dlmc_matrices_files_k[@]}"; do
+            # IFS=$'\n' read -d '' -a tmp < "$f"
+            mapfile -t tmp < "$f"
+            for item in "${tmp[@]}"; do
+                prog_args_k+=("${path_dlmc}/${item}")
+                # echo $item
+            done
+            # prog_args+=("${path_dlmc}/${tmp[@]}")
+            # item="${path_dlmc}/${tmp[@]}"
+            # echo $item
         done
-        # prog_args+=("${path_dlmc}/${tmp[@]}")
-        # item="${path_dlmc}/${tmp[@]}"
-        # echo $item
-    done
+        for f in "${dlmc_matrices_files_q[@]}"; do
+            # IFS=$'\n' read -d '' -a tmp < "$f"
+            mapfile -t tmp < "$f"
+            for item in "${tmp[@]}"; do
+                prog_args_q+=("${path_dlmc}/${item}")
+            done
+            # prog_args+=("${path_dlmc}/${tmp[@]}")
+            # item="${path_dlmc}/${tmp[@]}"
+            # echo $item
+        done
+        for f in "${dlmc_matrices_files_v[@]}"; do
+            # IFS=$'\n' read -d '' -a tmp < "$f"
+            mapfile -t tmp < "$f"
+            for item in "${tmp[@]}"; do
+                prog_args_v+=("${path_dlmc}/${item}")
+            done
+            # prog_args+=("${path_dlmc}/${tmp[@]}")
+            # item="${path_dlmc}/${tmp[@]}"
+            # echo $item
+        done
+
+    else
+        for f in "${dlmc_matrices_files[@]}"; do
+            # IFS=$'\n' read -d '' -a tmp < "$f"
+            mapfile -t tmp < "$f"
+            for item in "${tmp[@]}"; do
+                prog_args+=("${path_dlmc}/${item}")
+            done
+            # prog_args+=("${path_dlmc}/${tmp[@]}")
+            # item="${path_dlmc}/${tmp[@]}"
+            # echo $item
+        done
+    fi
 elif ((!USE_ARTIFICIAL_MATRICES)); then
     prog_args=("${matrices[@]}")
 else
@@ -568,7 +605,7 @@ for format_name in "${!progs[@]}"; do
     # fi
 
     for ((i=0;i<rep;i++)); do
-        for a in "${prog_args[@]}"
+        for ((a=0; a<${#prog_args_k[@]}; a++));
         do
 
             rep_in=1
@@ -583,8 +620,8 @@ for format_name in "${!progs[@]}"; do
                 done
                 echo >&1
 
-                echo "File: $a"
-                bench "$prog" $a
+                echo "File: "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}""
+                bench "$prog" "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}"
 
             done
         done

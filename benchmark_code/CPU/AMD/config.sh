@@ -48,16 +48,18 @@ conf_vars=(
     ['force_retry_on_error']=0
     # ['force_retry_on_error']=1
 
-    ['output_to_files']=0
+    ['output_to_files']=1
     # ['output_to_files']=1
 
     ['NUM_COLS']=128
 
-    ['BAND_SIZE']=100
+    ['BAND_SIZE']=3
 
     ['SPARSITY']=0.95
 
     ['SPARSE_ATTENTION_TYPE']='band_and_random'
+
+    ['PIPELINE']=1
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -243,6 +245,21 @@ dlmc_matrices_files=(
     # "$path_dlcm/transformer_matrices_small.txt"
     
 )
+dlmc_matrices_files_k=(
+    "$path_dlmc/transformer_matrices_k.txt"
+    # "$path_dlcm/transformer_matrices_small.txt"
+    
+)
+dlmc_matrices_files_q=(
+    "$path_dlmc/transformer_matrices_q.txt"
+    # "$path_dlcm/transformer_matrices_small.txt"
+    
+)
+dlmc_matrices_files_v=(
+    "$path_dlmc/transformer_matrices_v.txt"
+    # "$path_dlcm/transformer_matrices_small.txt"
+    
+)
 
 
 # Artificial twins.
@@ -410,7 +427,11 @@ progs=(
     ##SDDMM kernels##
 
     # ['sddmm_taco_f']="${script_dir}/sddmm_code_bench/sddmm_taco_f.exe"   
-    ['sddmm_taco_naive_f']="${script_dir}/sddmm_code_bench/sddmm_taco_naive_f.exe"  
+    # ['sddmm_taco_naive_f']="${script_dir}/sddmm_code_bench/sddmm_taco_naive_f.exe"  
+
+    ##pipeline kernels##
+
+    ['pipeline_taco_naive_mkl_csr_f']="${script_dir}/pipeline_code_bench/sddmm_taco_naive_f.exe"  
 
 )
 
