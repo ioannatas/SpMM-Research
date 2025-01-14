@@ -190,7 +190,7 @@ void
 CSRTensors::sddmm(ValueType * y)
 {
 	compute_csr(this, y);
-    printf("SDDMM\n");
+    // printf("SDDMM\n");
 }
 
 void
@@ -209,12 +209,16 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
 	#elif DOUBLE == 1
 		mkl_dcsrmm(&transa, &m, &n, &k, &alpha, matdescra, a, ja, ia,  &(ia[1]), &(x[0]), &n,  &beta, &(y[0]), &n);
 	#endif
-    printf("SPMM\n");
+    // printf("SPMM\n");
 
-    if (type=='K')
+    if (type=='K'){
 	    this->K->vals = (ValueType*)y;
-    else if (type=='Q')
+        printf("k\n");
+    }
+    else if (type=='Q'){
 	    this->Q->vals = (ValueType*)y;
+        printf("q\n");
+    }
 }
 
 

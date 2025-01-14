@@ -55,7 +55,7 @@ conf_vars=(
 
     ['BAND_SIZE']=3
 
-    ['SPARSITY']=0.95
+    ['SPARSITY']=0.9
 
     ['SPARSE_ATTENTION_TYPE']='band_and_random'
 

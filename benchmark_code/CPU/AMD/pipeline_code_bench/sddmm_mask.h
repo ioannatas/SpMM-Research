@@ -59,93 +59,99 @@ INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsit
         printf("error creating mask: %d %d", nnz, nonzero_elements);
     return mask;
 }
-// Generate a band and decaying sparsity mask
-// std::vector<std::vector<double>> band_and_decay(int length, INT_T & nnz, int band_size, double sparsity) {
-//     auto mask = create_matrix(length, length);
 
-//     // Calculate weights based on distance from diagonal
-//     std::vector<double> weights;
-//     std::vector<std::pair<int, int>> indices;
 
-//     for (int i = band_size; i < length; ++i) {
-//         for (int j = 0; j < i - band_size; ++j) {
-//             double weight = 1.0 / (i - j + 1e-5);
-//             weights.push_back(weight);
-//             indices.emplace_back(i, j);
-//         }
-//     }
-
-//     // Normalize weights
-//     double weight_sum = 0.0;
-//     for (double w : weights) weight_sum += w;
-//     for (double& w : weights) w /= weight_sum;
-
-//     // Sample indices based on weights
-//     std::discrete_distribution<> dist(weights.begin(), weights.end());
-//     std::mt19937 gen(std::random_device{}());
-//     int nonzero = static_cast<int>(std::round(weights.size() * (1.0 - sparsity)));
-//     nnz=nonzero;
-//     printf("%lf\n", (1.0-sparsity));
-//     printf("mask band %ld %lf %ld %ld\n",std::round(weights.size()), sparsity, nonzero, nnz);
-
-//     for (int n = 0; n < nonzero; ++n) {
-//         int idx = dist(gen);
-//         auto [row, col] = indices[idx];
-//         mask[row][col] = 1.0;
-//     }
-
-//     // Add the dense diagonal band
-//     for (int i = 0; i < length; ++i) {
-//         for (int j = std::max(0, i - band_size + 1); j <= std::min(length - 1, i + band_size - 1); ++j) {
-//             mask[i][j] = 1.0;
-//         }
-//     }
-
-//     return mask;
-// }
-INT_T * band_and_decay(long length, INT_T & nnz, long band_size, double sparsity) {
+INT_T *band_and_decay(long length, INT_T &nnz, long band_size, double sparsity) {
     long total_elements = (length * (length + 1)) / 2; 
     long zero_elements = (long)(sparsity * total_elements); 
     long nonzero_elements = total_elements - zero_elements; 
+
+    // Allocate memory for the mask
     INT_T *mask;
-    mask= (typeof(mask)) aligned_alloc(64, length*length * sizeof(*mask));
+    mask = (typeof(mask))aligned_alloc(64, length * length * sizeof(*mask));
 
     // Initialize all elements to zero
     #pragma omp parallel for
     for (long i = 0; i < length; i++) {
         for (long j = 0; j < length; j++) {
-            mask[i*length+j] = 0;
+            mask[i * length + j] = 0;
         }
     }
 
     // Create the dense diagonal band
-    long band_zeros=0;
+    long band_zeros = 0;
     for (long i = 0; i < length; ++i) {
-        for (long j = std::max((long)0, i - band_size + 1); j <= std::min(length - 1, i + band_size - 1); ++j) {
-            mask[i*length+j] = 1.0;
+        for (long j = fmax(0, i - band_size + 1); j <= fmin(length - 1, i + band_size - 1); ++j) {
+            mask[i * length + j] = 1;
             band_zeros++;
         }
     }
-    // printf("here %ld %ld\n",length, band_zeros);
 
-    // Randomly place non-zero values in the lower triangular part
-    long placed_nonzeros = band_zeros;
-    long counter=0;
-    long period=10;
-    while (placed_nonzeros < nonzero_elements) {
-        if (counter % period == 0)            // Periodic reseeding.
-				srand(time(NULL)+counter);
-        printf("%d", counter);
-        long row = rand() % length;
-        long col = rand() % (row + 1); // Ensure col <= row for lower triangular part
-        if (mask[row*length+col] == 0) {
-            mask[row*length+col] = 1; // Random value between 1 and 10
-            placed_nonzeros++;
+    double *weights = (double *)malloc(total_elements * sizeof(double));
+
+
+    long idx = 0;
+    for (long i = 0; i < length; ++i) {
+        for (long j = 0; j <= i; ++j) { 
+            if (j < i - band_size || j > i + band_size) { 
+                double distance = i - j;
+                weights[idx] = 1.0 / (distance + 1e-5);
+            } else {
+                weights[idx] = 0.0;
+            }
+            idx++;
         }
     }
-    nnz=placed_nonzeros;
-    //  if (nnz!=nonzero_elements)
-        printf("error creating mask: %d %d", nnz, nonzero_elements);
+
+    // Normalize the weights
+    double weight_sum = 0.0;
+    for (long i = 0; i < total_elements; ++i) {
+        weight_sum += weights[i];
+    }
+    for (long i = 0; i < total_elements; ++i) {
+        weights[i] /= weight_sum;
+    }
+
+    // Place random non-zero values based on weights
+    long placed_nonzeros = band_zeros;
+    long counter = 0;
+    while (placed_nonzeros < nonzero_elements) {
+        if (counter % 10 == 0) { // Periodic reseeding
+            srand(time(NULL) + counter);
+        }
+
+        double r = (double)rand() / RAND_MAX;
+        double cumulative = 0.0;
+        long selected_index = -1;
+
+        for (long i = 0; i < total_elements; ++i) {
+            cumulative += weights[i];
+            if (r <= cumulative) {
+                selected_index = i;
+                break;
+            }
+        }
+
+        if (selected_index >= 0) {
+            long row = (long)sqrt(2 * selected_index); 
+            long col = selected_index - (row * (row + 1)) / 2;
+            if (mask[row * length + col] == 0) {
+                mask[row * length + col] = 1;
+                placed_nonzeros++;
+            }
+        }
+        counter++;
+    }
+
+    nnz = placed_nonzeros;
+
+    // Free weights array
+    free(weights);
+
+    if (nnz != nonzero_elements) {
+        printf("Error creating mask: %d %d\n", nnz, nonzero_elements);
+    }
+
     return mask;
 }
 

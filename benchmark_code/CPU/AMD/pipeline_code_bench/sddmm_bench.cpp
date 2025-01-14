@@ -99,7 +99,7 @@ reference_to_double(void * A, long i)
 
 void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, INT_T csr_k, INT_T csr_nnz, INT_T n, double * x_ref, ReferenceType * y_gold)
 {
-	#pragma omp parallel for
+	// #pragma omp parallel for
 		for (long i = 0; i < csr_m; i++) {
 
             for (long k = 0; k < n; k++) {
@@ -109,12 +109,13 @@ void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m
                 ReferenceType sum = 0;
                 
 				for (long j = csr_ia[i]; j < csr_ia[i + 1]; j++) {
-					val = csr_a_ref[j] * x_ref[k * csr_k + csr_ja[j]] - compensation;
+					val = csr_a_ref[j] * x_ref[k * n + csr_ja[j]]- compensation;
                     tmp = sum + val;
                     compensation = (tmp - sum) - val;
                     sum = tmp;
                 }
                 y_gold[i * n + k] = sum;
+				// printf("%lf ", (double)y_gold[i * n + k]);
             }
         }
 }
@@ -150,7 +151,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 	ReferenceType * y_final_test = (typeof(y_final_test)) malloc(Mask->m * n * sizeof(*y_final_test));
 	#pragma omp parallel
 	{
-		ValueType sum;
+		// ReferenceType sum;
 		long i, j;
 		#pragma omp for
 		for(i=0;i<Mask->nnz;i++)
@@ -183,35 +184,42 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 			y_final_gold[i] = 0;
 			y_final_test[i] = y_final[i];
 		}
-		// printf("initiation %ld %ld\n", Mask->m, Mask->nnz);
-		spmm_helper( csr_ia_k, csr_ja_k, csr_a_k, csr_m_k, csr_k_k, csr_nnz_k, n, x_ref, K_gold);
-		spmm_helper( csr_ia_q, csr_ja_q, csr_a_q, csr_m_q, csr_k_q, csr_nnz_q, n, x_ref, Q_gold);
-		spmm_helper( csr_ia_v, csr_ja_v, csr_a_v, csr_m_v, csr_k_v, csr_nnz_v, n, x_ref, V_gold);
-		long nnz=0;
-		#pragma omp for
-		for (i = 0; i < Mask->m; i++) {
-			// printf("%ld ", Mask->csr_ia[i]);
-			for (j = Mask->csr_ia[i]; j < Mask->csr_ia[i+1]; j++) {
-				ValueType val, tmp, compensation;
-				compensation = 0;
-				sum = 0.0f;
-				for (long k = 0; k < n; k++) {
-					val = Q_gold[i*n+k] * K_gold[i*n+k] - compensation;
-					tmp = sum + val;
-					compensation = (tmp - sum) - val;
-					sum = tmp;  
-				}
-				
-				y_gold[nnz] = sum;
-				y_gold_ref[nnz] = sum;
-				nnz++;
-			}
-			// line++;
-        }
-		spmm_helper(Mask->csr_ia, Mask->csr_ja, y_gold_ref, Mask->m, Mask->m, Mask->nnz, n, V_gold_ref, y_final_gold);
 	}
+	// printf("initiation %ld %ld\n", Mask->m, Mask->nnz);
+	spmm_helper( csr_ia_k, csr_ja_k, csr_a_k, csr_m_k, csr_k_k, csr_nnz_k, n, x_ref, K_gold);
+	spmm_helper( csr_ia_q, csr_ja_q, csr_a_q, csr_m_q, csr_k_q, csr_nnz_q, n, x_ref, Q_gold);
+	spmm_helper( csr_ia_v, csr_ja_v, csr_a_v, csr_m_v, csr_k_v, csr_nnz_v, n, x_ref, V_gold);
+	// #pragma omp parallel for
+	for (long i=0; i<Mask->m * n; i++){
+		V_gold_ref[i]=(double)V_gold[i];
+		// printf("%lf %lf \n",V[i], V_gold_ref[i]);
+	}
+	long nnz=0;
+	// #pragma omp parallel for
+	for (long i = 0; i < Mask->m; i++) {
+		// printf("%ld ", Mask->csr_ia[i]);
+		for (long j = Mask->csr_ia[i]; j < Mask->csr_ia[i+1]; j++) {
+			ReferenceType val, tmp, compensation;
+			compensation = 0;
+			ReferenceType sum = 0;
+			for (long k = 0; k < n; k++) {
+				val = Q_gold[i*n+k] * K_gold[i*n+k] - compensation;
+				tmp = sum + val;
+				compensation = (tmp - sum) - val;
+				sum = tmp;  
+			}
+			
+			y_gold[nnz] = sum;
+			y_gold_ref[nnz] = (double)sum;
+			nnz++;
+		}
+		// line++;
+	}
+	spmm_helper(Mask->csr_ia, Mask->csr_ja, y_gold_ref, Mask->m, Mask->m, Mask->nnz, n, V_gold_ref, y_final_gold);
 	
-	// printf("end\n");
+	for (long i=0;i<Mask->nnz; i++ )
+	// printf("%lf %lf \n",(double) y_final[i], (double)y_final_gold[i]);
+printf("%lf %lf \n",y[i], y_gold_ref[i]);
 
 	ReferenceType maxDiff = 0, diff;
 	// int cnt=0;
@@ -220,7 +228,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 		diff = Abs(y_final_gold[i] - y_final_test[i]);
 		// maxDiff = Max(maxDiff, diff);
 		// printf(" %f", y_gold[i]); 
-		if (K_gold[i] > epsilon)
+		if (y_final_gold[i] > epsilon)
 		{ 
 			diff = diff / abs(y_final_gold[i]);
 			maxDiff = Max(maxDiff, diff);
@@ -384,6 +392,9 @@ compute(char * matrix_name,
 		time_warm_up = time_it(1,
 			MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
 		);
+		// time_warm_up = time_it(1,
+		// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+		// );
 		
 		
 	
@@ -448,9 +459,9 @@ compute(char * matrix_name,
 				MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
 			);
 
-			// time_spmm_V += time_it(1,
-			// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-			// );
+			time_spmm_V += time_it(1,
+				MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+			);
 		// 	time_warm_up = time_it(1,
 		// 	MF->sddmm(y);
 		// );
@@ -460,9 +471,9 @@ compute(char * matrix_name,
 		// 	time_warm_up = time_it(1,
 		// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
 		// );
-			time_spmm_V += time_it(1,
-				MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-			);
+			// time_spmm_V += time_it(1,
+			// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+			// );
 			time_final_spmm += time_it(1,
 				MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
 			);
