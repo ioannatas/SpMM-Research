@@ -205,7 +205,15 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
     matdescra[3] = 'C';
 
 	#if DOUBLE == 0
-		mkl_scsrmm(&transa, &m, &n, &k, &alpha, matdescra, a, ja, ia,  &(ia[1]), &(x[0]), &n,  &beta, &(y[0]), &n);
+        // if (type=='T'){
+        //     printf("T\n");
+        //    mkl_dcsrmm(&transa, &m, &n, &k, &alpha, matdescra, a, ja, ia,  &(ia[1]), &(x[0]), &n,  &beta, &(y[0]), &n); /* code */
+        // }
+        // else{
+            mkl_scsrmm(&transa, &m, &n, &k, &alpha, matdescra, a, ja, ia,  &(ia[1]), &(x[0]), &n,  &beta, &(y[0]), &n);
+        // }
+        
+		
 	#elif DOUBLE == 1
 		mkl_dcsrmm(&transa, &m, &n, &k, &alpha, matdescra, a, ja, ia,  &(ia[1]), &(x[0]), &n,  &beta, &(y[0]), &n);
 	#endif

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <bits/stdc++.h>
 
+
 #include <unistd.h>
 
 #include "sddmm_bench_common.h"
@@ -109,7 +110,7 @@ void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m
                 ReferenceType sum = 0;
                 
 				for (long j = csr_ia[i]; j < csr_ia[i + 1]; j++) {
-					val = csr_a_ref[j] * x_ref[k * n + csr_ja[j]]- compensation;
+					val = csr_a_ref[j] * x_ref[k + csr_ja[j] * n]- compensation;
                     tmp = sum + val;
                     compensation = (tmp - sum) - val;
                     sum = tmp;
@@ -147,6 +148,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 	double * V_gold_ref = (typeof(V_gold_ref)) malloc(csr_m_v * n * sizeof(*V_gold_ref));
 	ReferenceType * V_gold = (typeof(V_gold)) malloc(csr_m_v * n * sizeof(*V_gold));
 	ReferenceType * V_test = (typeof(V_test)) malloc(csr_m_v * n * sizeof(*V_test));
+	double * y_final_gold_ref = (typeof(y_final_gold_ref)) malloc(Mask->m * n * sizeof(*y_final_gold_ref));
 	ReferenceType * y_final_gold = (typeof(y_final_gold)) malloc(Mask->m * n * sizeof(*y_final_gold));
 	ReferenceType * y_final_test = (typeof(y_final_test)) malloc(Mask->m * n * sizeof(*y_final_test));
 	#pragma omp parallel
@@ -215,11 +217,20 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 		}
 		// line++;
 	}
+	char transa = 'N';
+	double alpha = 1.0, beta = 0.0;
+	char matdescra[6];
+	matdescra[0] = 'G';
+    matdescra[1] = 'L';
+    matdescra[2] = 'N';
+    matdescra[3] = 'C';
+// MF->spmm('T', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y_gold_ref, V_gold_ref, y_final_gold_ref);
+		// mkl_dcsrmm(&transa, &Mask->m, &n, &Mask->m, &alpha, matdescra, y_gold_ref, Mask->csr_ja, Mask->csr_ia,  &(Mask->csr_ia[1]), &(V_gold_ref[0]), &n,  &beta, &(y_final_gold_ref[0]), &n);
 	spmm_helper(Mask->csr_ia, Mask->csr_ja, y_gold_ref, Mask->m, Mask->m, Mask->nnz, n, V_gold_ref, y_final_gold);
 	
 	for (long i=0;i<Mask->nnz; i++ )
 	// printf("%lf %lf \n",(double) y_final[i], (double)y_final_gold[i]);
-printf("%lf %lf \n",y[i], y_gold_ref[i]);
+printf("%lf %lf \n",y_final[i], (double)y_final_gold[i]);
 
 	ReferenceType maxDiff = 0, diff;
 	// int cnt=0;
