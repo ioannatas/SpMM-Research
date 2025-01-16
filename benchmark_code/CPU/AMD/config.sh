@@ -51,7 +51,7 @@ conf_vars=(
     ['output_to_files']=1
     # ['output_to_files']=1
 
-    ['NUM_COLS']=128
+    ['NUM_COLS']=512
 
     ['BAND_SIZE']=3
 
@@ -60,6 +60,8 @@ conf_vars=(
     ['SPARSE_ATTENTION_TYPE']='band_and_random'
 
     ['PIPELINE']=1
+
+    ['SPLIT']=1
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1

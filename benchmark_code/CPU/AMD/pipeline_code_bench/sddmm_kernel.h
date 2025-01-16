@@ -15,6 +15,7 @@ struct Matrix_Format
 	double mem_footprint;
 	double csr_mem_footprint;
 
+	// virtual void softmax(ValueType * input, int size) = 0;
 	virtual void spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y) = 0;
 	virtual void sddmm(ValueType * y) = 0;
 	virtual void statistics_start() = 0;

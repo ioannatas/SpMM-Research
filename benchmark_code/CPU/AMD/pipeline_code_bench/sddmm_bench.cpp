@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <sstream>
 #include <bits/stdc++.h>
+#include <mkl.h>
 
 
 #include <unistd.h>
@@ -98,6 +99,7 @@ reference_to_double(void * A, long i)
 	return (double) ((ReferenceType *) A)[i];
 }
 
+
 void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, INT_T csr_k, INT_T csr_nnz, INT_T n, double * x_ref, ReferenceType * y_gold)
 {
 	// #pragma omp parallel for
@@ -121,6 +123,25 @@ void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m
         }
 }
 
+void softmax(double *input, int size)
+{
+    double max_val = input[0];
+    double sum = 0.0;
+
+    for (int i = 1; i < size; i++) {
+        if (input[i] > max_val) {
+            max_val = input[i];
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        input[i] = exp(input[i] - max_val);
+        sum += input[i];
+    }
+    // #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        input[i] /= sum;
+    }
+}
 
 /** Simply return the max relative diff */
 void
@@ -217,20 +238,12 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia_k, INT_T * csr_ja_k, double * c
 		}
 		// line++;
 	}
-	char transa = 'N';
-	double alpha = 1.0, beta = 0.0;
-	char matdescra[6];
-	matdescra[0] = 'G';
-    matdescra[1] = 'L';
-    matdescra[2] = 'N';
-    matdescra[3] = 'C';
-// MF->spmm('T', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y_gold_ref, V_gold_ref, y_final_gold_ref);
-		// mkl_dcsrmm(&transa, &Mask->m, &n, &Mask->m, &alpha, matdescra, y_gold_ref, Mask->csr_ja, Mask->csr_ia,  &(Mask->csr_ia[1]), &(V_gold_ref[0]), &n,  &beta, &(y_final_gold_ref[0]), &n);
+	// softmax(y_gold_ref, Mask->nnz);
 	spmm_helper(Mask->csr_ia, Mask->csr_ja, y_gold_ref, Mask->m, Mask->m, Mask->nnz, n, V_gold_ref, y_final_gold);
 	
-	for (long i=0;i<Mask->nnz; i++ )
+	// for (long i=0;i<Mask->nnz; i++ )
 	// printf("%lf %lf \n",(double) y_final[i], (double)y_final_gold[i]);
-printf("%lf %lf \n",y_final[i], (double)y_final_gold[i]);
+// printf("%lf %lf \n",y_final[i], (double)y_final_gold[i]);
 
 	ReferenceType maxDiff = 0, diff;
 	// int cnt=0;
@@ -367,7 +380,7 @@ compute(char * matrix_name,
 	int use_processes = atoi(getenv("USE_PROCESSES"));
 	long num_loops;
 	double gflops, gflops_final_spmm,gflops_sddmm,gflops_spmm_K,gflops_spmm_Q, gflops_spmm_V;
-	double time, time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm, time_final_spmm, time_warm_up, time_after_warm_up;
+	double time, time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm, time_final_spmm, time_warm_up, time_after_warm_up, time_KQV;
 	long buf_n = 10000;
 	char buf[buf_n + 1];
 	long i, j;
@@ -403,9 +416,9 @@ compute(char * matrix_name,
 		time_warm_up = time_it(1,
 			MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
 		);
-		// time_warm_up = time_it(1,
-		// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-		// );
+		time_warm_up = time_it(1,
+			MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+		);
 		
 		
 	
@@ -456,39 +469,77 @@ compute(char * matrix_name,
 		time_spmm_Q=0.0;
 		time_spmm_V=0.0;
 		time_sddmm = 0.0;
+		time_KQV = 0.0;
 		num_loops = 0.0;
 		while (/*time < 1.0 ||*/ num_loops < min_num_loops)
 		{
 			rapl_read_start(regs, regs_n);
+			#if SPLIT==1
+				time_KQV += time_it(1,
+					#pragma omp parallel
+					{
+						#pragma omp single
+						{
+							#pragma omp task
+							{
+								mkl_set_num_threads_local(8);
+								time_spmm_K += time_it(1,
+									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
+								);
+							}
+							#pragma omp task
+							{
+								mkl_set_num_threads_local(8);
+								time_spmm_Q += time_it(1,
+									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
+								);
+							}
+							#pragma omp task
+							{
+								mkl_set_num_threads_local(8);
+								time_spmm_V += time_it(1,
+									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+								);
+							}
+						}
+					}
+				);
+				time_sddmm += time_it(1,
+					MF->sddmm(y);
+				);
 
-			time_spmm_K += time_it(1,
-				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
-			);
-			printf("%ld %ld %ld \n", csr_m_k, csr_k_k, csr_nnz_k);
+				time_final_spmm += time_it(1,
+					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+				);
+			#elif SPLIT==0
+				time_spmm_K += time_it(1,
+					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
+				);
+				printf("%ld %ld %ld \n", csr_m_k, csr_k_k, csr_nnz_k);
 
-			time_spmm_Q += time_it(1,
-				MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-			);
+				time_spmm_Q += time_it(1,
+					MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
+				);
 
-			time_spmm_V += time_it(1,
-				MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-			);
-		// 	time_warm_up = time_it(1,
-		// 	MF->sddmm(y);
-		// );
-			time_sddmm += time_it(1,
-				MF->sddmm(y);
-			);
-		// 	time_warm_up = time_it(1,
-		// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-		// );
-			// time_spmm_V += time_it(1,
-			// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				time_spmm_V += time_it(1,
+					MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				);
+			// 	time_warm_up = time_it(1,
+			// 	MF->sddmm(y);
 			// );
-			time_final_spmm += time_it(1,
-				MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-			);
-
+				time_sddmm += time_it(1,
+					MF->sddmm(y);
+				);
+			// 	time_warm_up = time_it(1,
+			// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+			// );
+				// time_spmm_V += time_it(1,
+				// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				// );
+				time_final_spmm += time_it(1,
+					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+				);
+			#endif
 		// 	for (int i=0;i<Mask->nnz;i++)
 		// 	printf("%lf ",y[i]);
 		// printf("sddmm \n");
@@ -496,7 +547,11 @@ compute(char * matrix_name,
 
 			num_loops++;
 		}
-		time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
+		#if SPLIT==1
+			time=time_KQV+time_sddmm+time_final_spmm;
+		#elif SPLIT==0
+			time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
+		#endif
 		num_loops_out = num_loops;
 		printf("number of loops = %ld\n", num_loops);
 
@@ -530,9 +585,9 @@ compute(char * matrix_name,
 			gflops_final_spmm = Mask->nnz * 2 * 1e-9 * n / time_final_spmm * num_loops ;
 			gflops = (csr_nnz_k+csr_nnz_q+csr_nnz_v+Mask->nnz+Mask->nnz) * 2 * 1e-9 * n / time * num_loops ;
 			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
-			printf("HERE %lf %lf %lf %lf %lf\n", gflops_spmm_K, gflops_spmm_Q, gflops_spmm_V, gflops_sddmm,gflops_final_spmm);
-			printf("HERE %lf %lf %lf %lf %lf\n", time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm,time_final_spmm);
-			printf("HERE %ld %ld %ld %ld\n", csr_nnz_k, csr_nnz_q, csr_nnz_v, Mask->nnz);
+			// printf("HERE %lf %lf %lf %lf %lf\n", gflops_spmm_K, gflops_spmm_Q, gflops_spmm_V, gflops_sddmm,gflops_final_spmm);
+			// printf("HERE %lf %lf %lf %lf %lf\n", time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm,time_final_spmm);
+			// printf("HERE %ld %ld %ld %ld\n", csr_nnz_k, csr_nnz_q, csr_nnz_v, Mask->nnz);
 		}
 	}
 

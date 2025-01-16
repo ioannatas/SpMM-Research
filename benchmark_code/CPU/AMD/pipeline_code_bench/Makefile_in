@@ -282,8 +282,8 @@ $(call Rule_Auto_Dependencies,obj/sddmm_kernel_csr_cv_stream_opt_compress$(SUFFI
 	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 
-$(call Rule_Auto_Dependencies,obj/sddmm_bench$(SUFFIX).o,sddmm_bench.cpp,$(CPPFLAGS))
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+$(call Rule_Auto_Dependencies,obj/sddmm_bench$(SUFFIX).o,sddmm_bench.cpp,$(CPPFLAGS),$(CPPFLAGS_MKL))
+	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -c $< -o $@
 
 $(call Rule_Auto_Dependencies,obj/artificial_matrix_generation$(SUFFIX).o,$(AMG_PATH)/artificial_matrix_generation.c,$(CFLAGS))
 	$(CC) $(CFLAGS) -c $< -o $@

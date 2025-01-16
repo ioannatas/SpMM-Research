@@ -46,6 +46,7 @@ typedef struct {
 #endif
 
 
+
 void cacheFlush(ValueType *X, ValueType *Y) {
   
   for(int i=0; i<20*1000000; i++) {
@@ -185,11 +186,31 @@ struct CSRTensors : Matrix_Format
 
 void compute_csr(CSRTensors * csr, ValueType * y);
 
+void softmax(ValueType *input, int size)
+{
+    ValueType max_val = input[0];
+    ValueType sum = 0.0;
+
+    for (int i = 1; i < size; i++) {
+        if (input[i] > max_val) {
+            max_val = input[i];
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        input[i] = exp(input[i] - max_val);
+        sum += input[i];
+    }
+    // #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        input[i] /= sum;
+    }
+}
 
 void
 CSRTensors::sddmm(ValueType * y)
 {
 	compute_csr(this, y);
+    // softmax(y,this->nnz);
     // printf("SDDMM\n");
 }
 
