@@ -1,2 +1,0 @@
-matrix_name,num_threads,input_columns,csr_m,csr_k,csr_nnz,time_spmm_K,time_spmm_Q,time_spmm_V,time_sddmm,time_final_spmm,time,gflops_spmm_K,gflops_spmm_Q,gflops_spmm_V,gflops_sddmm,gflops_final_spmm,gflops,csr_mem_footprint,m,n,nnz
-/various/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,24,512,512,512,128761,0.000526,0.000510,0.000418,0.000299,0.000157,0.001910,250.724525,285.629644,300.392787,44.903493,85.608199,225.061819,0.102154,512,512,13133

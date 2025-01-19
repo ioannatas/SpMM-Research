@@ -331,44 +331,44 @@ smtx_read(char * filename, long expand_symmetry, long pattern_dummy_vals)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-void
-smtx_write(struct DLCM_Matrix * MTX, char * filename)
-{
-	char * field = MTX->field;
-	char * str = NULL;
-	long str_len = 0;
-	if (!strcmp(field, "real"))
-	{
-		#undef  SUFFIX
-		#define SUFFIX  _f
-		str_len = smtx_to_string_par(MTX, &str);
-	}
-	// else if (!strcmp(field, "integer"))
-	// {
-	// 	#undef  SUFFIX
-	// 	#define SUFFIX  _i
-	// 	str_len = smtx_to_string_par(MTX, &str);
-	// }
-	// else if (!strcmp(field, "complex"))
-	// {
-	// 	#undef  SUFFIX
-	// 	#define SUFFIX  _cf
-	// 	str_len = smtx_to_string_par(MTX, &str);
-	// }
-	// else if (!strcmp(field, "pattern"))
-	// {
-	// 	#undef  SUFFIX
-	// 	#define SUFFIX  _pat
-	// 	str_len = smtx_to_string_par(MTX, &str);
-	// }
-	else
-		error("Error parsing MARKET matrix '%s': unrecognized field type: %s\n", MTX->filename, field);
-	int fd;
-	fd = safe_open(filename, O_WRONLY | O_TRUNC | O_CREAT);
-	safe_write(fd, str, str_len);
-	// write_string_to_file(filename, str, str_len);
+// void
+// smtx_write(struct DLCM_Matrix * MTX, char * filename)
+// {
+// 	char * field = MTX->field;
+// 	char * str = NULL;
+// 	long str_len = 0;
+// 	if (!strcmp(field, "real"))
+// 	{
+// 		#undef  SUFFIX
+// 		#define SUFFIX  _f
+// 		str_len = smtx_to_string_par(MTX, &str);
+// 	}
+// 	// else if (!strcmp(field, "integer"))
+// 	// {
+// 	// 	#undef  SUFFIX
+// 	// 	#define SUFFIX  _i
+// 	// 	str_len = smtx_to_string_par(MTX, &str);
+// 	// }
+// 	// else if (!strcmp(field, "complex"))
+// 	// {
+// 	// 	#undef  SUFFIX
+// 	// 	#define SUFFIX  _cf
+// 	// 	str_len = smtx_to_string_par(MTX, &str);
+// 	// }
+// 	// else if (!strcmp(field, "pattern"))
+// 	// {
+// 	// 	#undef  SUFFIX
+// 	// 	#define SUFFIX  _pat
+// 	// 	str_len = smtx_to_string_par(MTX, &str);
+// 	// }
+// 	else
+// 		error("Error parsing MARKET matrix '%s': unrecognized field type: %s\n", MTX->filename, field);
+// 	int fd;
+// 	fd = safe_open(filename, O_WRONLY | O_TRUNC | O_CREAT);
+// 	safe_write(fd, str, str_len);
+// 	// write_string_to_file(filename, str, str_len);
 
-}
+// }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

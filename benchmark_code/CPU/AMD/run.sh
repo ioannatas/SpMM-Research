@@ -29,11 +29,11 @@ fi
 # export MKL_ENABLE_INSTRUCTIONS=AVX512
 export MKL_VERBOSE=1
 
-export LD_LIBRARY_PATH="${AOCL_PATH}/lib:${MKL_PATH}/lib/intel64:${LD_LIBRARY_PATH}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${BOOST_LIB_PATH}:${LLVM_LIB_PATH}:${SPARSEX_LIB_PATH}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/gcc/gcc-12.2.0/gcc_bin/lib64"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/epyc1/cuda/cuda_11_4_4/lib64"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${TACO_PATH}/build/lib"
+# export LD_LIBRARY_PATH="${AOCL_PATH}/lib:${MKL_PATH}/lib/intel64:${LD_LIBRARY_PATH}"
+# export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${BOOST_LIB_PATH}:${LLVM_LIB_PATH}:${SPARSEX_LIB_PATH}"
+# export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/gcc/gcc-12.2.0/gcc_bin/lib64"
+# export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/various/dgal/epyc1/cuda/cuda_11_4_4/lib64"
+# export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${TACO_PATH}/build/lib"
 
 # Encourages idle threads to spin rather than sleep.
 # export OMP_WAIT_POLICY='active'
@@ -567,16 +567,20 @@ for format_name in "${!progs[@]}"; do
     prog="${progs["$format_name"]}"
 
     if ((output_to_files)); then
-        > out/"${format_name}.out"
-        exec 1>>out/"${format_name}.out"
-        > out/"${format_name}.csv"
-        exec 2>>out/"${format_name}.csv"
+        > out/"${format_name}_${cores}.out"
+        exec 1>>out/"${format_name}_${cores}.out"
+        > out/"${format_name}_${cores}.csv"
+        exec 2>>out/"${format_name}_${cores}.csv"
     fi
 
     echo "$config_str"
 
     echo "program: $prog"
-    echo "number of matrices: ${#prog_args[@]}"
+    if ((PIPELINE)); then
+        echo "number of matrices: ${#prog_args_k[@]}"
+    else
+        echo "number of matrices: ${#prog_args[@]}"
+    fi
 
     "$prog"
 
@@ -605,26 +609,57 @@ for format_name in "${!progs[@]}"; do
     # fi
 
     for ((i=0;i<rep;i++)); do
-        for ((a=0; a<${#prog_args_k[@]}; a++));
-        do
+        if ((PIPELINE)); then
+            for ((a=0; a<${#prog_args_k[@]}; a++));
+            do
 
-            rep_in=1
-            # rep_in=10
+                rep_in=1
+                # rep_in=10
 
-            for packet_vals in "${csrcv_num_packet_vals[@]}"; do
-                export CSRCV_NUM_PACKET_VALS="$packet_vals"
+                for packet_vals in "${csrcv_num_packet_vals[@]}"; do
+                    export CSRCV_NUM_PACKET_VALS="$packet_vals"
 
-                printf "Temps: " >&1
-                for ((k=0;k<${#temp_labels[@]};k++)); do
-                    printf "%s %s " $(cat ${temp_labels[k]}) $(cat ${temp_inputs[k]}) >&1
+                    printf "Temps: " >&1
+                    for ((k=0;k<${#temp_labels[@]};k++)); do
+                        printf "%s %s " $(cat ${temp_labels[k]}) $(cat ${temp_inputs[k]}) >&1
+                    done
+                    echo >&1
+                    if [[ $prog_args_k[a] =~ /0\.([^/]+)/ ]]; then
+                    result="${BASH_REMATCH[1]}"
+                    export SPARSITY="0.${result}"
+                    echo "sparsity: $result"
+                    else
+                        echo "No match found."
+                    fi
+                    echo "File: "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}""
+                    bench "$prog" "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}"
+
                 done
-                echo >&1
-
-                echo "File: "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}""
-                bench "$prog" "${prog_args_k[a]}" "${prog_args_q[a]}" "${prog_args_v[a]}"
-
             done
-        done
+        else
+            for ((a=0; a<${#prog_args[@]}; a++));
+            do
+
+                rep_in=1
+                # rep_in=10
+
+                for packet_vals in "${csrcv_num_packet_vals[@]}"; do
+                    export CSRCV_NUM_PACKET_VALS="$packet_vals"
+
+                    printf "Temps: " >&1
+                    for ((k=0;k<${#temp_labels[@]};k++)); do
+                        printf "%s %s " $(cat ${temp_labels[k]}) $(cat ${temp_inputs[k]}) >&1
+                    done
+                    echo >&1
+
+                    echo "File: "${prog_args[a]}""
+
+                    bench "$prog" "${prog_args[a]}"
+                    
+
+                done
+            done
+        fi
     done
 done
 

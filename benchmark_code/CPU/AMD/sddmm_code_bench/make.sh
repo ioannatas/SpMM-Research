@@ -18,13 +18,15 @@ export AMG_PATH=../../../../artificial-matrix-generator
 
 # export CC=gcc
 # export CC=/home/jim/Documents/gcc_versions/gcc_12/bin/gcc
-export CC=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/gcc
+# export CC=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/gcc
+export CC=/opt/software/gnu/gcc-14/gcc-14.2.0/bin/gcc
 # CC=clang
 # CC=xlc
 
 # export CPP=g++
 # export CPP=/home/jim/Documents/gcc_versions/gcc_12/bin/g++
-export CPP=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/g++
+# export CPP=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/g++
+export CPP=/opt/software/gnu/gcc-14/gcc-14.2.0/bin/g++
 # CPP=clang++
 # CPP=xlc++
 

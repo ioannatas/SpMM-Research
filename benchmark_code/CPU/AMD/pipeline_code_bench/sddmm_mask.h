@@ -14,7 +14,7 @@
 
 INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsity) {
 
-    long total_elements = (length * (length + 1)) / 2; 
+    long total_elements = (length * (length + 1));// / 2; 
     long zero_elements = (long)(sparsity * total_elements); 
     long nonzero_elements = total_elements - zero_elements; 
     INT_T *mask;
@@ -62,7 +62,7 @@ INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsit
 
 
 INT_T *band_and_decay(long length, INT_T &nnz, long band_size, double sparsity) {
-    long total_elements = (length * (length + 1)) / 2; 
+    long total_elements = (length * (length + 1)); // / 2; 
     long zero_elements = (long)(sparsity * total_elements); 
     long nonzero_elements = total_elements - zero_elements; 
 
@@ -133,8 +133,10 @@ INT_T *band_and_decay(long length, INT_T &nnz, long band_size, double sparsity) 
         }
 
         if (selected_index >= 0) {
-            long row = (long)sqrt(2 * selected_index); 
-            long col = selected_index - (row * (row + 1)) / 2;
+            long row = selected_index % length;
+            long col = selected_index % (row + 1);
+            // long row = (long)sqrt(2 * selected_index); 
+            // long col = selected_index - (row * (row + 1)) / 2;
             if (mask[row * length + col] == 0) {
                 mask[row * length + col] = 1;
                 placed_nonzeros++;

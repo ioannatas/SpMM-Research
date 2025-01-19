@@ -109,14 +109,14 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 	#elif DOUBLE == 1
 		ReferenceType epsilon = 1e-10;
 	#endif
-	long i;
+	// long i;
 	ReferenceType * y_gold = (typeof(y_gold)) malloc(Mask->nnz * sizeof(*y_gold));
 	ReferenceType * y_test = (typeof(y_test)) malloc(Mask->nnz * sizeof(*y_test));
-	#pragma omp parallel
-	{
+	// #pragma omp parallel
+	// {
 		ValueType sum;
 		long i, j;
-		#pragma omp for
+		#pragma omp parallel for
 		for(i=0;i<Mask->nnz;i++)
 		{
 			y_gold[i] = 0;
@@ -125,7 +125,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 		}
 		// printf("initiation %ld %ld\n", Mask->m, Mask->nnz);
 		long nnz=0;
-		#pragma omp for
+		// #pragma omp for
 		for (i = 0; i < Mask->m; i++) {
 			// printf("%ld ", Mask->csr_ia[i]);
 			for (j = Mask->csr_ia[i]; j < Mask->csr_ia[i+1]; j++) {
@@ -133,7 +133,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 				compensation = 0;
 				sum = 0.0f;
 				for (long k = 0; k < n; k++) {
-					val = x_ref[i*n+k] * z_ref[csr_m*k+csr_ja[j]] - compensation;
+					val = x_ref[i*n+k] * z_ref[i*n+k] - compensation;
 					tmp = sum + val;
 					compensation = (tmp - sum) - val;
 					sum = tmp;  
@@ -144,7 +144,7 @@ CheckAccuracy(struct Mask * Mask, INT_T * csr_ia, INT_T * csr_ja, double * csr_a
 			}
 			// line++;
         }
-	}
+	// }
 	// printf("end\n");
 
 	ReferenceType maxDiff = 0, diff;

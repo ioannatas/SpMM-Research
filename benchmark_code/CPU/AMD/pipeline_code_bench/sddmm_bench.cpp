@@ -468,6 +468,7 @@ compute(char * matrix_name,
 		time_spmm_K=0.0;
 		time_spmm_Q=0.0;
 		time_spmm_V=0.0;
+		time_final_spmm=0.0;
 		time_sddmm = 0.0;
 		time_KQV = 0.0;
 		num_loops = 0.0;
@@ -530,6 +531,9 @@ compute(char * matrix_name,
 				time_sddmm += time_it(1,
 					MF->sddmm(y);
 				);
+				// time_spmm_V += time_it(1,
+				// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				// );
 			// 	time_warm_up = time_it(1,
 			// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
 			// );

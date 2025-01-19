@@ -1,0 +1,268 @@
+SPLIT=0;GHOST_APPS_ROOT_DIR=/various/pmpakos/SpMV-Research/benchmark_code/CPU/AMD/spmv_code_sell-C-s;RAPL_REGISTERS=0;COOLDOWN=0;cpu_pinning_step=1;SPARSE_ATTENTION_TYPE=band_and_random;path_tamu=/home/itasou/Data/graphs/tamu;SPARSEX_LIB_PATH=;BOOST_LIB_PATH=;USE_DLCM_MATRICES=1;USE_ARTIFICIAL_MATRICES=0;cores=64;path_M3E=/home/itasou/Data/graphs/M3E-Matrix-Collection;PRINT_STATISTICS=1;MKL_PATH=/opt/software/intel/oneapi/mkl/2024.1;path_validation=;AOCL_PATH=;PIPELINE=1;cpu_affinity=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63;force_retry_on_error=0;NUM_COLS=512;SPARSITY=0.9;GHOST_ROOT_DIR=/home/pmpakos/ESSEX;LLVM_LIB_PATH=;LLVM_INC_PATH=;USE_PROCESSES=0;cpu_pinning_group_size=1;SPARSEX_CONF_PATH=;TACO_PATH=/various/itasou/taco;path_openFoam=;SPARSEX_INC_PATH=;VC_TOLERANCE=0;output_to_files=1;BOOST_INC_PATH=;max_cores=256;BAND_SIZE=3;
+program: /home/itasou/SpMM-Research/benchmark_code/CPU/AMD/pipeline_code_bench/sddmm_taco_naive_f.exe
+number of matrices: 504
+sparsity: 0.900000
+max threads 256
+Temps: loc1 51000 Tdie 49750 Tctl 49750 Tdie 48250 Tctl 48250 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.407090
+
+time copy: 0.000538
+time convert to format: 0.000005
+time warm up 0.129424
+k
+k
+512 512 128761 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (8.23153e-05)
+errors spmv: mae=0.000995521, max_ae=0.0137365, mse=3.22825e-06, mape=0.00045178, smape=0.000225894, lnQ_error=-3.42202e-07, mlare=-6.1035, gmare=7.87948e-07
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_encdec_attention_multihead_attention_k.smtx,64,512,512,512,128761,0.000336,0.000350,0.000333,0.002017,0.000530,0.003567,392.157706,415.984019,376.745026,66.671197,253.520354,188.393101,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 53750 Tctl 53750 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.696501
+
+time copy: 0.000642
+time convert to format: 0.000006
+time warm up 0.129823
+k
+k
+512 512 158760 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (2.46686e-05)
+errors spmv: mae=0.000997091, max_ae=0.0102744, mse=3.07545e-06, mape=0.00038858, smape=0.000194289, lnQ_error=-2.91496e-08, mlare=-7.17315, gmare=6.71195e-08
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_0_self_attention_multihead_attention_k.smtx,64,512,512,512,158760,0.000383,0.000377,0.000404,0.001989,0.000527,0.003681,424.853626,419.772707,414.929349,67.609387,254.957479,205.846804,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54250 Tctl 54250 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.459056
+
+time copy: 0.000533
+time convert to format: 0.000005
+time warm up 0.130102
+k
+k
+512 512 138452 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (0.000154413)
+errors spmv: mae=0.000982384, max_ae=0.0123421, mse=2.94359e-06, mape=0.000394754, smape=0.000197377, lnQ_error=2.41948e-08, mlare=-7.25406, gmare=5.57107e-08
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_encdec_attention_multihead_attention_k.smtx,64,512,512,512,138452,0.000357,0.000343,0.000327,0.001984,0.000534,0.003545,397.139550,416.321950,408.034678,67.789027,251.688384,193.792936,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54375 Tctl 54375 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.416061
+
+time copy: 0.000588
+time convert to format: 0.000005
+time warm up 0.128973
+k
+k
+512 512 122396 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (0.000146512)
+errors spmv: mae=0.000977949, max_ae=0.0122849, mse=3.40649e-06, mape=0.000391636, smape=0.000195818, lnQ_error=-6.66232e-08, mlare=-6.81416, gmare=1.53406e-07
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_1_self_attention_multihead_attention_k.smtx,64,512,512,512,122396,0.000311,0.000290,0.000387,0.001995,0.000507,0.003491,403.129948,420.499631,413.963073,67.396262,265.047641,193.791959,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54500 Tctl 54500 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.409866
+
+time copy: 0.000552
+time convert to format: 0.000006
+time warm up 0.129350
+k
+k
+512 512 130692 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (6.63272e-05)
+errors spmv: mae=0.000979201, max_ae=0.00925925, mse=2.92253e-06, mape=0.000858815, smape=0.000429587, lnQ_error=-2.15982e-06, mlare=-5.30337, gmare=4.97316e-06
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_encdec_attention_multihead_attention_k.smtx,64,512,512,512,130692,0.000334,0.000339,0.000330,0.001974,0.000522,0.003500,400.420705,398.029310,413.196521,68.116217,257.456584,192.609197,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54500 Tctl 54500 Tdie 48000 Tctl 48000 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.499379
+
+time copy: 0.000638
+time convert to format: 0.000006
+time warm up 0.130095
+k
+k
+512 512 129969 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (0.0010721)
+errors spmv: mae=0.000955093, max_ae=0.00844866, mse=2.89083e-06, mape=0.000376653, smape=0.000188326, lnQ_error=3.79949e-08, mlare=-7.05806, gmare=8.74866e-08
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_2_self_attention_multihead_attention_k.smtx,64,512,512,512,129969,0.000333,0.000331,0.000409,0.001980,0.000522,0.003576,399.484484,406.832600,394.614817,67.902632,257.417159,195.204357,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54000 Tctl 54000 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.483110
+
+time copy: 0.000614
+time convert to format: 0.000005
+time warm up 0.129452
+k
+k
+512 512 132401 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (4.57881e-05)
+errors spmv: mae=0.000862024, max_ae=0.0127151, mse=2.55878e-06, mape=0.000386135, smape=0.000193067, lnQ_error=7.72377e-08, mlare=-6.74996, gmare=1.77846e-07
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_encdec_attention_multihead_attention_k.smtx,64,512,512,512,132401,0.000358,0.000344,0.000382,0.001975,0.000529,0.003587,378.753559,405.495057,393.329763,68.103799,254.229677,193.475366,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 53750 Tctl 53750 Tdie 47750 Tctl 47750 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_self_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_self_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_self_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_self_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.532228
+
+time copy: 0.000607
+time convert to format: 0.000006
+time warm up 0.130284
+k
+k
+512 512 133334 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (1.50333e-05)
+errors spmv: mae=0.000819796, max_ae=0.011008, mse=2.22215e-06, mape=0.000380511, smape=0.000190255, lnQ_error=6.83937e-08, mlare=-6.80277, gmare=1.57482e-07
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_3_self_attention_multihead_attention_k.smtx,64,512,512,512,133334,0.000344,0.000326,0.000403,0.001973,0.000508,0.003554,397.282323,421.396540,409.313130,68.167318,264.760640,199.220053,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 53500 Tctl 53500 Tdie 47500 Tctl 47500 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_encdec_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_encdec_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.493315
+
+time copy: 0.000586
+time convert to format: 0.000005
+time warm up 0.130329
+k
+k
+512 512 128782 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (4.01897e-05)
+errors spmv: mae=0.00106425, max_ae=0.0121025, mse=3.57376e-06, mape=0.000406602, smape=0.000203299, lnQ_error=2.34929e-07, mlare=-6.26685, gmare=5.40943e-07
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_encdec_attention_multihead_attention_k.smtx,64,512,512,512,128782,0.000330,0.000341,0.000390,0.001979,0.000531,0.003571,399.191064,407.345156,413.738116,67.942770,253.463015,196.293233,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 53500 Tctl 53500 Tdie 47500 Tctl 47500 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_self_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_self_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_self_attention_multihead_attention_v.smtx
+sparsity: 0.500000
+max threads 64
+MATRIX NAME /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_self_attention_multihead_attention_k.smtx
+line:1
+rows: 512
+line:1
+rows: 512
+line:1
+rows: 512
+time read: 1.453231
+
+time copy: 0.000553
+time convert to format: 0.000006
+time warm up 0.129816
+k
+k
+512 512 125661 
+q
+512 512 512 512 512 number of loops = 1
+before acccuracy
+Test failed! (0.000132208)
+errors spmv: mae=0.000856875, max_ae=0.00638549, mse=2.13266e-06, mape=0.00372208, smape=0.00186063, lnQ_error=1.01025e-06, mlare=-5.63335, gmare=2.3262e-06
+/home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_4_self_attention_multihead_attention_k.smtx,64,512,512,512,125661,0.000333,0.000328,0.000395,0.001970,0.000502,0.003528,386.243026,398.068834,398.489068,68.273252,267.674372,194.311681,1.003910,512,512,131328
+Temps: loc1 51000 Tdie 54000 Tctl 54000 Tdie 47625 Tctl 47625 
+sparsity: 5
+File: /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_5_encdec_attention_multihead_attention_k.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_5_encdec_attention_multihead_attention_q.smtx /home/itasou/dlmc/transformer/l0_regularization/0.5/body_decoder_layer_5_encdec_attention_multihead_attention_v.smtx

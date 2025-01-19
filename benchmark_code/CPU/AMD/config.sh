@@ -61,7 +61,7 @@ conf_vars=(
 
     ['PIPELINE']=1
 
-    ['SPLIT']=1
+    ['SPLIT']=0
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -82,10 +82,10 @@ conf_vars=(
 
     # Maximum number of the machine's cores.
     # ['max_cores']=160
-    # ['max_cores']=256
+    ['max_cores']=256
     # ['max_cores']=128
     # ['max_cores']=64
-    ['max_cores']=96
+    # ['max_cores']=96
     # ['max_cores']=48
     # ['max_cores']=16
     # ['max_cores']=8
@@ -95,10 +95,10 @@ conf_vars=(
     # ['cores']='1 2 4 8 16 32 64 128'
     # ['cores']='64 128'
     # ['cores']=128
-    # ['cores']=64
+    ['cores']=64
     # ['cores']=48
     # ['cores']=32
-    ['cores']=24
+    # ['cores']=24
     # ['cores']=16
     # ['cores']=12
     # ['cores']=8
@@ -137,7 +137,8 @@ conf_vars=(
     #                 find_valid_dir "${options[@]}"
     #             )"
     ['TACO_PATH']='/various/itasou/taco'
-    ['MKL_PATH']='/various/pmpakos/intel/oneapi/mkl/2024.1'
+    # ['MKL_PATH']='/various/pmpakos/intel/oneapi/mkl/2024.1'
+    ['MKL_PATH']='/opt/software/intel/oneapi/mkl/2024.1'
     ['AOCL_PATH']="$( options=(
                         '/opt/aoclsparse'
                         '/various/pmpakos/spmv_paper/aocl-sparse/build/release'
@@ -225,7 +226,7 @@ conf_vars['cpu_affinity']="$(calc_cpu_pinning "${conf_vars["cores"]}" "${conf_va
 
 
 path_artificial="${script_dir}/../../../matrix_generation_parameters"
-path_dlmc="/various/itasou/dlmc"
+path_dlmc="/home/itasou/dlmc"
 
 
 # Artificial matrices to benchmark.
@@ -243,7 +244,7 @@ artificial_matrices_files=(
 )
 
 dlmc_matrices_files=(
-    "$path_dlmc/transformer_matrices_small.txt"
+    "$path_dlmc/transformer_matrices.txt"
     # "$path_dlcm/transformer_matrices_small.txt"
     
 )

@@ -1,5 +1,6 @@
 #include "macros/macrolib.h"
 #include "parallel_util.h"
+#include <time.h>
 // #include <random>
 
 /* 
@@ -57,7 +58,7 @@ smtx_parse_array_format(char ** lines, long * lengths, struct DLCM_Matrix * MTX)
 	// const int symmetric = MTX->symmetric || MTX->skew_symmetric;
 	int * C =  MTX->C;
 	int * R =  MTX->R;
-	TYPE * V = (typeof(R)) MTX->V;
+	TYPE * V = (typeof(V)) MTX->V;
 	// int complex_weights = (strcmp(MTX->field, "complex") == 0);
 	long M, K, nnz, j;
 
