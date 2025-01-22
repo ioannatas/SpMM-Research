@@ -607,10 +607,16 @@ for format_name in "${!progs[@]}"; do
     # if [[ "$prog" == *'spmv_csr_cv'* ]]; then
         # csrcv_num_packet_vals=( $( declare -i i; for (( i=64;i<=2**24;i*=2 )); do echo "$i"; done ) )
     # fi
-
+    # RANDOM ADD
+# export OMP_NESTED=true
+# export MKL_THREADING_LAYER=GNU
+# export OMP_PROC_BIND=close
+# export OMP_STACKSIZE=1000
+# export OMP_DISPLAY_ENV=true
     for ((i=0;i<rep;i++)); do
         if ((PIPELINE)); then
-            for ((a=0; a<${#prog_args_k[@]}; a++));
+            # for ((a=0; a<${#prog_args_k[@]}; a++));
+            for ((a=0; a<1; a++));
             do
 
                 rep_in=1
@@ -624,7 +630,7 @@ for format_name in "${!progs[@]}"; do
                         printf "%s %s " $(cat ${temp_labels[k]}) $(cat ${temp_inputs[k]}) >&1
                     done
                     echo >&1
-                    if [[ $prog_args_k[a] =~ /0\.([^/]+)/ ]]; then
+                    if [[ ${prog_args_k[a]} =~ /0\.([^/]+)/ ]]; then
                     result="${BASH_REMATCH[1]}"
                     export SPARSITY="0.${result}"
                     echo "sparsity: $result"

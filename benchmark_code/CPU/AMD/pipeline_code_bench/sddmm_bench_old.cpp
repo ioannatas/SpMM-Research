@@ -8,9 +8,6 @@
 #include <sstream>
 #include <bits/stdc++.h>
 #include <mkl.h>
-#include <omp.h>
-#include <sys/time.h>
-
 
 
 #include <unistd.h>
@@ -102,16 +99,6 @@ reference_to_double(void * A, long i)
 	return (double) ((ReferenceType *) A)[i];
 }
 
-void pin_thread(int core_id) {
-    cpu_set_t cpuset;
-    CPU_ZERO(&cpuset);
-    CPU_SET(core_id, &cpuset);
-
-    pthread_t thread = pthread_self();
-    if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
-        perror("Error setting CPU affinity");
-    }
-}
 
 void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m, INT_T csr_k, INT_T csr_nnz, INT_T n, double * x_ref, ReferenceType * y_gold)
 {
@@ -135,6 +122,28 @@ void spmm_helper(INT_T * csr_ia, INT_T * csr_ja, double * csr_a_ref, INT_T csr_m
             }
         }
 }
+
+// double sparsity_def(const std::string& input) {
+//     // Regular expression to match "/0.<something>/"
+//     std::regex regexPattern(R"(/0\.([^/]+)/)");
+//     std::smatch match;
+
+//     // Check if the input matches the regex
+//     if (std::regex_search(input, match, regexPattern)) {
+//         // Extract the matched group
+//         std::string result = match[1].str();
+//         std::string sparsity = "0." + result;
+
+//         // Export or use the extracted sparsity value
+//         std::cout << "Matched sparsity: " << sparsity << std::endl;
+// 		return std::stod(sparsity);;
+//     } else {
+//         // Handle no match case
+//         std::cout << "No match found in: " << input << std::endl;
+// 		return 0.95;
+//     }
+// }
+
 
 void softmax(double *input, int size)
 {
@@ -375,95 +384,9 @@ get_pinning_position_from_affinity_string(const char * range_string, long len, i
 	return aff;
 }
 
-// typedef struct {
-//     char opname;
-//     int csr_m, csr_k, n;
-//     INT_T *csr_ia, *csr_ja;
-//     ValueType *csr_a, *x, *result;
-// 	double *timer; 
-//     struct Matrix_Format * MF_in;
-// } thread_args_t;
 
-// // Thread function for spmm
-// void* void_mkl_wrap(void* arg) {
-//     thread_args_t* args = (thread_args_t*)arg;
-//     // Set the number of MKL threads locally
-//     omp_set_num_threads(16);
-//     // Measure time for spmm
-//     *(args->timer) += time_it(1, args->MF_in->spmm(args->opname, args->csr_m, args->csr_k, args->n, 
-//         args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result););
-//     return NULL;
-// }
-
-// Thread arguments structure
-typedef struct {
-    char opname;
-    int csr_m, csr_k, n;
-    INT_T *csr_ia, *csr_ja;
-    ValueType *csr_a, *x, *result;
-    double *timer;
-    struct Matrix_Format *MF_in;
-    int core_id; // Core ID for CPU affinity
-} thread_args_t;
-
-// Thread function for spmm with CPU affinity
-void* void_mkl_wrap(void* arg) {
-    thread_args_t* args = (thread_args_t*)arg;
-
-    // Set CPU affinity for the thread
-    // cpu_set_t cpuset;
-    // CPU_ZERO(&cpuset);
-    // CPU_SET(args->core_id, &cpuset);
-    // pthread_t thread = pthread_self();
-    // if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
-    //     perror("Error setting CPU affinity");
-    //     pthread_exit(NULL);
-    // }
-
-	// omp_set_nested(1);
-	// mkl_set_dynamic(0);
-    // omp_set_num_threads(32);
-	// Configure MKL threads and affinity
-    // int mkl_threads = 64; // Number of MKL threads per pthread
-    // omp_set_nested(1);   // Disable nested parallelism
-    // omp_set_num_threads(mkl_threads); // Set OpenMP threads for MKL
-    // mkl_set_dynamic(0); scancel  // Disable dynamic threading in MKL
-
-    // Bind MKL threads to specific cores
-    // kmp_affinity_mask_t mask;
-    // __kmpc_set_affinity_mask_proc(args->core_id, &mask); // Bind starting at args->core_id
-    // for (int i = 0; i < mkl_threads; i++) {
-    //     __kmpc_set_affinity_mask_proc(args->core_id + i, &mask);
-    // }
-    // __kmpc_set_affinity(&mask); // Apply affinity mask
-
-    // Measure time for spmm
-	
-	// clock_t start, end;
-	struct timeval start, end;
-    long seconds, useconds;
-    // double elapsed;
-
-    gettimeofday(&start, NULL);
-	// start = clock();
-	args->MF_in->spmm(
-        args->opname, args->csr_m, args->csr_k, args->n,
-        args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result
-    );
-	// end = clock();
-	gettimeofday(&end, NULL);
-	// *(args->timer) =((double) (end - start)) / CLOCKS_PER_SEC;
-	seconds = end.tv_sec - start.tv_sec;
-    useconds = end.tv_usec - start.tv_usec;
-	*(args->timer) =  seconds + useconds / 1e6;
-    // *(args->timer) += time_it(1, args->MF_in->spmm(
-    //     args->opname, args->csr_m, args->csr_k, args->n,
-    //     args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result
-    // ););
-    return NULL;
-}
-
-void compute(char * matrix_name,
+void
+compute(char * matrix_name,
 		INT_T * csr_ia_k, INT_T * csr_ja_k, ValueType * csr_a_k, double * csr_a_ref_k, INT_T csr_m_k, INT_T csr_k_k, INT_T n, INT_T csr_nnz_k,
 		INT_T * csr_ia_q, INT_T * csr_ja_q, ValueType * csr_a_q, double * csr_a_ref_q, INT_T csr_m_q, INT_T csr_k_q, INT_T csr_nnz_q,
 		INT_T * csr_ia_v, INT_T * csr_ja_v, ValueType * csr_a_v, double * csr_a_ref_v, INT_T csr_m_v, INT_T csr_k_v, INT_T csr_nnz_v,
@@ -574,115 +497,36 @@ void compute(char * matrix_name,
 		while (/*time < 1.0 ||*/ num_loops < min_num_loops)
 		{
 			rapl_read_start(regs, regs_n);
-			 if (omp_get_nested()) {
-        printf("Nested parallelism is enabled %d.\n", omp_get_max_active_levels());
-    } else {
-        printf("Nested parallelism is NOT enabled.\n");
-    }
-			if (1){
-				
-				printf("SPLIIIIIIT\n");
+			#if SPLIT==1
 				time_KQV += time_it(1,
-				pthread_t threads[1];
-				// pthread_attr_t attr;
-				// pthread_attr_init(&attr);
-    			thread_args_t thread_args[1];
-				int cores[1] = {0}; // Assign threads to cores 0, 1, and 2
-
-				// Prepare thread arguments for 'K', 'Q', and 'V' operations
-				thread_args[0] = (thread_args_t){'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, &time_spmm_K, MF, cores[0]};
-				// thread_args[1] = (thread_args_t){'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, &time_spmm_Q, MF, cores[1]};
-				// thread_args[2] = (thread_args_t){'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V, &time_spmm_V, MF, cores[2]};
-				// Create threads for spmm operations
-				// pthread_attr_setstacksize(&attr, 1000000);
-    			for (int i = 0; i < 1; i++)
-        			pthread_create(&threads[i], NULL, void_mkl_wrap, (void*)&thread_args[i]);
-
-				// Join threads
-				for (int i = 0; i < 1; i++) {
-					pthread_join(threads[i], NULL);
-				}	
-			);
-			// omp_set_num_threads(32);
-			time_spmm_Q += time_it(1,
-									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-								);
-			time_spmm_V += time_it(1,
-									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-								);
-				time_sddmm += time_it(1, MF->sddmm(y););
-
-				time_final_spmm += time_it(1,
-					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-				);
-			time=time_KQV+time_spmm_V+time_sddmm+time_final_spmm;
-			}
-			else if(0){
-				// time_KQV += time_it(1,
-				// omp_set_nested(1);
-				// omp_set_nested(1);
-				// mkl_set_dynamic(0);
-				// omp_set_num_threads(16);
-				// mkl_set_num_threads(16);
-					struct timeval start, end;
-				long seconds, useconds;
-				// double elapsed;
-				// omp_set_num_threads(16);
-				// mkl_set_num_threads_local(16);
-
-				gettimeofday(&start, NULL);
-					#pragma omp parallel num_threads(1)
+					#pragma omp parallel
 					{
-						// int thread_id = omp_get_thread_num();
-						// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
-						// pin_thread(core_id);
-						#pragma omp sections
+						#pragma omp single
 						{
-							#pragma omp section 
+							#pragma omp task
 							{
-								// pin_thread(core_id);
-								mkl_set_num_threads_local(63);
-								omp_set_num_threads(63);
+								mkl_set_num_threads_local(8);
 								time_spmm_K += time_it(1,
 									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
 								);
 							}
-							// #pragma omp single
-							// {
-							// 	// pin_thread(core_id);
-							// 	// mkl_set_num_threads(16);
-							// 	// omp_set_num_threads(16);
-							// 	// mkl_set_num_threads_local(16);
-							// 	time_spmm_Q += time_it(1,
-							// 		MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-							// 	);
-							// }
-							// #pragma omp single
-							// {
-							// 	// pin_thread(core_id);
-							// 	// mkl_set_num_threads(16);
-							// 	// omp_set_num_threads(16);
-							// 	// mkl_set_num_threads_local(16);
-							// 	time_spmm_V += time_it(1,
-							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-							// 	);
-							// }
-						}
-					}
-					gettimeofday(&end, NULL);
-					seconds = end.tv_sec - start.tv_sec;
-					useconds = end.tv_usec - start.tv_usec;
-					time_KQV =  seconds + useconds / 1e6;
-				// );
-				// time_KQV +=((double) (end - start)) / CLOCKS_PER_SEC;
-				omp_set_num_threads(64);
-				mkl_set_num_threads(64);
-				time_spmm_Q += time_it(1,
-					MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-				);
-				time_spmm_V += time_it(1,
+							#pragma omp task
+							{
+								mkl_set_num_threads_local(8);
+								time_spmm_Q += time_it(1,
+									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
+								);
+							}
+							#pragma omp task
+							{
+								mkl_set_num_threads_local(8);
+								time_spmm_V += time_it(1,
 									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
 								);
+							}
+						}
+					}
+				);
 				time_sddmm += time_it(1,
 					MF->sddmm(y);
 				);
@@ -690,9 +534,7 @@ void compute(char * matrix_name,
 				time_final_spmm += time_it(1,
 					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
 				);
-				time=time_KQV+time_sddmm+time_final_spmm;
-			}
-			else if (0){
+			#elif SPLIT==0
 				time_spmm_K += time_it(1,
 					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
 				);
@@ -705,14 +547,25 @@ void compute(char * matrix_name,
 				time_spmm_V += time_it(1,
 					MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
 				);
+			// 	time_warm_up = time_it(1,
+			// 	MF->sddmm(y);
+			// );
 				time_sddmm += time_it(1,
 					MF->sddmm(y);
 				);
+				// time_spmm_V += time_it(1,
+				// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				// );
+			// 	time_warm_up = time_it(1,
+			// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+			// );
+				// time_spmm_V += time_it(1,
+				// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+				// );
 				time_final_spmm += time_it(1,
 					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
 				);
-				time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
-			}
+			#endif
 		// 	for (int i=0;i<Mask->nnz;i++)
 		// 	printf("%lf ",y[i]);
 		// printf("sddmm \n");
@@ -720,11 +573,11 @@ void compute(char * matrix_name,
 
 			num_loops++;
 		}
-		// #if SPLIT==1
-		// 	time=time_KQV+time_sddmm+time_final_spmm;
-		// #elif SPLIT==0
-		// 	time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
-		// #endif
+		#if SPLIT==1
+			time=time_KQV+time_sddmm+time_final_spmm;
+		#elif SPLIT==0
+			time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
+		#endif
 		num_loops_out = num_loops;
 		printf("number of loops = %ld\n", num_loops);
 
@@ -995,7 +848,7 @@ main(int argc, char **argv)
 	INT_T band_size = atoi(getenv("BAND_SIZE"));
 	char * sparse_attention_type = getenv("SPARSE_ATTENTION_TYPE");
 	double sparsity = atof(getenv("SPARSITY"));
-	printf("sparsity: %lf\n", sparsity);
+	
 
 	struct Matrix_Format * MF;   // Real matrices.
 	csr_matrix * AM = NULL;
@@ -1082,6 +935,9 @@ child_proc_label:
 		file_in_v = argv[i++];
 		snprintf(matrix_name, sizeof(matrix_name), "%s", file_in_k);
 		printf("MATRIX NAME %s\n", matrix_name);
+		// std::string input=matrix_name;
+		// sparsity=sparsity_def(input);
+		// printf("sparsity: %lf\n", sparsity);
 
 		time = time_it(1,
 			if (use_dlcm_matrices)

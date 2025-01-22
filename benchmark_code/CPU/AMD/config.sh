@@ -61,7 +61,7 @@ conf_vars=(
 
     ['PIPELINE']=1
 
-    ['SPLIT']=0
+    ['SPLIT']=1
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1

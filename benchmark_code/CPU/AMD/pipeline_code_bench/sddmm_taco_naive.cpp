@@ -217,6 +217,7 @@ CSRTensors::sddmm(ValueType * y)
 void
 CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y)
 {
+    // mkl_verbose(1);
     char transa = 'N';
 	ValueType alpha = 1.0, beta = 0.0;
 	char matdescra[6];
@@ -224,7 +225,12 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
     matdescra[1] = 'L';
     matdescra[2] = 'N';
     matdescra[3] = 'C';
-
+    int threads;
+    // mkl_set_num_threads_local(16);
+    // omp_set_num_threads(16);
+    #pragma omp parallel
+    {threads=omp_get_num_threads();}
+    printf("threads %d\n",threads);
 	#if DOUBLE == 0
         // if (type=='T'){
         //     printf("T\n");

@@ -20,15 +20,13 @@ INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsit
     INT_T *mask;
     mask= (typeof(mask)) aligned_alloc(64, length*length * sizeof(*mask));
 
-    // Initialize all elements to zero
     #pragma omp parallel for
     for (long i = 0; i < length; i++) {
         for (long j = 0; j < length; j++) {
             mask[i*length+j] = 0;
         }
     }
-    // printf("INITIALIZE\n");
-    // Create the dense diagonal band
+
     long band_zeros=0;
     for (long i = 0; i < length; ++i) {
         for (long j = std::max((long)0, i - band_size + 1); j <= std::min(length - 1, i + band_size - 1); ++j) {
@@ -38,7 +36,6 @@ INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsit
     }
     // printf("here %ld %ld\n",length, band_zeros);
 
-    // Randomly place non-zero values in the lower triangular part
     long placed_nonzeros = band_zeros;
     long counter=0;
     long period=10;
@@ -47,7 +44,7 @@ INT_T * band_and_random(long length, INT_T & nnz, long band_size, double sparsit
         if (counter % period == 0)            // Periodic reseeding.
 				srand(time(NULL)+counter);
         long row = rand() % length;
-        long col = rand() % (row + 1); // Ensure col <= row for lower triangular part
+        long col = rand() % (row + 1); 
         if (mask[row*length+col] == 0) {
             mask[row*length+col] = 1; 
             placed_nonzeros++;

@@ -11,6 +11,7 @@ export library=../../../../lib
 
 script_dir="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
 source "$script_dir"/../config.sh
+source /opt/software/intel/oneapi/setvars.sh
 
 
 export AMG_PATH=../../../../artificial-matrix-generator
@@ -20,6 +21,7 @@ export AMG_PATH=../../../../artificial-matrix-generator
 # export CC=/home/jim/Documents/gcc_versions/gcc_12/bin/gcc
 # export CC=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/gcc
 export CC=/opt/software/gnu/gcc-14/gcc-14.2.0/bin/gcc
+# export CC=/opt/software/intel/oneapi/compiler/2024.2/bin/icx
 # CC=clang
 # CC=xlc
 
@@ -27,6 +29,7 @@ export CC=/opt/software/gnu/gcc-14/gcc-14.2.0/bin/gcc
 # export CPP=/home/jim/Documents/gcc_versions/gcc_12/bin/g++
 # export CPP=/various/dgal/gcc/gcc-12.2.0/gcc_bin/bin/g++
 export CPP=/opt/software/gnu/gcc-14/gcc-14.2.0/bin/g++
+# export CPP=/opt/software/intel/oneapi/compiler/2024.2/bin/icpx
 # CPP=clang++
 # CPP=xlc++
 

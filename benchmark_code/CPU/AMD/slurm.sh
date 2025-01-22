@@ -21,6 +21,12 @@ module load gcc/latest 2>&1
 module load tbb/2021.12
 module load compiler-rt/2024.1.0
 module load mkl/2024.1
+
+module load intel
+module load tbb/latest
+module load compiler-rt/latest
+module load oclfpga/latest
+module load compiler-intel-llvm/latest
 # module load gcc/11.2.0 2>&1
 
 cd pipeline_code_bench
