@@ -10,6 +10,10 @@
 #include <mkl.h>
 #include <omp.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sched.h>
+#include <string.h>
+#include <sys/mman.h>
 
 
 
@@ -100,6 +104,27 @@ double
 reference_to_double(void * A, long i)
 {
 	return (double) ((ReferenceType *) A)[i];
+}
+
+double csecond(void) {
+  struct timespec tms;
+
+  if (clock_gettime(CLOCK_REALTIME, &tms)) {
+    return (0.0);
+  }
+  /// seconds, multiplied with 1 million
+  int64_t micros = tms.tv_sec * 1000000;
+  /// Add full microseconds
+  micros += tms.tv_nsec / 1000;
+  /// round up if necessary
+  if (tms.tv_nsec % 1000 >= 500) {
+    ++micros;
+  }
+  return ((double)micros / 1000000.0);
+}
+
+double compute_gflops(double time, long nnz, long n, long num_loops){
+	return nnz * 2 * 1e-9 * n / time * num_loops;
 }
 
 void pin_thread(int core_id) {
@@ -407,61 +432,101 @@ typedef struct {
 } thread_args_t;
 
 // Thread function for spmm with CPU affinity
-void* void_mkl_wrap(void* arg) {
-    thread_args_t* args = (thread_args_t*)arg;
+// void* void_mkl_wrap(void* arg) {
+//     thread_args_t* args = (thread_args_t*)arg;
+// 				setenv("OMP_NESTED", "true", 1);
+// 			omp_set_nested(1); 
+// 			omp_set_dynamic(0);
+// 			omp_set_max_active_levels(2);
+// 			 if (omp_get_nested()) {
+//         printf("Nested parallelism is enabled %d.\n", omp_get_max_active_levels());
+//     } else {
+//         printf("Nested parallelism is NOT enabled.\n");
+//     }
 
-    // Set CPU affinity for the thread
-    // cpu_set_t cpuset;
-    // CPU_ZERO(&cpuset);
-    // CPU_SET(args->core_id, &cpuset);
-    // pthread_t thread = pthread_self();
-    // if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
-    //     perror("Error setting CPU affinity");
-    //     pthread_exit(NULL);
-    // }
-
-	// omp_set_nested(1);
-	// mkl_set_dynamic(0);
-    // omp_set_num_threads(32);
-	// Configure MKL threads and affinity
-    // int mkl_threads = 64; // Number of MKL threads per pthread
-    // omp_set_nested(1);   // Disable nested parallelism
-    // omp_set_num_threads(mkl_threads); // Set OpenMP threads for MKL
-    // mkl_set_dynamic(0); scancel  // Disable dynamic threading in MKL
-
-    // Bind MKL threads to specific cores
-    // kmp_affinity_mask_t mask;
-    // __kmpc_set_affinity_mask_proc(args->core_id, &mask); // Bind starting at args->core_id
-    // for (int i = 0; i < mkl_threads; i++) {
-    //     __kmpc_set_affinity_mask_proc(args->core_id + i, &mask);
-    // }
-    // __kmpc_set_affinity(&mask); // Apply affinity mask
-
-    // Measure time for spmm
+//     // Set CPU affinity for the thread
+//     // cpu_set_t cpuset;
+//     // CPU_ZERO(&cpuset);
+//     // CPU_SET(args->core_id, &cpuset);
+//     // pthread_t thread = pthread_self();
+//     // if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
+//     //     perror("Error setting CPU affinity");
+//     //     pthread_exit(NULL);
+//     // }
+// // 	mkl_set_dynamic(0); // Disable MKL dynamic threading
+// // setenv("KMP_AFFINITY", "none", 1); // Disable MKL thread affinity
+// 	cpu_set_t cpuset;
+//     CPU_ZERO(&cpuset);
+//     CPU_SET(args->core_id, &cpuset);
+//     if (sched_setaffinity(0, sizeof(cpu_set_t), &cpuset) != 0) {
+//         perror("Error setting CPU affinity");
+//         exit(EXIT_FAILURE);
+//     }
+// 	// omp_set_nested(1);
+// 	// mkl_set_dynamic(0);
 	
-	// clock_t start, end;
-	struct timeval start, end;
-    long seconds, useconds;
-    // double elapsed;
+//     // omp_set_num_threads(6);
+// 	// Configure MKL threads and affinity
+//     // int mkl_threads = 1; // Number of MKL threads per pthread
+//     omp_set_nested(1);   // Disable nested parallelism
+//     mkl_set_num_threads_local(6); // Set OpenMP threads for MKL
+// 	// omp_set_max_active_levels(1);
+//     mkl_set_dynamic(0); // Disable dynamic threading in MKL
+// 	// setenv("OMP_NUM_THREADS", "granularity=core,proclist=[1-6],explicit", 1);
+// 	char affinity[100];
+// 	if (args->core_id == 0) {
+// 		// setenv("KMP_AFFINITY", "granularity=core,proclist=[1-6],explicit", 1);
+// 		snprintf(affinity, sizeof(affinity), "GOMP_CPU_AFFINITY=%d-%d", 1, 6);
+//     	putenv(affinity);
+// 	} else if (args->core_id == 7) {
+// 		// setenv("KMP_AFFINITY", "granularity=core,proclist=[8-13],explicit", 1);
+// 		snprintf(affinity, sizeof(affinity), "GOMP_CPU_AFFINITY=%d-%d", 8, 13);
+//     	putenv(affinity);
 
-    gettimeofday(&start, NULL);
-	// start = clock();
-	args->MF_in->spmm(
-        args->opname, args->csr_m, args->csr_k, args->n,
-        args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result
-    );
-	// end = clock();
-	gettimeofday(&end, NULL);
-	// *(args->timer) =((double) (end - start)) / CLOCKS_PER_SEC;
-	seconds = end.tv_sec - start.tv_sec;
-    useconds = end.tv_usec - start.tv_usec;
-	*(args->timer) =  seconds + useconds / 1e6;
-    // *(args->timer) += time_it(1, args->MF_in->spmm(
-    //     args->opname, args->csr_m, args->csr_k, args->n,
-    //     args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result
-    // ););
-    return NULL;
-}
+// 	} else if (args->core_id == 14) {
+// 		// setenv("KMP_AFFINITY", "granularity=core,proclist=[15-20],explicit", 1);
+// 		snprintf(affinity, sizeof(affinity), "GOMP_CPU_AFFINITY=%d-%d", 15, 20);
+//     	putenv(affinity);
+// 	}
+// 	printf("Setting affinity to %s\n", affinity);
+
+
+//     // Bind MKL threads to specific cores
+//     // kmp_affinity_mask_t mask;
+//     // __kmpc_set_affinity_mask_proc(args->core_id, &mask); // Bind starting at args->core_id
+//     // for (int i = 0; i < mkl_threads; i++) {
+//     //     __kmpc_set_affinity_mask_proc(args->core_id + i, &mask);
+//     // }
+//     // __kmpc_set_affinity(&mask); // Apply affinity mask
+
+//     // Measure time for spmm
+	
+// 	// clock_t start, end;
+// 	struct timeval start, end;
+//     long seconds, useconds;
+//     // double elapsed;
+
+//     gettimeofday(&start, NULL);
+// 	// start = clock();
+// 	// for (int i = 0; i < 1000; i++)
+// 	printf("time\n");
+// 	args->MF_in->spmm(
+//         args->opname, args->csr_m, args->csr_k, args->n,
+//         args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result, 6
+//     );
+// 	// end = clock();
+// 	gettimeofday(&end, NULL);
+// 	// *(args->timer) =((double) (end - start)) / CLOCKS_PER_SEC;
+// 	seconds = end.tv_sec - start.tv_sec;
+//     useconds = end.tv_usec - start.tv_usec;
+// 	*(args->timer) =  seconds + useconds / 1e6;
+//     // *(args->timer) += time_it(1, args->MF_in->spmm(
+//     //     args->opname, args->csr_m, args->csr_k, args->n,
+//     //     args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result
+//     // ););
+//     // return NULL;
+// 	exit(EXIT_SUCCESS);
+// }
 
 void compute(char * matrix_name,
 		INT_T * csr_ia_k, INT_T * csr_ja_k, ValueType * csr_a_k, double * csr_a_ref_k, INT_T csr_m_k, INT_T csr_k_k, INT_T n, INT_T csr_nnz_k,
@@ -479,7 +544,7 @@ void compute(char * matrix_name,
 	int use_processes = atoi(getenv("USE_PROCESSES"));
 	long num_loops;
 	double gflops, gflops_final_spmm,gflops_sddmm,gflops_spmm_K,gflops_spmm_Q, gflops_spmm_V;
-	double time, time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm, time_final_spmm, time_warm_up, time_after_warm_up, time_KQV;
+	double time_all,time, time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm, time_final_spmm, time_warm_up, time_after_warm_up, time_KQV;
 	long buf_n = 10000;
 	char buf[buf_n + 1];
 	long i, j;
@@ -490,35 +555,102 @@ void compute(char * matrix_name,
 	if (!print_labels)
 	{
 		// Warm up cpu.
-		__attribute__((unused)) volatile double warmup_total;
-		long A_warmup_n = (1<<20) * num_threads;
-		double * A_warmup;
-		time_warm_up = time_it(1,
-			A_warmup = (typeof(A_warmup)) malloc(A_warmup_n * sizeof(*A_warmup));
-			_Pragma("omp parallel for")
-			for (long i=0;i<A_warmup_n;i++)
-				A_warmup[i] = 0;
-			for (j=0;j<16;j++)
-			{
-				_Pragma("omp parallel for")
-				for (long i=1;i<A_warmup_n;i++)
-				{
-					A_warmup[i] += A_warmup[i-1] * 7 + 3;
-				}
-			}
-			warmup_total = A_warmup[A_warmup_n];
-			free(A_warmup);
-		);
-		printf("time warm up %lf\n", time_warm_up);
+		// __attribute__((unused)) volatile double warmup_total;
+		// long A_warmup_n = (1<<20) * num_threads;
+		// double * A_warmup;
+		// time_warm_up = time_it(1,
+		// 	A_warmup = (typeof(A_warmup)) malloc(A_warmup_n * sizeof(*A_warmup));
+		// 	_Pragma("omp parallel for")
+		// 	for (long i=0;i<A_warmup_n;i++)
+		// 		A_warmup[i] = 0;
+		// 	for (j=0;j<16;j++)
+		// 	{
+		// 		_Pragma("omp parallel for")
+		// 		for (long i=1;i<A_warmup_n;i++)
+		// 		{
+		// 			A_warmup[i] += A_warmup[i-1] * 7 + 3;
+		// 		}
+		// 	}
+		// 	warmup_total = A_warmup[A_warmup_n];
+		// 	free(A_warmup);
+		// );
+		// printf("time warm up %lf\n", time_warm_up);
 
 		// Warm up caches.
-		time_warm_up = time_it(1,
-			MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
-		);
-		time_warm_up = time_it(1,
-			MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-		);
-		
+		// time_warm_up = time_it(1,
+		int warmup=3;
+		double temp;
+		if(warmup==1){
+			double timer_w=csecond();
+			for (int itt=0; itt<100; itt++){
+				for (int jtt=0; jtt< csr_k_q*n; jtt++){
+					temp=x[jtt];
+					x[jtt]=temp;
+				}
+			}
+			time_warm_up=csecond()-timer_w;
+			printf("X Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
+		}else if(warmup==2){
+			double timer_w=csecond();
+			for (int itt=0; itt<100; itt++){
+				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,64);
+				MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,64);
+
+			}
+			time_warm_up=csecond()-timer_w;
+			printf("K-SPMM Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
+		}
+		else{
+			double timer_w=csecond();
+			for (int itt=0; itt<100; itt++)
+				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,64);
+			time_warm_up=csecond()-timer_w;
+			printf("Pipeline Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
+		}
+		// 	MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,32);
+		// 	MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,32);
+		// // );
+		// // time_warm_up = time_it(1,
+		// 	// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,64);
+		// // );
+		// MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
+		// #pragma omp parallel num_threads(1)
+		// {
+		// 	// int thread_id = omp_get_thread_num();
+		// 	// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+		// 	// pin_thread(core_id);
+		// 	#pragma omp single
+		// 	{
+		// 		#pragma omp task
+		// 		{
+		// 			// pin_thread(core_id);
+		// 			// mkl_set_num_threads(6);
+		// 			// omp_set_num_threads(16);
+		// 			// mkl_set_num_threads_local(16);
+		// 				MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, 32);
+		// 		}
+		// 		#pragma omp task
+		// 		{
+		// 			// pin_thread(core_id);
+		// 			// mkl_set_num_threads(6);
+		// 			// omp_set_num_threads(63);
+		// 				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, 32);
+		// 		}
+				
+		// 		// #pragma omp task
+		// 		// {
+		// 		// 	// pin_thread(core_id);
+		// 		// 	// mkl_set_num_threads(6);
+		// 		// 	// omp_set_num_threads(16);
+		// 		// 	// mkl_set_num_threads_local(16);
+		// 		// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,6);
+		// 		// }
+		// 	}
+		// }
+
+		// MF->sddmm(y,24);
+		// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,24);
+	
 		
 	
 		// /* Calculate number of loops so that the total running time is at least 1 second for stability reasons
@@ -570,52 +702,102 @@ void compute(char * matrix_name,
 		time_final_spmm=0.0;
 		time_sddmm = 0.0;
 		time_KQV = 0.0;
+		time_all=0.0;
 		num_loops = 0.0;
+		// setenv("OMP_NESTED", "true", 1);
+		// omp_set_nested(1); 
+		// omp_set_dynamic(0);
+		// omp_set_max_active_levels(2);
+		// rapl_read_start(regs, regs_n);
+			if (omp_get_nested()) {
+				printf("Nested parallelism is enabled %d.\n", omp_get_max_active_levels());
+			} else {
+				printf("Nested parallelism is NOT enabled.\n");
+			}
 		while (/*time < 1.0 ||*/ num_loops < min_num_loops)
 		{
-			rapl_read_start(regs, regs_n);
-			 if (omp_get_nested()) {
-        printf("Nested parallelism is enabled %d.\n", omp_get_max_active_levels());
-    } else {
-        printf("Nested parallelism is NOT enabled.\n");
-    }
-			if (1){
+
+
+			if(0)
+			{
+				printf("PROCESSES\n");
+
+				// // Allocate shared memory for timers
+				// double *shared_timers =(double *) mmap(NULL, sizeof(double) * 3, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+				// if (shared_timers == MAP_FAILED) {
+				// 	perror("mmap failed for timers");
+				// 	exit(EXIT_FAILURE);
+				// }
+
+				// // Allocate shared memory for K, Q, and V
+				// size_t result_size_k = sizeof(ValueType) * csr_m_k * n; // Adjust size according to matrix dimensions
+				// size_t result_size_q = sizeof(ValueType) * csr_m_q * n;
+				// size_t result_size_v = sizeof(ValueType) * csr_m_v * n;
+
+				// ValueType *K_map = (ValueType *)mmap(NULL, result_size_k, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+				// ValueType *Q_map = (ValueType *)mmap(NULL, result_size_q, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+				// ValueType *V_map = (ValueType *)mmap(NULL, result_size_v, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+				// if (K == MAP_FAILED || Q == MAP_FAILED || V == MAP_FAILED) {
+				// 	perror("mmap failed for K, Q, or V");
+				// 	exit(EXIT_FAILURE);
+				// }
+
+				// thread_args_t process_args[3];
+				// pid_t pids[3];
+				// int cores[3] = {0, 7, 14}; // Assign processes to cores 0, 7, and 14
+
+				// // Prepare arguments for 'K', 'Q', and 'V' operations
+				// process_args[0] = (thread_args_t){'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K_map, &shared_timers[0], MF, cores[0]};
+				// process_args[1] = (thread_args_t){'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q_map, &shared_timers[1], MF, cores[1]};
+				// process_args[2] = (thread_args_t){'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V_map, &shared_timers[2], MF, cores[2]};
+
+				// // Fork processes
+				// time_KQV += time_it(1,
+				// for (int i = 0; i < 3; i++) {
+				// 	if ((pids[i] = fork()) == 0) {
+				// 		// Child process
+				// 		void_mkl_wrap(&process_args[i]);
+				// 	} else if (pids[i] < 0) {
+				// 		perror("Fork failed");
+				// 		exit(EXIT_FAILURE);
+				// 	}
+				// }
+
+				// // Wait for all child processes to complete
+				// for (int i = 0; i < 3; i++) {
+				// 	waitpid(pids[i], NULL, 0);
+				// }
+				// );
 				
-				printf("SPLIIIIIIT\n");
-				time_KQV += time_it(1,
-				pthread_t threads[1];
-				// pthread_attr_t attr;
-				// pthread_attr_init(&attr);
-    			thread_args_t thread_args[1];
-				int cores[1] = {0}; // Assign threads to cores 0, 1, and 2
+				// // Collect results
+				// time_spmm_K = shared_timers[0];
+				// time_spmm_Q = shared_timers[1];
+				// time_spmm_V = shared_timers[2];
+				// #pragma omp parallel for
+				// for (long i = 0; i < csr_m_k * n; i++) {
+				// 	K[i] = K_map[i];
+				// }
+				// #pragma omp parallel for
+				// for (long i = 0; i < csr_m_q * n; i++) {
+				// 	Q[i] = Q_map[i];
+				// }
+				// #pragma omp parallel for
+				// for (long i = 0; i < csr_m_v * n; i++) {
+				// 	V[i] = V_map[i];
+				// }
 
-				// Prepare thread arguments for 'K', 'Q', and 'V' operations
-				thread_args[0] = (thread_args_t){'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, &time_spmm_K, MF, cores[0]};
-				// thread_args[1] = (thread_args_t){'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, &time_spmm_Q, MF, cores[1]};
-				// thread_args[2] = (thread_args_t){'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V, &time_spmm_V, MF, cores[2]};
-				// Create threads for spmm operations
-				// pthread_attr_setstacksize(&attr, 1000000);
-    			for (int i = 0; i < 1; i++)
-        			pthread_create(&threads[i], NULL, void_mkl_wrap, (void*)&thread_args[i]);
+				// // Clean up shared memory
+				// munmap(shared_timers, sizeof(double) * 3);
+				// munmap(K, result_size_k);
+				// munmap(Q, result_size_q);
+				// munmap(V, result_size_v);
+				// time_sddmm += time_it(1, MF->sddmm(y,24););
 
-				// Join threads
-				for (int i = 0; i < 1; i++) {
-					pthread_join(threads[i], NULL);
-				}	
-			);
-			// omp_set_num_threads(32);
-			time_spmm_Q += time_it(1,
-									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-								);
-			time_spmm_V += time_it(1,
-									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
-								);
-				time_sddmm += time_it(1, MF->sddmm(y););
-
-				time_final_spmm += time_it(1,
-					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
-				);
-			time=time_KQV+time_spmm_V+time_sddmm+time_final_spmm;
+				// time_final_spmm += time_it(1,
+				// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final, 24);
+				// );
+			// time=time_KQV+time_sddmm+time_final_spmm;
 			}
 			else if(0){
 				// time_KQV += time_it(1,
@@ -626,100 +808,142 @@ void compute(char * matrix_name,
 				// mkl_set_num_threads(16);
 					struct timeval start, end;
 				long seconds, useconds;
+				struct timeval start_t1, end_t1;
+				long seconds_t1, useconds_t1;
+				struct timeval start_t2, end_t2;
+				long seconds_t2, useconds_t2;
 				// double elapsed;
 				// omp_set_num_threads(16);
 				// mkl_set_num_threads_local(16);
 
 				gettimeofday(&start, NULL);
-					#pragma omp parallel num_threads(1)
+					#pragma omp parallel num_threads(1) 
 					{
 						// int thread_id = omp_get_thread_num();
 						// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
 						// pin_thread(core_id);
-						#pragma omp sections
+						#pragma omp single
 						{
-							#pragma omp section 
+							#pragma omp task
 							{
 								// pin_thread(core_id);
-								mkl_set_num_threads_local(63);
-								omp_set_num_threads(63);
-								time_spmm_K += time_it(1,
-									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
-								);
+								// mkl_set_num_threads(6);
+								// omp_set_num_threads(16);
+								// mkl_set_num_threads_local(16);
+								// time_spmm_Q += time_it(1,
+								gettimeofday(&start_t1, NULL);
+									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,32);
+								// );
+								gettimeofday(&end_t1, NULL);
+							seconds_t1 = end_t1.tv_sec - start_t1.tv_sec;
+							useconds_t1 = end_t1.tv_usec - start_t1.tv_usec;
+							time_spmm_Q +=  seconds_t1 + useconds_t1 / 1e6;
 							}
-							// #pragma omp single
+							
+							#pragma omp task
+							{
+								gettimeofday(&start_t2, NULL);
+								// pin_thread(core_id);
+								// mkl_set_num_threads(16);
+								// omp_set_num_threads(63);
+								// time_spmm_K += time_it(1,
+									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, 32);
+								// );
+								gettimeofday(&end_t2, NULL);
+								seconds_t2 = end_t2.tv_sec - start_t2.tv_sec;
+								useconds_t2 = end_t2.tv_usec - start_t2.tv_usec;
+								time_spmm_K +=  seconds_t2 + useconds_t2 / 1e6;
+							}
+							// #pragma omp task
 							// {
+							// 	gettimeofday(&start_t2, NULL);
 							// 	// pin_thread(core_id);
 							// 	// mkl_set_num_threads(16);
-							// 	// omp_set_num_threads(16);
-							// 	// mkl_set_num_threads_local(16);
-							// 	time_spmm_Q += time_it(1,
-							// 		MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-							// 	);
+							// 	// omp_set_num_threads(63);
+							// 	// time_spmm_K += time_it(1,
+							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,30);
+							// 	// );
+							// 	gettimeofday(&end_t2, NULL);
+							// 	seconds_t2 = end_t2.tv_sec - start_t2.tv_sec;
+							// 	useconds_t2 = end_t2.tv_usec - start_t2.tv_usec;
+							// 	time_spmm_K +=  seconds_t2 + useconds_t2 / 1e6;
 							// }
-							// #pragma omp single
+							
+							// #pragma omp task
 							// {
 							// 	// pin_thread(core_id);
-							// 	// mkl_set_num_threads(16);
+							// 	// mkl_set_num_threads(6);
 							// 	// omp_set_num_threads(16);
 							// 	// mkl_set_num_threads_local(16);
 							// 	time_spmm_V += time_it(1,
-							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,30);
 							// 	);
 							// }
 						}
 					}
+
 					gettimeofday(&end, NULL);
 					seconds = end.tv_sec - start.tv_sec;
 					useconds = end.tv_usec - start.tv_usec;
-					time_KQV =  seconds + useconds / 1e6;
+					time_KQV +=  seconds + useconds / 1e6;
+					mkl_set_dynamic(1);
+					omp_set_nested(0);
+					omp_set_num_threads(64);
+					mkl_set_num_threads(64);
+					
 				// );
 				// time_KQV +=((double) (end - start)) / CLOCKS_PER_SEC;
-				omp_set_num_threads(64);
-				mkl_set_num_threads(64);
-				time_spmm_Q += time_it(1,
-					MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
-				);
+				// omp_set_num_threads(64);
+				// mkl_set_num_threads(64);
+				// time_spmm_Q += time_it(1,
+				// 	MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,64);
+				// );
+				// MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
 				time_spmm_V += time_it(1,
-									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
 								);
 				time_sddmm += time_it(1,
-					MF->sddmm(y);
+					MF->sddmm(y,64);
 				);
 
 				time_final_spmm += time_it(1,
-					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,64);
 				);
-				time=time_KQV+time_sddmm+time_final_spmm;
+				gettimeofday(&end, NULL);
+				seconds = end.tv_sec - start.tv_sec;
+				useconds = end.tv_usec - start.tv_usec;
+				time_all +=  seconds + useconds / 1e6;
+				// time_all+=time_KQV;//+time_spmm_V+time_sddmm+time_final_spmm;
 			}
-			else if (0){
+			else if (1){
 				time_spmm_K += time_it(1,
-					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K);
+					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,omp_get_max_threads());
 				);
 				printf("%ld %ld %ld \n", csr_m_k, csr_k_k, csr_nnz_k);
 
 				time_spmm_Q += time_it(1,
-					MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q);
+					MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,omp_get_max_threads());
 				);
 
 				time_spmm_V += time_it(1,
-					MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V);
+					MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,omp_get_max_threads());
 				);
 				time_sddmm += time_it(1,
-					MF->sddmm(y);
+					MF->sddmm(y,6);
 				);
 				time_final_spmm += time_it(1,
-					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final);
+					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,omp_get_max_threads());
 				);
-				time=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
+				time_all+=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
 			}
 		// 	for (int i=0;i<Mask->nnz;i++)
 		// 	printf("%lf ",y[i]);
 		// printf("sddmm \n");
-			rapl_read_end(regs, regs_n);
+			
 
 			num_loops++;
 		}
+		// rapl_read_end(regs, regs_n);
 		// #if SPLIT==1
 		// 	time=time_KQV+time_sddmm+time_final_spmm;
 		// #elif SPLIT==0
@@ -756,10 +980,11 @@ void compute(char * matrix_name,
 			gflops_spmm_V = csr_nnz_v * 2 * 1e-9 * n / time_spmm_V * num_loops ; 
 			gflops_sddmm = Mask->nnz * 2 * 1e-9 * n / time_sddmm * num_loops ;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
 			gflops_final_spmm = Mask->nnz * 2 * 1e-9 * n / time_final_spmm * num_loops ;
-			gflops = (csr_nnz_k+csr_nnz_q+csr_nnz_v+Mask->nnz+Mask->nnz) * 2 * 1e-9 * n / time * num_loops ;
+			gflops = (csr_nnz_k+csr_nnz_q+csr_nnz_v+Mask->nnz+Mask->nnz)  * 1e-9 * n * 2 / time_all * num_loops ;
+			double gflops_KQV=(csr_nnz_k+csr_nnz_q) * 2 * 1e-9 * n / time_KQV * num_loops ;
 			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
-			// printf("HERE %lf %lf %lf %lf %lf\n", gflops_spmm_K, gflops_spmm_Q, gflops_spmm_V, gflops_sddmm,gflops_final_spmm);
-			// printf("HERE %lf %lf %lf %lf %lf\n", time_spmm_K, time_spmm_Q, time_spmm_V, time_sddmm,time_final_spmm);
+			printf("gflops_spmm_K: %.1lf, gflops_spmm_Q: %.1lf, gflops_spmm_V: %.1lf, gflops_KQV: %.1lf, gflops_sddmm: %.1lf,gflops_final_spmm: %.1lf,gflops: %.1lf\n", gflops_spmm_K, gflops_spmm_Q, gflops_spmm_V,gflops_KQV, gflops_sddmm,gflops_final_spmm,gflops);
+			printf("time_spmm_K: %lf, time_spmm_Q: %lf, time_spmm_V: %lf, time_KQV: %lf, time_sddmm: %lf,time_final_spmm,time: %lf\n", time_spmm_K, time_spmm_Q, time_spmm_V, time_KQV, time_sddmm,time_final_spmm,time_all);
 			// printf("HERE %ld %ld %ld %ld\n", csr_nnz_k, csr_nnz_q, csr_nnz_v, Mask->nnz);
 		}
 	}
@@ -819,7 +1044,7 @@ void compute(char * matrix_name,
 		}
 		else
 		{
-			i += snprintf(buf + i, buf_n - i, ",%d", omp_get_max_threads());
+			i += snprintf(buf + i, buf_n - i, ",%d", num_threads);
 		}
 		i += snprintf(buf + i, buf_n - i, ",%u", n);
 		i += snprintf(buf + i, buf_n - i, ",%u", csr_m_k);
@@ -853,8 +1078,8 @@ void compute(char * matrix_name,
 		buf[i] = '\0';
 		fprintf(stderr, "%s\n", buf);
 		printf("before acccuracy\n");
-		CheckAccuracy(Mask, csr_ia_k, csr_ja_k, csr_a_ref_k, csr_m_k, csr_k_k, csr_nnz_k, n,
-		 csr_ia_q, csr_ja_q, csr_a_ref_q, csr_m_q, csr_k_q, csr_nnz_q, csr_ia_v, csr_ja_v, csr_a_ref_v, csr_m_v, csr_k_v, csr_nnz_v, x_ref, K, Q, V, y_final, y);
+		// CheckAccuracy(Mask, csr_ia_k, csr_ja_k, csr_a_ref_k, csr_m_k, csr_k_k, csr_nnz_k, n,
+		//  csr_ia_q, csr_ja_q, csr_a_ref_q, csr_m_q, csr_k_q, csr_nnz_q, csr_ia_v, csr_ja_v, csr_a_ref_v, csr_m_v, csr_k_v, csr_nnz_v, x_ref, K, Q, V, y_final, y);
 	}
 	else
 	{
@@ -994,7 +1219,9 @@ main(int argc, char **argv)
 	INT_T num_cols = atoi(getenv("NUM_COLS"));
 	INT_T band_size = atoi(getenv("BAND_SIZE"));
 	char * sparse_attention_type = getenv("SPARSE_ATTENTION_TYPE");
+	char * sddmm_sparsification_type = getenv("SDDMM_SPARSIFICATION_TYPE");
 	double sparsity = atof(getenv("SPARSITY"));
+	double l_sparsity = atof(getenv("L_SPARSITY"));
 	printf("sparsity: %lf\n", sparsity);
 
 	struct Matrix_Format * MF;   // Real matrices.
@@ -1406,7 +1633,7 @@ child_proc_label:
 		// z_ref = (typeof(z_ref)) aligned_alloc(64, csr_m * n * sizeof(*z_ref));
 		// z = (typeof(z)) aligned_alloc(64, csr_m * n * sizeof(*z));
 		// printf("HERE\n");
-		mask= create_mask(sparse_attention_type, csr_m_k, sparsity, band_size);
+		mask= create_mask(sparse_attention_type, sddmm_sparsification_type, csr_m_k, sparsity, l_sparsity, band_size);
 		// printf("MASK CREATION\n");
 		#pragma omp parallel for
 		for(int i=0;i<csr_k_k * n;++i)

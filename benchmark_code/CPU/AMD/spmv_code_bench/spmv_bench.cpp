@@ -95,6 +95,27 @@ reference_to_double(void * A, long i)
 	return (double) ((ReferenceType *) A)[i];
 }
 
+double csecond(void) {
+  struct timespec tms;
+
+  if (clock_gettime(CLOCK_REALTIME, &tms)) {
+    return (0.0);
+  }
+  /// seconds, multiplied with 1 million
+  int64_t micros = tms.tv_sec * 1000000;
+  /// Add full microseconds
+  micros += tms.tv_nsec / 1000;
+  /// round up if necessary
+  if (tms.tv_nsec % 1000 >= 500) {
+    ++micros;
+  }
+  return ((double)micros / 1000000.0);
+}
+
+double compute_gflops(double time, long nnz, long n, long num_loops){
+	return nnz * 2 * 1e-9 * n / time * num_loops;
+}
+
 
 /** Simply return the max relative diff */
 void
@@ -270,31 +291,35 @@ compute(char * matrix_name,
 	if (!print_labels)
 	{
 		// Warm up cpu.
-		__attribute__((unused)) volatile double warmup_total;
-		long A_warmup_n = (1<<20) * num_threads;
-		double * A_warmup;
-		time_warm_up = time_it(1,
-			A_warmup = (typeof(A_warmup)) malloc(A_warmup_n * sizeof(*A_warmup));
-			_Pragma("omp parallel for")
-			for (long i=0;i<A_warmup_n;i++)
-				A_warmup[i] = 0;
-			for (j=0;j<16;j++)
-			{
-				_Pragma("omp parallel for")
-				for (long i=1;i<A_warmup_n;i++)
-				{
-					A_warmup[i] += A_warmup[i-1] * 7 + 3;
-				}
-			}
-			warmup_total = A_warmup[A_warmup_n];
-			free(A_warmup);
-		);
-		printf("time warm up %lf\n", time_warm_up);
+		// __attribute__((unused)) volatile double warmup_total;
+		// long A_warmup_n = (1<<20) * num_threads;
+		// double * A_warmup;
+		// time_warm_up = time_it(1,
+		// 	A_warmup = (typeof(A_warmup)) malloc(A_warmup_n * sizeof(*A_warmup));
+		// 	_Pragma("omp parallel for")
+		// 	for (long i=0;i<A_warmup_n;i++)
+		// 		A_warmup[i] = 0;
+		// 	for (j=0;j<16;j++)
+		// 	{
+		// 		_Pragma("omp parallel for")
+		// 		for (long i=1;i<A_warmup_n;i++)
+		// 		{
+		// 			A_warmup[i] += A_warmup[i-1] * 7 + 3;
+		// 		}
+		// 	}
+		// 	warmup_total = A_warmup[A_warmup_n];
+		// 	free(A_warmup);
+		// );
+		// printf("time warm up %lf\n", time_warm_up);
 
 		// Warm up caches.
-		time_warm_up = time_it(1,
+		double timer_w=csecond();
+		for (int itt=0; itt<100; itt++)
 			MF->spmm(x, y, n);
-		);
+		time_warm_up=csecond()-timer_w;
+		printf("time warm up:%lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz, n, 100));
+			
+		
 
 		// /* Calculate number of loops so that the total running time is at least 1 second for stability reasons
 		// (some cpus show frequency inconsistencies when running times are too small). */
@@ -341,18 +366,19 @@ compute(char * matrix_name,
 		num_loops = 0;
 		while (/*time < 1.0 ||*/ num_loops < min_num_loops)
 		{
-			rapl_read_start(regs, regs_n);
+			// rapl_read_start(regs, regs_n);
 
-			time += time_it(1,
-				MF->spmm(x, y, n);
-			);
+			timer_w=csecond();
+			MF->spmm(x, y, n);
+			time = csecond()-timer_w;
 
-			rapl_read_end(regs, regs_n);
+			// rapl_read_end(regs, regs_n);
 
 			num_loops++;
 		}
 		num_loops_out = num_loops;
 		printf("number of loops = %ld\n", num_loops);
+		printf("threads %d time spmm:%lf s (%lf GFLOPS/s)\n", omp_get_max_threads(), time, compute_gflops(time, csr_nnz, n, num_loops));
 
 		/*****************************************************************************************/
 		J_estimated = 0;

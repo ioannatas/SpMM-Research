@@ -78,7 +78,7 @@ int compute1(taco_tensor_t *O, taco_tensor_t *A, taco_tensor_t *D) {
     int D1_size = *(int*)(D->indices[0][0]);
     int D2_size = *(int*)(D->indices[1][0]);
     //cout<<"\n14\n";
-	printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
+	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
     ValueType* __restrict D_vals = (ValueType*)(D->vals);
     //cout<<"\n15\n"<<"O1_size"<<O1_size<<"O2_size"<<O2_size<<endl;
     for (int pO = 0; pO < (O1_size * O2_size); pO++) {
@@ -104,7 +104,7 @@ int compute2(taco_tensor_t *O, taco_tensor_t *A, ValueType *B, taco_tensor_t *D)
     int D1_size = *(int*)(D->indices[0][0]);
     int D2_size = *(int*)(D->indices[1][0]);
     //cout<<"\n14\n";
-	printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
+	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
     ValueType* __restrict D_vals = (ValueType*)(D->vals);
 	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);  
     //cout<<"\nbefore parallel for\n";

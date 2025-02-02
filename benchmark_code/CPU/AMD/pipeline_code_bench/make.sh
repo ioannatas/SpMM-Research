@@ -84,9 +84,13 @@ CFLAGS+=" -D'LEVEL3_CACHE_SIZE=$(getconf LEVEL3_CACHE_SIZE)'"
 
 CFLAGS+=" -D'MATRIX_MARKET_FLOAT_T=ValueType'"
 
+# CPPFLAGS+=" -xHost -qopenmp"
+
 
 CPPFLAGS=''
 CPPFLAGS+=" ${CFLAGS}"
+
+# CPPFLAGS+=" -xHost -qopenmp"
 
 if [[ ${CC} == xlc ]]; then
     CFLAGS+=" -Wno-typedef-redefinition"

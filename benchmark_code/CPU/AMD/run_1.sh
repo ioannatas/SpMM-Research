@@ -362,39 +362,39 @@ bench()
                 # export GOMP_CPU_AFFINITY="0"
                 # mt_conf=$(seq -s ',' 0 1 "$(($t-1))")
                 # if ((!USE_ARTIFICIAL_MATRICES)); then
-                    # "$prog" "${prog_args[@]}" -t -o spx.rt.nr_threads=$t -o spx.rt.cpu_affinity=${mt_conf} -o spx.preproc.xform=all #-v  2>'tmp.err'
+                    # "$prog" "${prog_args[@]}" -t -o spx.rt.nr_threads=$t -o spx.rt.cpu_affinity=${mt_conf} -o spx.preproc.xform=all #-v  2>'tmp_1.err'
                 # else
                     # prog_args2="${prog_args[@]}"
-                    # "$prog" -p "${prog_args2[@]}" -t -o spx.rt.nr_threads=$t -o spx.rt.cpu_affinity=${mt_conf} -o spx.preproc.xform=all #-v  2>'tmp.err'
+                    # "$prog" -p "${prog_args2[@]}" -t -o spx.rt.nr_threads=$t -o spx.rt.cpu_affinity=${mt_conf} -o spx.preproc.xform=all #-v  2>'tmp_1.err'
                 # fi
                 # export GOMP_CPU_AFFINITY="${GOMP_CPU_AFFINITY_backup}"
             # elif [[ "$prog" == *"spmv_sell-C-s.exe"* ]]; then
             if [[ "$prog" == *"spmv_sell-C-s.exe"* ]]; then
                 if ((!USE_ARTIFICIAL_MATRICES)); then
-                    "$prog" -c $OMP_NUM_THREADS -m "${prog_args[@]}" -f SELL-32-1  2>'tmp.err'
+                    "$prog" -c $OMP_NUM_THREADS -m "${prog_args[@]}" -f SELL-32-1  2>'tmp_1.err'
                     ret="$?"
                 else
                     prog_args2="${prog_args[@]}"
-                    "$prog" -c $OMP_NUM_THREADS --artif_args="${prog_args2[@]}" -f SELL-32-1  2>'tmp.err'
+                    "$prog" -c $OMP_NUM_THREADS --artif_args="${prog_args2[@]}" -f SELL-32-1  2>'tmp_1.err'
                     ret="$?"
                 fi
             else
-                # "$prog" 4690000 4 1.6 normal random 1 14  2>'tmp.err'
+                # "$prog" 4690000 4 1.6 normal random 1 14  2>'tmp_1.err'
 
-                # numactl -i all "$prog" "${prog_args[@]}"  2>'tmp.err'
-                "$prog" "${prog_args[@]}"  2>'tmp.err'
+                # numactl -i all "$prog" "${prog_args[@]}"  2>'tmp_1.err'
+                "$prog" "${prog_args[@]}"  2>'tmp_1.err'
                 ret="$?"
             fi
-            cat 'tmp.err'
+            cat 'tmp_1.err'
             if ((!ret || !force_retry_on_error)); then      # If not retrying then print the error text to be able to notice it.
-                cat 'tmp.err' >&2
+                cat 'tmp_1.err' >&2
                 break
             fi
             echo "ERROR: Program exited with error [${ret}], retrying."
         done
     done
 
-    rm 'tmp.err'
+    rm 'tmp_1.err'
 }
 
 

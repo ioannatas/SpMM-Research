@@ -53,15 +53,17 @@ conf_vars=(
 
     ['NUM_COLS']=512
 
-    ['BAND_SIZE']=3
+    ['BAND_SIZE']=32
 
-    ['SPARSITY']=0.9
+    ['L_SPARSITY']=0.0
+
+    ['SDDMM_SPARSIFICATION_TYPE']='band_size'
 
     ['SPARSE_ATTENTION_TYPE']='band_and_random'
 
     ['PIPELINE']=1
 
-    ['SPLIT']=1
+    ['SPLIT']=0
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -92,10 +94,10 @@ conf_vars=(
 
     # Cores / Threads to utilize. Use spaces to define a set of different thread numbers to benchmark.
     # ['cores']=1
-    # ['cores']='1 2 4 8 16 32 64 128'
+    ['cores']='1 2 4 8 16 32 64'
     # ['cores']='64 128'
     # ['cores']=128
-    ['cores']=64
+    # ['cores']=64
     # ['cores']=48
     # ['cores']=32
     # ['cores']=24

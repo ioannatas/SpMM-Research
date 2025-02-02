@@ -83,7 +83,7 @@ int compute1(taco_tensor_t *O, taco_tensor_t *A, taco_tensor_t *D) {
     int D1_size = *(int*)(D->indices[0][0]);
     int D2_size = *(int*)(D->indices[1][0]);
     //cout<<"\n14\n";
-	printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
+	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
     ValueType* __restrict D_vals = (ValueType*)(D->vals);
     //cout<<"\n15\n"<<"O1_size"<<O1_size<<"O2_size"<<O2_size<<endl;
     for (int pO = 0; pO < (O1_size * O2_size); pO++) {
@@ -95,7 +95,7 @@ int compute1(taco_tensor_t *O, taco_tensor_t *A, taco_tensor_t *D) {
 }
 
 
-int compute2(taco_tensor_t *O, taco_tensor_t *A, ValueType *B, taco_tensor_t *D) {
+int compute2(taco_tensor_t *O, taco_tensor_t *A, ValueType *B, taco_tensor_t *D, int num_threads) {
     int O1_size = *(int*)(O->indices[0][0]);
     int O2_size = *(int*)(O->indices[1][0]);
     //cout<<"\n11\n";
@@ -109,10 +109,12 @@ int compute2(taco_tensor_t *O, taco_tensor_t *A, ValueType *B, taco_tensor_t *D)
     int D1_size = *(int*)(D->indices[0][0]);
     int D2_size = *(int*)(D->indices[1][0]);
     //cout<<"\n14\n";
-	printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
+	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);
     ValueType* __restrict D_vals = (ValueType*)(D->vals);
 	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);  
     //cout<<"\nbefore parallel for\n";
+    // omp_set_num_threads(num_threads);
+    // printf("threads sddmm: %d\n", omp_get_num_threads());
     #pragma omp parallel for
     for (int mA = 0; mA < A1_size; mA++) {
         
@@ -177,14 +179,14 @@ struct CSRTensors : Matrix_Format
 	{
 	}
 
-    void spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y) ;
-	void sddmm(ValueType * y);
+    void spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y, int num_threads) ;
+	void sddmm(ValueType * y, int num_threads);
 	void statistics_start();
 	int statistics_print_data(__attribute__((unused)) char * buf, __attribute__((unused)) long buf_n);
 };
 
 
-void compute_csr(CSRTensors * csr, ValueType * y);
+void compute_csr(CSRTensors * csr, ValueType * y, int num_threads);
 
 void softmax(ValueType *input, int size)
 {
@@ -207,15 +209,15 @@ void softmax(ValueType *input, int size)
 }
 
 void
-CSRTensors::sddmm(ValueType * y)
+CSRTensors::sddmm(ValueType * y, int num_threads)
 {
-	compute_csr(this, y);
+	compute_csr(this, y, num_threads);
     // softmax(y,this->nnz);
     // printf("SDDMM\n");
 }
 
 void
-CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y)
+CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, ValueType *a, ValueType *x, ValueType *y, int num_threads)
 {
     // mkl_verbose(1);
     char transa = 'N';
@@ -226,11 +228,12 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
     matdescra[2] = 'N';
     matdescra[3] = 'C';
     int threads;
+    // mkl_set_num_threads(num_threads);
     // mkl_set_num_threads_local(16);
     // omp_set_num_threads(16);
-    #pragma omp parallel
-    {threads=omp_get_num_threads();}
-    printf("threads %d\n",threads);
+    // #pragma omp parallel
+    // {threads=omp_get_num_threads();}
+    // printf("threads %d\n",threads);
 	#if DOUBLE == 0
         // if (type=='T'){
         //     printf("T\n");
@@ -248,11 +251,11 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
 
     if (type=='K'){
 	    this->K->vals = (ValueType*)y;
-        printf("k\n");
+        // printf("k\n");
     }
     else if (type=='Q'){
 	    this->Q->vals = (ValueType*)y;
-        printf("q\n");
+        // printf("q\n");
     }
 }
 
@@ -275,14 +278,14 @@ csr_to_format(INT_T * row_ptr, INT_T * col_ind, ValueType * values, long m, long
 
 
 void
-compute_csr(CSRTensors * csr, ValueType * y)
+compute_csr(CSRTensors * csr, ValueType * y, int num_threads)
 {
 	// compute1(csr->x, csr->Mask, csr->z);
 	// printf("hi\n");
 	for (int i=0; i<csr->nnz; i++){
 		y[i]=0.0;
 	}
-	compute2(csr->Q, csr->Mask, y, csr->K);
+	compute2(csr->Q, csr->Mask, y, csr->K, num_threads);
 	
 }
 

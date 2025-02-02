@@ -129,7 +129,9 @@ CPPFLAGS_MKL += -Wno-deprecated-declarations -m64 -mavx2
 
 LDFLAGS_MKL = 
 LDFLAGS_MKL += -L'$(MKL_PATH)/lib/intel64'
-LDFLAGS_MKL += -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -ldl
+LDFLAGS_MKL += -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -ldl 
+# LDFLAGS_MKL += -fuse-ld=lld
+
 
 # sddmm_mkl_coo$(SUFFIX).exe: sddmm_kernel_mkl_coo.cpp $(LIB_OBJ)
 # 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
