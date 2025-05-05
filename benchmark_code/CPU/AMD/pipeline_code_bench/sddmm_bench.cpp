@@ -421,15 +421,15 @@ get_pinning_position_from_affinity_string(const char * range_string, long len, i
 // }
 
 // Thread arguments structure
-typedef struct {
-    char opname;
-    int csr_m, csr_k, n;
-    INT_T *csr_ia, *csr_ja;
-    ValueType *csr_a, *x, *result;
-    double *timer;
-    struct Matrix_Format *MF_in;
-    int core_id; // Core ID for CPU affinity
-} thread_args_t;
+// typedef struct {
+//     char opname;
+//     int csr_m, csr_k, n;
+//     INT_T *csr_ia, *csr_ja;
+//     ValueType *csr_a, *x, *result;
+//     double *timer;
+//     struct Matrix_Format *MF_in;
+//     int core_id; // Core ID for CPU affinity
+// } thread_args_t;
 
 // Thread function for spmm with CPU affinity
 // void* void_mkl_wrap(void* arg) {
@@ -528,6 +528,37 @@ typedef struct {
 // 	exit(EXIT_SUCCESS);
 // }
 
+typedef struct {
+	struct Matrix_Format * MF;
+    char type;
+    int csr_m, csr_k, n;
+    INT_T *csr_ia, *csr_ja;
+    ValueType *csr_a, *x, *result;
+    int mkl_threads;
+    double *time_spmm;
+    int core_id; // Core to pin the thread to
+	char *mkl_affinity;
+} ThreadArgs;
+
+// Wrapper function for pthreads
+void* spmm_thread(void* arg) {
+    ThreadArgs* args = (ThreadArgs*)arg;
+
+    // Pin the thread to the specified core
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(args->core_id, &cpuset);
+    pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+	printf("affinity mkl: %s\n",args->mkl_affinity);
+	// setenv("GOMP_CPU_AFFINITY", args->mkl_affinity, 1);
+	putenv(args->mkl_affinity);
+    // Execute the computation
+    *(args->time_spmm) += time_it(1,
+        args->MF->spmm(args->type, args->csr_m, args->csr_k, args->n, args->csr_ia, args->csr_ja, args->csr_a, args->x, args->result, args->mkl_threads);
+    );
+    return NULL;
+}
+
 void compute(char * matrix_name,
 		INT_T * csr_ia_k, INT_T * csr_ja_k, ValueType * csr_a_k, double * csr_a_ref_k, INT_T csr_m_k, INT_T csr_k_k, INT_T n, INT_T csr_nnz_k,
 		INT_T * csr_ia_q, INT_T * csr_ja_q, ValueType * csr_a_q, double * csr_a_ref_q, INT_T csr_m_q, INT_T csr_k_q, INT_T csr_nnz_q,
@@ -554,31 +585,12 @@ void compute(char * matrix_name,
 
 	if (!print_labels)
 	{
-		// Warm up cpu.
-		// __attribute__((unused)) volatile double warmup_total;
-		// long A_warmup_n = (1<<20) * num_threads;
-		// double * A_warmup;
-		// time_warm_up = time_it(1,
-		// 	A_warmup = (typeof(A_warmup)) malloc(A_warmup_n * sizeof(*A_warmup));
-		// 	_Pragma("omp parallel for")
-		// 	for (long i=0;i<A_warmup_n;i++)
-		// 		A_warmup[i] = 0;
-		// 	for (j=0;j<16;j++)
-		// 	{
-		// 		_Pragma("omp parallel for")
-		// 		for (long i=1;i<A_warmup_n;i++)
-		// 		{
-		// 			A_warmup[i] += A_warmup[i-1] * 7 + 3;
-		// 		}
-		// 	}
-		// 	warmup_total = A_warmup[A_warmup_n];
-		// 	free(A_warmup);
-		// );
-		// printf("time warm up %lf\n", time_warm_up);
 
 		// Warm up caches.
 		// time_warm_up = time_it(1,
-		int warmup=3;
+		int warmup=5;
+		int mkl_threads=atoi(getenv("MKL_NUM_THREADS"));
+		printf("mkl threads: %d\n", mkl_threads);
 		double temp;
 		if(warmup==1){
 			double timer_w=csecond();
@@ -600,82 +612,114 @@ void compute(char * matrix_name,
 			time_warm_up=csecond()-timer_w;
 			printf("K-SPMM Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
 		}
-		else{
+		else if (warmup==3){
 			double timer_w=csecond();
 			for (int itt=0; itt<100; itt++)
-				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,64);
+				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,mkl_threads);
 			time_warm_up=csecond()-timer_w;
 			printf("Pipeline Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
-		}
-		// 	MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,32);
-		// 	MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,32);
-		// // );
-		// // time_warm_up = time_it(1,
-		// 	// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,64);
-		// // );
-		// MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
-		// #pragma omp parallel num_threads(1)
-		// {
-		// 	// int thread_id = omp_get_thread_num();
-		// 	// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
-		// 	// pin_thread(core_id);
-		// 	#pragma omp single
-		// 	{
-		// 		#pragma omp task
-		// 		{
-		// 			// pin_thread(core_id);
-		// 			// mkl_set_num_threads(6);
-		// 			// omp_set_num_threads(16);
-		// 			// mkl_set_num_threads_local(16);
-		// 				MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, 32);
-		// 		}
-		// 		#pragma omp task
-		// 		{
-		// 			// pin_thread(core_id);
-		// 			// mkl_set_num_threads(6);
-		// 			// omp_set_num_threads(63);
-		// 				MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, 32);
-		// 		}
+		}else if (warmup==4){
+				for (int itt=0; itt<100; itt++){
+					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,64);
+					
+				}
+				// pthread_t threads[3];
+				// ThreadArgs args[3];
+
+				// // Initialize arguments for each thread
+				// args[0] = (ThreadArgs) {MF,'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, mkl_threads, &time_spmm_Q, 0, "1,2,3,4,5,6,7,8"}; // Pin to core 0
+				// args[1] = (ThreadArgs) {MF,'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V, mkl_threads, &time_spmm_V, 12, "13,14,15,16,17,18,19,20"}; // Pin to core 1
+				// // args[2] = {'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, mkl_threads, &time_spmm_K, 2}; // Pin to core 2
+
+				// // Create threads
+				// for (int i = 0; i < 2; i++) {
+				// 	if (i=0)
+				// 		setenv("GOMP_CPU_AFFINITY", "1,2,3,4,5,6,7,8", 1);
+				// 	else
+				// 		setenv("GOMP_CPU_AFFINITY", "13,14,15,16,17,18,19,20", 1);
+				// 	pthread_create(&threads[i], NULL, spmm_thread, (void*)&args[i]);
+				// }
+
+				// // Wait for all threads to complete
+				// for (int i = 0; i < 2; i++) {
+				// 	pthread_join(threads[i], NULL);
+				// }
+		}else{
+			
+				// );
+				// time_warm_up = time_it(1,
+					// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,64);
+				// );
+				double timer_w=csecond();
+				// for (int itt=0; itt<100; itt++){
+				// 	MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,64);
+					
+				// }
+				// MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,mkl_threads);
+				// 	MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,mkl_threads);
+				// 	MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,mkl_threads);
 				
-		// 		// #pragma omp task
-		// 		// {
-		// 		// 	// pin_thread(core_id);
-		// 		// 	// mkl_set_num_threads(6);
-		// 		// 	// omp_set_num_threads(16);
-		// 		// 	// mkl_set_num_threads_local(16);
-		// 		// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,6);
-		// 		// }
-		// 	}
-		// }
-
-		// MF->sddmm(y,24);
-		// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,24);
+				// setenv("OMP_NUM_THREADS", "3,16", 1);
+				omp_set_num_threads(3);
+				for (int itt=0; itt<100; itt++){
+					
+					#pragma omp parallel 
+					{
+						// int thread_id = omp_get_thread_num();
+						// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+						// pin_thread(core_id*17);
+						#pragma omp single
+						{
+							#pragma omp task
+							{
+								// printf("thread %d\n",omp_get_thread_num());
+								// pin_thread(core_id);
+								// mkl_set_num_threads(6);
+								// omp_set_num_threads(16);
+								// mkl_set_num_threads_local(16);
+								int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,mkl_threads);
+							}
+							#pragma omp task
+							{
+								// pin_thread(core_id);
+								// mkl_set_num_threads(6);
+								// omp_set_num_threads(16);
+								int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, mkl_threads);
+							}
+							#pragma omp task
+							{
+								int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+								// mkl_set_num_threads(6);
+								// omp_set_num_threads(16);
+								// mkl_set_num_threads_local(16);
+								// #pragma omp parallel
+								// {
+								// 	int thread_id = omp_get_thread_num();
+								// 	int cpu_id = sched_getcpu();
+								// 	std::cout << "Thread " << thread_id << " is running on CPU " << cpu_id << std::endl;
+								// }
+									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, mkl_threads);
+							}
+							
+							
+							
+						}
+					}
+				}
+				time_warm_up=csecond()-timer_w;
+				printf("Pipeline Warm up: time: %lf s (%lf GFLOPS/s)\n", time_warm_up, compute_gflops(time_warm_up, csr_nnz_k, n, 100));
+				// MF->sddmm(y,24);
+				// MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,24);
+		}
 	
-		
-	
-		// /* Calculate number of loops so that the total running time is at least 1 second for stability reasons
-		// (some cpus show frequency inconsistencies when running times are too small). */
-		// long num_calc_loops_runs_1 = 5;
-		// long num_calc_loops_runs_2;
-		// time_after_warm_up = 0;
-		// time_after_warm_up += time_it(1,
-			// for (i=0;i<num_calc_loops_runs_1;i++)
-				// MF->spmv(x, y);
-		// );
-		// num_calc_loops_runs_2 = 0.1 / (time_after_warm_up / num_calc_loops_runs_1);
-		// if (num_calc_loops_runs_2 < 5)
-			// num_calc_loops_runs_2 = 5;
-		// time_after_warm_up += time_it(1,
-			// for (i=0;i<num_calc_loops_runs_2;i++)
-				// MF->spmv(x, y);
-		// );
-		// printf("time after warm up %lf\n", time_after_warm_up);
-		// num_loops = 1.0 / (time_after_warm_up / (num_calc_loops_runs_1 + num_calc_loops_runs_2));
-		// if (num_loops < min_num_loops)
-			// num_loops = min_num_loops;
-		// num_loops_out = num_loops;
-		// printf("number of loops = %ld\n", num_loops);
-
 		if (use_processes)
 			raise(SIGSTOP);
 
@@ -720,91 +764,34 @@ void compute(char * matrix_name,
 
 			if(0)
 			{
-				printf("PROCESSES\n");
+				printf("Pthreads\n");
+				double time_start = csecond();
+				pthread_t threads[3];
+				ThreadArgs args[3];
 
-				// // Allocate shared memory for timers
-				// double *shared_timers =(double *) mmap(NULL, sizeof(double) * 3, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-				// if (shared_timers == MAP_FAILED) {
-				// 	perror("mmap failed for timers");
-				// 	exit(EXIT_FAILURE);
-				// }
+				// Initialize arguments for each thread
+				args[0] = (ThreadArgs) {MF,'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, mkl_threads, &time_spmm_Q, 0, "GOMP_CPU_AFFINITY=1,2,3,4,5,6,7,8"}; // Pin to core 0
+				args[1] = (ThreadArgs) {MF,'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V, mkl_threads, &time_spmm_V, 12, "GOMP_CPU_AFFINITY=13,14,15,16,17,18,19,20"}; // Pin to core 1
+				// args[2] = {'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, mkl_threads, &time_spmm_K, 2}; // Pin to core 2
 
-				// // Allocate shared memory for K, Q, and V
-				// size_t result_size_k = sizeof(ValueType) * csr_m_k * n; // Adjust size according to matrix dimensions
-				// size_t result_size_q = sizeof(ValueType) * csr_m_q * n;
-				// size_t result_size_v = sizeof(ValueType) * csr_m_v * n;
+				// Create threads
+				for (int i = 0; i < 2; i++) {
+					pthread_create(&threads[i], NULL, spmm_thread, (void*)&args[i]);
+				}
 
-				// ValueType *K_map = (ValueType *)mmap(NULL, result_size_k, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-				// ValueType *Q_map = (ValueType *)mmap(NULL, result_size_q, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-				// ValueType *V_map = (ValueType *)mmap(NULL, result_size_v, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+				// Wait for all threads to complete
+				for (int i = 0; i < 2; i++) {
+					pthread_join(threads[i], NULL);
+				}
 
-				// if (K == MAP_FAILED || Q == MAP_FAILED || V == MAP_FAILED) {
-				// 	perror("mmap failed for K, Q, or V");
-				// 	exit(EXIT_FAILURE);
-				// }
+				time_KQV = csecond() - time_start;
 
-				// thread_args_t process_args[3];
-				// pid_t pids[3];
-				// int cores[3] = {0, 7, 14}; // Assign processes to cores 0, 7, and 14
-
-				// // Prepare arguments for 'K', 'Q', and 'V' operations
-				// process_args[0] = (thread_args_t){'K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K_map, &shared_timers[0], MF, cores[0]};
-				// process_args[1] = (thread_args_t){'Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q_map, &shared_timers[1], MF, cores[1]};
-				// process_args[2] = (thread_args_t){'V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V_map, &shared_timers[2], MF, cores[2]};
-
-				// // Fork processes
-				// time_KQV += time_it(1,
-				// for (int i = 0; i < 3; i++) {
-				// 	if ((pids[i] = fork()) == 0) {
-				// 		// Child process
-				// 		void_mkl_wrap(&process_args[i]);
-				// 	} else if (pids[i] < 0) {
-				// 		perror("Fork failed");
-				// 		exit(EXIT_FAILURE);
-				// 	}
-				// }
-
-				// // Wait for all child processes to complete
-				// for (int i = 0; i < 3; i++) {
-				// 	waitpid(pids[i], NULL, 0);
-				// }
-				// );
-				
-				// // Collect results
-				// time_spmm_K = shared_timers[0];
-				// time_spmm_Q = shared_timers[1];
-				// time_spmm_V = shared_timers[2];
-				// #pragma omp parallel for
-				// for (long i = 0; i < csr_m_k * n; i++) {
-				// 	K[i] = K_map[i];
-				// }
-				// #pragma omp parallel for
-				// for (long i = 0; i < csr_m_q * n; i++) {
-				// 	Q[i] = Q_map[i];
-				// }
-				// #pragma omp parallel for
-				// for (long i = 0; i < csr_m_v * n; i++) {
-				// 	V[i] = V_map[i];
-				// }
-
-				// // Clean up shared memory
-				// munmap(shared_timers, sizeof(double) * 3);
-				// munmap(K, result_size_k);
-				// munmap(Q, result_size_q);
-				// munmap(V, result_size_v);
-				// time_sddmm += time_it(1, MF->sddmm(y,24););
-
-				// time_final_spmm += time_it(1,
-				// 	MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final, 24);
-				// );
-			// time=time_KQV+time_sddmm+time_final_spmm;
 			}
 			else if(0){
 				// time_KQV += time_it(1,
-				// omp_set_nested(1);
-				// omp_set_nested(1);
-				// mkl_set_dynamic(0);
-				// omp_set_num_threads(16);
+				omp_set_nested(1); 
+				omp_set_dynamic(0);
+				omp_set_max_active_levels(2);
 				// mkl_set_num_threads(16);
 					struct timeval start, end;
 				long seconds, useconds;
@@ -817,7 +804,8 @@ void compute(char * matrix_name,
 				// mkl_set_num_threads_local(16);
 
 				gettimeofday(&start, NULL);
-					#pragma omp parallel num_threads(1) 
+					// omp_set_num_threads(1);
+					#pragma omp parallel 
 					{
 						// int thread_id = omp_get_thread_num();
 						// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
@@ -827,12 +815,12 @@ void compute(char * matrix_name,
 							#pragma omp task
 							{
 								// pin_thread(core_id);
-								// mkl_set_num_threads(6);
-								// omp_set_num_threads(16);
+								mkl_set_num_threads(mkl_threads);
+								omp_set_num_threads(mkl_threads);
 								// mkl_set_num_threads_local(16);
 								// time_spmm_Q += time_it(1,
 								gettimeofday(&start_t1, NULL);
-									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,32);
+									MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q, mkl_threads);
 								// );
 								gettimeofday(&end_t1, NULL);
 							seconds_t1 = end_t1.tv_sec - start_t1.tv_sec;
@@ -840,33 +828,33 @@ void compute(char * matrix_name,
 							time_spmm_Q +=  seconds_t1 + useconds_t1 / 1e6;
 							}
 							
-							#pragma omp task
-							{
-								gettimeofday(&start_t2, NULL);
-								// pin_thread(core_id);
-								// mkl_set_num_threads(16);
-								// omp_set_num_threads(63);
-								// time_spmm_K += time_it(1,
-									MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, 32);
-								// );
-								gettimeofday(&end_t2, NULL);
-								seconds_t2 = end_t2.tv_sec - start_t2.tv_sec;
-								useconds_t2 = end_t2.tv_usec - start_t2.tv_usec;
-								time_spmm_K +=  seconds_t2 + useconds_t2 / 1e6;
-							}
 							// #pragma omp task
 							// {
 							// 	gettimeofday(&start_t2, NULL);
 							// 	// pin_thread(core_id);
-							// 	// mkl_set_num_threads(16);
-							// 	// omp_set_num_threads(63);
+							// 	mkl_set_num_threads(mkl_threads);
+							// 	// omp_set_num_threads(mkl_threads);
 							// 	// time_spmm_K += time_it(1,
-							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,30);
+							// 		MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K, mkl_threads);
 							// 	// );
 							// 	gettimeofday(&end_t2, NULL);
 							// 	seconds_t2 = end_t2.tv_sec - start_t2.tv_sec;
 							// 	useconds_t2 = end_t2.tv_usec - start_t2.tv_usec;
 							// 	time_spmm_K +=  seconds_t2 + useconds_t2 / 1e6;
+							// }
+							// #pragma omp task
+							// {
+							// 	gettimeofday(&start_t2, NULL);
+							// 	// pin_thread(core_id);
+							// 	mkl_set_num_threads(mkl_threads);
+							// 	// omp_set_num_threads(mkl_threads);
+							// 	// time_spmm_K += time_it(1,
+							// 		MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V, mkl_threads);
+							// 	// );
+							// 	gettimeofday(&end_t2, NULL);
+							// 	seconds_t2 = end_t2.tv_sec - start_t2.tv_sec;
+							// 	useconds_t2 = end_t2.tv_usec - start_t2.tv_usec;
+							// 	time_spmm_V +=  seconds_t2 + useconds_t2 / 1e6;
 							// }
 							
 							// #pragma omp task
@@ -882,26 +870,16 @@ void compute(char * matrix_name,
 						}
 					}
 
-					gettimeofday(&end, NULL);
-					seconds = end.tv_sec - start.tv_sec;
-					useconds = end.tv_usec - start.tv_usec;
-					time_KQV +=  seconds + useconds / 1e6;
-					mkl_set_dynamic(1);
-					omp_set_nested(0);
-					omp_set_num_threads(64);
-					mkl_set_num_threads(64);
-					
-				// );
-				// time_KQV +=((double) (end - start)) / CLOCKS_PER_SEC;
-				// omp_set_num_threads(64);
-				// mkl_set_num_threads(64);
-				// time_spmm_Q += time_it(1,
-				// 	MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,64);
-				// );
-				// MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
-				time_spmm_V += time_it(1,
-									MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,64);
-								);
+				gettimeofday(&end, NULL);
+				seconds = end.tv_sec - start.tv_sec;
+				useconds = end.tv_usec - start.tv_usec;
+				time_KQV +=  seconds + useconds / 1e6;
+				// mkl_set_dynamic(1);
+				// omp_set_nested(0);
+				setenv("OMP_NUM_THREADS", "64", 1);
+				omp_set_num_threads(64);
+				mkl_set_num_threads(64);
+				
 				time_sddmm += time_it(1,
 					MF->sddmm(y,64);
 				);
@@ -915,7 +893,7 @@ void compute(char * matrix_name,
 				time_all +=  seconds + useconds / 1e6;
 				// time_all+=time_KQV;//+time_spmm_V+time_sddmm+time_final_spmm;
 			}
-			else if (1){
+			else if (0){
 				time_spmm_K += time_it(1,
 					MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,omp_get_max_threads());
 				);
@@ -929,12 +907,78 @@ void compute(char * matrix_name,
 					MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,omp_get_max_threads());
 				);
 				time_sddmm += time_it(1,
-					MF->sddmm(y,6);
+					MF->sddmm(y,omp_get_max_threads());
 				);
 				time_final_spmm += time_it(1,
 					MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,omp_get_max_threads());
 				);
 				time_all+=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
+			}
+			else if(1){
+					// omp_set_num_threads(8);
+					omp_set_num_threads(3);
+					double time_start=csecond();
+					#pragma omp parallel
+					{
+						// for (int itt=0; itt<1000; itt++){
+						// int thread_id = omp_get_thread_num();
+						// int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+						// pin_thread(core_id*17);
+							#pragma omp single
+							{
+								#pragma omp task
+								{
+									// omp_set_num_threads(8);
+									// mkl_set_num_threads(8);
+									int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+									time_spmm_Q += time_it(1,
+										MF->spmm('Q', csr_m_q, csr_k_q, n, csr_ia_q, csr_ja_q, csr_a_q, x, Q,mkl_threads);
+									);
+								}
+							// }
+						// // }
+						// // for (int itt=0; itt<1000; itt++){
+								#pragma omp task
+								{
+									int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+									time_spmm_K += time_it(1,
+										MF->spmm('K', csr_m_k, csr_k_k, n, csr_ia_k, csr_ja_k, csr_a_k, x, K,mkl_threads);
+									);
+								}
+						// 	}
+						// // for (int itt=0; itt<1000; itt++){
+								#pragma omp task
+								{
+									// omp_set_num_threads(8);
+									// mkl_set_num_threads(8);
+									int thread_id = omp_get_thread_num();
+								int core_id = thread_id; // Map threads to cores (simple 1-to-1 mapping)
+								pin_thread(core_id*17);
+									time_spmm_V += time_it(1,
+										MF->spmm('V', csr_m_v, csr_k_v, n, csr_ia_v, csr_ja_v, csr_a_v, x, V,mkl_threads);
+									);
+								}
+							
+						// }
+						}
+						#pragma omp taskwait
+					} 
+					time_KQV=csecond()-time_start;
+					omp_set_num_threads(64);
+					mkl_set_num_threads(64);
+					omp_set_nested(0); 
+					omp_set_dynamic(1);
+					time_sddmm += time_it(1,
+					MF->sddmm(y,omp_get_max_threads());
+					);
+					time_final_spmm += time_it(1,
+						MF->spmm('final', Mask->m, Mask->m, n, Mask->csr_ia, Mask->csr_ja, y, V, y_final,omp_get_max_threads());
+					);
+					time_all+=time_spmm_K+time_spmm_Q+time_spmm_V+time_sddmm+time_final_spmm;
 			}
 		// 	for (int i=0;i<Mask->nnz;i++)
 		// 	printf("%lf ",y[i]);
@@ -981,7 +1025,7 @@ void compute(char * matrix_name,
 			gflops_sddmm = Mask->nnz * 2 * 1e-9 * n / time_sddmm * num_loops ;    // Use csr_nnz to be sure we have the initial nnz (there is no coo for artificial AM).
 			gflops_final_spmm = Mask->nnz * 2 * 1e-9 * n / time_final_spmm * num_loops ;
 			gflops = (csr_nnz_k+csr_nnz_q+csr_nnz_v+Mask->nnz+Mask->nnz)  * 1e-9 * n * 2 / time_all * num_loops ;
-			double gflops_KQV=(csr_nnz_k+csr_nnz_q) * 2 * 1e-9 * n / time_KQV * num_loops ;
+			double gflops_KQV=(csr_nnz_k+csr_nnz_q+csr_nnz_q) * 2 * 1e-9 * n / time_KQV * num_loops ;
 			// printf("wright %d * %d * %d / %lf * %ld * 2 * 1e-9;\n", csr_k, csr_m , n, time ,num_loops);
 			printf("gflops_spmm_K: %.1lf, gflops_spmm_Q: %.1lf, gflops_spmm_V: %.1lf, gflops_KQV: %.1lf, gflops_sddmm: %.1lf,gflops_final_spmm: %.1lf,gflops: %.1lf\n", gflops_spmm_K, gflops_spmm_Q, gflops_spmm_V,gflops_KQV, gflops_sddmm,gflops_final_spmm,gflops);
 			printf("time_spmm_K: %lf, time_spmm_Q: %lf, time_spmm_V: %lf, time_KQV: %lf, time_sddmm: %lf,time_final_spmm,time: %lf\n", time_spmm_K, time_spmm_Q, time_spmm_V, time_KQV, time_sddmm,time_final_spmm,time_all);
@@ -1055,7 +1099,7 @@ void compute(char * matrix_name,
 		i += snprintf(buf + i, buf_n - i, ",%lf", time_spmm_V);
 		i += snprintf(buf + i, buf_n - i, ",%lf", time_sddmm);
 		i += snprintf(buf + i, buf_n - i, ",%lf", time_final_spmm);
-		i += snprintf(buf + i, buf_n - i, ",%lf", time);
+		i += snprintf(buf + i, buf_n - i, ",%lf", time_all);
 		i += snprintf(buf + i, buf_n - i, ",%lf", gflops_spmm_K);
 		i += snprintf(buf + i, buf_n - i, ",%lf", gflops_spmm_Q);
 		i += snprintf(buf + i, buf_n - i, ",%lf", gflops_spmm_V);

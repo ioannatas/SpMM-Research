@@ -63,7 +63,7 @@ conf_vars=(
 
     ['PIPELINE']=1
 
-    ['SPLIT']=0
+    ['SPLIT']=1
 
     ['COOLDOWN']=0
     # ['COOLDOWN']=1
@@ -94,10 +94,10 @@ conf_vars=(
 
     # Cores / Threads to utilize. Use spaces to define a set of different thread numbers to benchmark.
     # ['cores']=1
-    ['cores']='1 2 4 8 16 32 64'
+    # ['cores']='1 2 4 8 16 32 64'
     # ['cores']='64 128'
     # ['cores']=128
-    # ['cores']=64
+    ['cores']=64
     # ['cores']=48
     # ['cores']=32
     # ['cores']=24

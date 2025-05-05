@@ -114,8 +114,9 @@ int compute2(taco_tensor_t *O, taco_tensor_t *A, ValueType *B, taco_tensor_t *D,
 	// printf("%d %d %d %d %d ",A1_size, D1_size, D2_size, O1_size, O2_size);  
     //cout<<"\nbefore parallel for\n";
     // omp_set_num_threads(num_threads);
+    // mkl_set_num_threads(num_threads);
     // printf("threads sddmm: %d\n", omp_get_num_threads());
-    #pragma omp parallel for
+    #pragma omp parallel for 
     for (int mA = 0; mA < A1_size; mA++) {
         
         for (int pA2 = A2_pos[mA]; pA2 < A2_pos[mA + 1]; pA2++) {
@@ -228,7 +229,7 @@ CSRTensors::spmm(char type, INT_T m, INT_T k, INT_T n, INT_T *ia, INT_T *ja, Val
     matdescra[2] = 'N';
     matdescra[3] = 'C';
     int threads;
-    // mkl_set_num_threads(num_threads);
+    mkl_set_num_threads_local(num_threads);
     // mkl_set_num_threads_local(16);
     // omp_set_num_threads(16);
     // #pragma omp parallel
@@ -282,6 +283,9 @@ compute_csr(CSRTensors * csr, ValueType * y, int num_threads)
 {
 	// compute1(csr->x, csr->Mask, csr->z);
 	// printf("hi\n");
+    omp_set_num_threads(num_threads);
+    mkl_set_num_threads(num_threads);
+    #pragma omp parallel for
 	for (int i=0; i<csr->nnz; i++){
 		y[i]=0.0;
 	}

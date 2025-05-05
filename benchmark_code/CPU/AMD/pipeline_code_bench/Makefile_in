@@ -124,41 +124,16 @@ sddmm_cusparse_coo$(SUFFIX).exe: sddmm_kernel_cusparse_coo.cu $(LIB_OBJ)
 
 
 CPPFLAGS_MKL = 
-CPPFLAGS_MKL += -I'$(MKL_PATH)/include' -I'/usr/include/mkl'
-CPPFLAGS_MKL += -Wno-deprecated-declarations -m64 -mavx2
+CPPFLAGS_MKL += -I'$(MKL_PATH)/include' -I'/usr/include/mkl' -fopenmp -O3 
+# CPPFLAGS_MKL += -Wno-deprecated-declarations -m64 -mavx2
 
 LDFLAGS_MKL = 
 LDFLAGS_MKL += -L'$(MKL_PATH)/lib/intel64'
 LDFLAGS_MKL += -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -ldl 
+# LDFLAGS_MKL += -lmkl_intel_lp64 -lmkl_core -lmkl_gnu_thread -lpthread -lm -ldl -liomp5
+# LDFLAGS_MKL += -pthread -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -liomp5
 # LDFLAGS_MKL += -fuse-ld=lld
 
-
-# sddmm_mkl_coo$(SUFFIX).exe: sddmm_kernel_mkl_coo.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_dia$(SUFFIX).exe: sddmm_kernel_mkl_dia.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_dia$(SUFFIX).exe: sddmm_kernel_dia.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS_MKL)
-# sddmm_mkl_csc$(SUFFIX).exe: sddmm_kernel_mkl_csc.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_csr$(SUFFIX).exe: sddmm_kernel_mkl_csr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_ie$(SUFFIX).exe: sddmm_kernel_mkl_ie.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_ie_col$(SUFFIX).exe: sddmm_kernel_mkl_ie_col.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_2$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=2' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_4$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=4' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_8$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=8' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_16$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=16' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_32$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=32' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
-# sddmm_mkl_bsr_64$(SUFFIX).exe: sddmm_kernel_mkl_bsr.cpp $(LIB_OBJ)
-# 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) -D'BLOCK_SIZE=64' $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)
 
 sddmm_mkl_gemm$(SUFFIX).exe: sddmm_kernel_mkl_gemm.cpp $(LIB_OBJ)
 	$(CPP) $(CPPFLAGS) $(CPPFLAGS_MKL) $^ -o $@ $(LDFLAGS) $(LDFLAGS_MKL)

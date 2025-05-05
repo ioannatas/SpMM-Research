@@ -13,12 +13,12 @@
 #include <time.h>
 #include <math.h>
 
-INT_T * band_and_random(char * sddmm_sparsification_type, long length, INT_T & nnz, long &band_size, double sparsity, double & l_sparsity) {
-
-    long total_elements = length * length; 
+INT_T *band_and_random(char *sddmm_sparsification_type, long length, INT_T &nnz, long &band_size, double sparsity, double &l_sparsity) {
+    long total_elements = length * length;
     long band_values;
     long C;
     long b;
+
     if (strcmp(sddmm_sparsification_type, "l_sparsity") == 0) {
         C = 1 / 2 - ((sparsity - 0.5) / l_sparsity);
         b = 2 * length - 1;
@@ -37,47 +37,127 @@ INT_T * band_and_random(char * sddmm_sparsification_type, long length, INT_T & n
         l_sparsity = ((sparsity - 0.5) * total_elements) / (total_elements/2 - band_values);
         // printf("band_size %lf\n", sparsity-0.5);
     }
-    // long zero_elements = (long)(sparsity * total_elements); 
-    long nonzero_elements = sparsity*total_elements; 
-    INT_T *mask;
-    mask= (typeof(mask)) aligned_alloc(64, total_elements * sizeof(*mask));
 
+    long nonzero_elements = (1-sparsity) * total_elements;
+    INT_T *mask = (INT_T *)aligned_alloc(64, total_elements * sizeof(INT_T));
+
+    // Initialize all elements to zero in parallel
     #pragma omp parallel for
-    for (long i = 0; i < length; i++) {
-        for (long j = 0; j < length; j++) {
-            mask[i*length+j] = 0;
-        }
+    for (long i = 0; i < total_elements; i++) {
+        mask[i] = 0;
     }
 
-    long band_zeros=0;
+    // Create the dense diagonal band
+    long band_zeros = 0;
+    #pragma omp parallel for reduction(+:band_zeros)
     for (long i = 0; i < length; ++i) {
-        for (long j = std::max((long)0, i - band_size + 1); j <= std::min(length - 1, i + band_size - 1); ++j) {
-            mask[i*length+j] = 1.0;
+        for (long j = std::max((long)0, i - band_size + 1); j <=i; ++j) {
+            mask[i * length + j] = 1;
             band_zeros++;
         }
     }
-    // printf("here %ld %ld\n",length, band_zeros);
 
+    // Place random non-zero values based on weights
     long placed_nonzeros = band_zeros;
-    long counter=0;
-    long period=10;
-    while (placed_nonzeros < nonzero_elements) {
-        // printf("%d", counter);
-        if (counter % period == 0)            // Periodic reseeding.
-				srand(time(NULL)+counter);
-        long row = rand() % length;
-        long col = rand() % (row + 1); 
-        if (mask[row*length+col] == 0) {
-            mask[row*length+col] = 1; 
-            placed_nonzeros++;
+
+    // Precompute candidate indices (where mask[index] == 0)
+    std::vector<long> candidate_indices;
+    for (long i = 0; i < total_elements; ++i) {
+        if (mask[i] == 0) {
+            candidate_indices.push_back(i);
         }
-        counter++;
     }
-    nnz=placed_nonzeros;
-     if (nnz!=nonzero_elements)
-        printf("Error creating mask: placed_nonzeros%d nonzero_elements%d sparsity:%f l_sparsity:%f band_size:%d\n", nnz, nonzero_elements, sparsity, l_sparsity, band_size);
+
+    // Shuffle the candidate indices
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(candidate_indices.begin(), candidate_indices.end(), g);
+
+    // Select the required number of non-zero elements
+    long remaining_nonzeros = nonzero_elements - placed_nonzeros;
+    for (long i = 0; i < remaining_nonzeros; ++i) {
+        long selected_index = candidate_indices[i];
+        mask[selected_index] = 1;
+        placed_nonzeros++;
+    }
+
+    nnz = placed_nonzeros;
+
+    if (nnz != nonzero_elements) {
+        printf("Error creating mask: placed_nonzeros %d nonzero_elements %d sparsity: %f l_sparsity: %f band_size: %d\n", nnz, nonzero_elements, sparsity, l_sparsity, band_size);
+    }
+
     return mask;
 }
+
+// INT_T * band_and_random(char * sddmm_sparsification_type, long length, INT_T & nnz, long &band_size, double sparsity, double & l_sparsity) {
+
+//     long total_elements = length * length; 
+//     long band_values;
+//     long C;
+//     long b;
+//     printf("length %ld\n", length);
+//     if (strcmp(sddmm_sparsification_type, "l_sparsity") == 0) {
+//         C = 1 / 2 - ((sparsity - 0.5) / l_sparsity);
+//         b = 2 * length - 1;
+//         band_size = (long)((-b + sqrt(b * b + 8 * total_elements * C)) / 2);
+//     } else if (strcmp(sddmm_sparsification_type, "band_size") == 0) {
+//         // printf("band_size \n");
+//         if (sparsity == 0.95){
+//             band_size = 16; //can do and 24 barely
+//         }else if(sparsity== 0.98){
+//             band_size=8;
+//         }else if (sparsity==0.5){
+//             band_size=length-100;
+//         }
+//         // band_values= band_size * length - (band_size * (band_size - 1)) / 2;
+//         band_values = (band_size/2) * (2 * length + band_size - 1);
+//         l_sparsity = ((sparsity - 0.5) * total_elements) / (total_elements/2 - band_values);
+//         // printf("band_size %lf\n", sparsity-0.5);
+//     }
+//     // long zero_elements = (long)(sparsity * total_elements); 
+//     long nonzero_elements = sparsity*total_elements; 
+//     INT_T *mask;
+//     mask= (typeof(mask)) aligned_alloc(64, total_elements * sizeof(*mask));
+//     printf("memory allocated\n");
+//     printf("total_elements %ld\n", total_elements);
+//     #pragma omp parallel for
+//     for (long i = 0; i < length; i++) {
+//         for (long j = 0; j < length; j++) {
+//             mask[i*length+j] = 0;
+//         }
+//     }
+//     printf("initialized\n");
+
+//     long band_zeros=0;
+//     for (long i = 0; i < length; ++i) {
+//         for (long j = std::max((long)0, i - band_size + 1); j <= i; ++j) {
+//             mask[i*length+j] = 1.0;
+//             band_zeros++;
+//         }
+//     }
+//     printf("here %ld %ld\n",length, band_zeros);
+
+//     long placed_nonzeros = band_zeros;
+//     long counter=0;
+//     long period=10;
+//     while (placed_nonzeros < nonzero_elements) {
+//         // printf("%d", counter);
+//         if (counter % period == 0)            // Periodic reseeding.
+// 				srand(time(NULL)+counter);
+//         long row = rand() % length;
+//         long col = rand() % (row + 1); 
+//         if (mask[row*length+col] == 0) {
+//             mask[row*length+col] = 1; 
+//             placed_nonzeros++;
+//         }
+//         counter++;
+//     }
+//     nnz=placed_nonzeros;
+//      if (nnz!=nonzero_elements)
+//         printf("Error creating mask: placed_nonzeros%d nonzero_elements%d sparsity:%f l_sparsity:%f band_size:%d\n", nnz, nonzero_elements, sparsity, l_sparsity, band_size);
+//     return mask;
+// }
 
 
 INT_T *band_and_decay(char *sddmm_sparsification_type, long length, INT_T &nnz, long &band_size, double sparsity, double &l_sparsity) {
@@ -91,7 +171,7 @@ INT_T *band_and_decay(char *sddmm_sparsification_type, long length, INT_T &nnz, 
         b = 2 * length - 1;
         band_size = (long)((-b + sqrt(b * b + 8 * total_elements * C)) / 2);
     } else if (strcmp(sddmm_sparsification_type, "band_size") == 0) {
-        printf("band_size \n");
+        // printf("band_size \n");
         if (sparsity == 0.95){
             band_size = 16; //can do and 24 barely
         }else if(sparsity== 0.98){
@@ -102,10 +182,10 @@ INT_T *band_and_decay(char *sddmm_sparsification_type, long length, INT_T &nnz, 
         // band_values= band_size * length - (band_size * (band_size - 1)) / 2;
         band_values = (band_size/2) * (2 * length + band_size - 1);
         l_sparsity = ((sparsity - 0.5) * total_elements) / (total_elements/2 - band_values);
-        printf("band_size %lf\n", sparsity-0.5);
+        // printf("band_size %lf\n", sparsity-0.5);
     }
 
-    long nonzero_elements = sparsity * total_elements;
+    long nonzero_elements = (1-sparsity) * total_elements;
     INT_T *mask = (INT_T *)aligned_alloc(64, total_elements * sizeof(INT_T));
 
     // Initialize all elements to zero in parallel

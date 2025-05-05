@@ -27,7 +27,7 @@ if (($? == 0)); then
     export MKL_DEBUG_CPU_TYPE=5
 fi
 # export MKL_ENABLE_INSTRUCTIONS=AVX512
-export MKL_VERBOSE=1
+# export MKL_VERBOSE=1
 
 # export LD_LIBRARY_PATH="${AOCL_PATH}/lib:${MKL_PATH}/lib/intel64:${LD_LIBRARY_PATH}"
 # export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${BOOST_LIB_PATH}:${LLVM_LIB_PATH}:${SPARSEX_LIB_PATH}"
@@ -38,7 +38,7 @@ export MKL_VERBOSE=1
 # Encourages idle threads to spin rather than sleep.
 # export OMP_WAIT_POLICY='active'
 # Don't let the runtime deliver fewer threads than those we asked for.
-export OMP_DYNAMIC='false'
+# export OMP_DYNAMIC='false'
 
 
 matrices_openFoam=("$path_openFoam"/*.mtx)
@@ -352,7 +352,7 @@ bench()
 
     for t in $cores
     do
-        export OMP_NUM_THREADS="$t"
+        # export OMP_NUM_THREADS="$t"
 
         while :; do
             # if [[ "$prog" == *"spmv_sparsex.exe"* ]]; then
@@ -611,21 +611,45 @@ for format_name in "${!progs[@]}"; do
 # export OMP_NESTED=TRUE
 # export OMP_DYNAMIC=FALSE
 # export MKL_DYNAMIC=FALSE
-# export MKL_NUM_THREADS=16
-# export MKL_THREADING_LAYER=GNU
+# export MKL_NUM_THREADS=32
+# export MKL_THREADING_LAYER=OMP
 # export GOMP_CPU_AFFINITY="$cpu_affinity"
 # export XLSMPOPTS="PROCS=$cpu_affinity"
-export OMP_PROC_BIND=true
-export OMP_PLACES="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26},{27},{28},{29},{30},{31},{32},{33},{34},{35},{36},{37},{38},{39},{40},{41},{42},{43},{44},{45},{46},{47},{48},{49},{50},{51},{52},{53},{54},{55},{56},{57},{58},{59},{60},{61},{62},{63}"
-# export OMP_PLACES="{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63}"
-# export OMP_PLACES="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23}"
 # export OMP_PROC_BIND=spread,close
+# export OMP_MAX_ACTIVE_LEVELS=2
+# export OMP_PLACES="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26},{27},{28},{29},{30},{31},{32},{33},{34},{35},{36},{37},{38},{39},{40},{41},{42},{43},{44},{45},{46},{47},{48},{49},{50},{51},{52},{53},{54},{55},{56},{57},{58},{59},{60},{61},{62},{63}"
+# export OMP_PLACES="{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},{17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32},{33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48}"
+# export OMP_PLACES="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23}"
+# export OMP_PROC_BIND=true
 # export OMP_STACKSIZE=1000
 # export OMP_DISPLAY_ENV=true
+
+# export	OMP_NESTED=true	
+# export	OMP_PLACES=cores
+# export	OMP_PROC_BIND=spread,close	
+# export	OMP_NUM_THREADS=32
+# export	MKL_DYNAMIC=false			
+# export	KMP_HOT_TEAMS=1	
+# export	KMP_HOT_TEAMS_MAX_LEVELS=2	
+#-----------------------------------------------------------------------------------------------------#
+# working
+export	OMP_NESTED=true	
+export OMP_MAX_ACTIVE_LEVELS=2
+# export OMP_PLACES="{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20},{22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41},{43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62}"
+export OMP_PLACES="{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},{18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},{35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50}"
+# export OMP_PLACES="{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24},{33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57}"
+# export OMP_PLACES="{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32},{33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63}"
+export	OMP_PROC_BIND=spread,close
+# export	OMP_NUM_THREADS=51
+export	OMP_NUM_THREADS=64
+export MKL_NUM_THREADS=16
+export	MKL_DYNAMIC=false	
+export OMP_DYNAMIC=FALSE
+#-----------------------------------------------------------------------------------------------------#
     for ((i=0;i<rep;i++)); do
         if ((PIPELINE)); then
-            # for ((a=0; a<${#prog_args_k[@]}; a++));
-            for ((a=0; a<1; a++));
+            for ((a=0; a<${#prog_args_k[@]}; a++));
+            # for ((a=0; a<1; a++));
             do
 
                 rep_in=1
@@ -641,7 +665,8 @@ export OMP_PLACES="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{
                     echo >&1
                     if [[ ${prog_args_k[a]} =~ /0\.([^/]+)/ ]]; then
                     result="${BASH_REMATCH[1]}"
-                    export SPARSITY="0.${result}"
+                    # export SPARSITY="0.${result}"
+                    export SPARSITY="0.95"
                     echo "sparsity: $result"
                     else
                         echo "No match found."
